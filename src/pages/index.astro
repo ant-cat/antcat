@@ -1,0 +1,51 @@
+---
+import Base from '../layouts/Base.astro';
+import { getCollection } from 'astro:content';
+
+const posts = (await getCollection('blog'))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .slice(0, 8);
+
+function formatDate(d: Date) {
+  return d.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+}
+---
+<Base title="Home">
+  <div style="margin-bottom:48px">
+    <div style="font-family:var(--mono);font-size:0.68rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--accent);margin-bottom:8px">// experiments &amp; learnings</div>
+    <h1 style="font-family:var(--serif);font-size:clamp(2rem,5vw,3rem);font-weight:400;color:var(--text);line-height:1.1;margin-bottom:14px">
+      20 years of writing.<br><em style="font-style:italic;color:var(--accent)">Now building in public.</em>
+    </h1>
+    <p style="font-size:0.95rem;color:var(--text2);max-width:520px;line-height:1.7">
+      I build small AI-powered experiments, ship them, and document what I learn. Everything here is a work in progress.
+    </p>
+    <div style="margin-top:20px;display:flex;gap:12px;flex-wrap:wrap">
+      <a href="/experiments" style="display:inline-flex;align-items:center;gap:6px;background:var(--accent);color:#fff;font-size:0.82rem;font-weight:600;padding:9px 18px;border-radius:6px;text-decoration:none">
+        See Experiments →
+      </a>
+      <a href="/writing" style="display:inline-flex;align-items:center;gap:6px;background:var(--surface);border:1px solid var(--border);color:var(--text2);font-size:0.82rem;font-weight:600;padding:9px 18px;border-radius:6px;text-decoration:none">
+        Read the Blog
+      </a>
+    </div>
+  </div>
+
+  <div style="margin-bottom:16px;display:flex;justify-content:space-between;align-items:baseline">
+    <div style="font-family:var(--mono);font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--text3)">— recent writing</div>
+    <a href="/writing" style="font-size:0.75rem;font-weight:600;color:var(--accent)">All posts →</a>
+  </div>
+  <div class="post-list">
+    {posts.map(post => (
+      <div class="post-item">
+        <span class="post-date">{formatDate(post.data.date)}</span>
+        <div>
+          <a href={`/writing/${post.slug}`} class="post-title">{post.data.title}</a>
+          {post.data.categories.length > 0 && (
+            <div class="post-cats">
+              {post.data.categories.map(c => <span class="post-cat">{c}</span>)}
+            </div>
+          )}
+        </div>
+      </div>
+    ))}
+  </div>
+</Base>

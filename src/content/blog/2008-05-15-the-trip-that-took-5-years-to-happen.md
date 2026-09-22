@@ -1,0 +1,50 @@
+---
+title: "The Trip That Took 5 Years to Happen!"
+date: 2008-05-15
+slug: "the-trip-that-took-5-years-to-happen"
+categories: ["Trips"]
+tags: ["Cedar Point", "Ohio", "Roller Coasters", "Top Thrill Dragster", "Vacation"]
+---
+
+[](http://catknees.files.wordpress.com/2008/05/dsc012501.jpg)Five years ago, 2003, a spam email was going around showing the newest roller coaster at Cedar Point, the roller coaster capital of the world! This new coaster was not something you would typically see when you think about a coaster. This was “Top Thrill Dragster” a 120mph 420ft high beast….we had to do it!
+
+Well 2008 was our chance to take on Cedar Point…we did it…and it was FANTASTIC!!
+
+[](http://catknees.files.wordpress.com/2008/05/dsc012361.jpg)
+
+[](http://catknees.files.wordpress.com/2008/05/dsc01257.jpg)[](http://catknees.files.wordpress.com/2008/05/dsc01257.jpg)
+
+[](http://catknees.files.wordpress.com/2008/05/dsc01257.jpg)
+[](http://catknees.files.wordpress.com/2008/05/dsc012501.jpg)
+
+[](http://catknees.files.wordpress.com/2008/05/dsc01257.jpg)
+
+[](http://catknees.files.wordpress.com/2008/05/dsc01257.jpg)
+
+[googlevideo=http://video.google.com/videoplay?docid=8754403973629749943&hl=en]
+
+[googlevideo=http://video.google.com/videoplay?docid=639624709977823410&hl=en]
+
+5/9 Friday - Our adventure from Jacksonville, Florida to Sandusky, OH began. We used Southwest Airlines which went off without a hitch. Let me tell you, the next time you are in an airport bring a deck of cards. It was the most fun I have ever had waiting for a plane. Way to go Rummy (I killed Jess playing). No lost bags and no delays make for happy customers. Our plans were to fly into Columbus, OH and drive to Sandusky, which is only about a 2 1/2 hour drive. Priceline is what we used to book our rooms and our rental car. It was our first time using Priceline and it worked out swimmingly. Our rental car came from Budget, cheapest car is $14 a day, and because they couldn’t find our car they upgraded us to a VW Jetta…hey you can’t beat free upgrades. We stayed at the 4 star Hyatt at Capitol Square. It was a very nice hotel with a good location and great views. We used Priceline so were able to get it for $90 a night. Way to go William Shatner and your negotiating skills!
+
+We had a blast in Columbus ([www.experiencecolumbus.com](http://www.experiencecolumbus.com/)). The city folks were very friendly and they seemed to have a good amount of activities going on. There was a reenactment going on across the street from the hotel where they shot a cannon off every hour. From the recommendations of the concierge at the Hyatt we found ourselves at a place called “The Elevator”. A very cool bar indeed. We highly recommend it and try there microbrew. It’s only a $1 a flight. Later that night we took about a $6 ride in a taxi to hit up an area of town called the Arena District. It’s mostly filled with bars. We were big fans of Bar Louie (the most single women at a bar with no guys around we have ever seen) and another place that had live music, but there was one bar called Brothers that was just boring and blah.
+
+5/10 Saturday – The adventure continues. We cruised on over to Sandusky after a little pricey breakfast at the hotel. The drive was great. It was full of beautiful landscapes and quaint little cities. We wanted to move up there immediately. After following a couple school buses of waving kids for about 45 min. we arrived at the famous Cedar Point around 1 pm. We were tickled pink and it was better than we imagined. Jess was super excited…enough to roll down the windows and cheer on the people who were riding the newest attraction “Maverick” (She’s a cutie!).
+
+The hotel we stayed at was called “Breakers”, not “Breakers Express”. It was an extremely old hotel, about 102, but it was right on the property and we had a beach view (who knew Lake Eerie had a beach). We were able to walk back and forth from the park with ease. The package they gave was great. It provided us with 2 free day tickets, 2 starlight passes, go-cart tickets, miniature golf passes, $30 in food money, and 10% off at few other places. I would say that’s quite a bit of extra freebies.
+
+The first night we used our starlight tickets from 5-10pm. To kill time until 5pm we grabbed some lunch at TGI Fridays in the hotel. We also used up our go-cart passes, played in the arcade (Jess beat me in everything from Basketball to Air Hockey), and we also played a round of mini-golf (which Jess also beat me in).
+
+When they say you can’t enter the park until 5pm they mean it. We tried at 4:57pm and they weren’t having it.
+
+It finally hit 5pm. Time for some fun. So, being that we are from Florida we are not used to the world record holding rides that are found up here in the North. Disney just doesn’t make anything like it. We jumped on Magnum XL200…holy crap it was fun. It was our favorite ride. In 1989 this was the crème de la crème of coasters and now we know why. We hit up the Corkscrew (one dizzy ride), Wicked Twister (crazy scary, but a ton of fun), Disaster Transport (not worth it), Iron Dragon (similar to the Big Bad Wolf in Busch Gardens Williamsburg, a blast!), Blue Streak (the oldest coaster and one of the best), and one more time for Magnum XL200 on the way out. For it to be opening weekend the park wasn’t very full. We were able to ride 7 coasters in 5 hours. Our longest wait was 45 minutes. We grabbed some dinner at Johnny Rockets in the park…burgers, onion rings, and fries….does life get better? Once back to the hotel we headed back over TGI Fridays for some drinks and we ended up coming up with our own called a “MayDay”. We have no idea what was in it.
+
+5/11 Sunday – This was it. This was the day to go all out at the park, ride every ride, and hopefully make it on the Top Thrill Dragster. Cold and wet are the next words to describe the day. In Jacksonville this day it was clear skies and 88 degrees. In Sandusky, OH it was 51 degrees with a 90% chance of rain and with a wind-chill it felt about 40. A light rain graced us with it’s presence throughout the whole morning. Almost every ride was shutdown. We used most of our one hour early admittance into the park waiting for Maverick to open up, but to our dismay it was a no go. We were able to ride Millennium Force (there were “So, many emotions”, a lot of fun, but really painful in the rain), Iron Dragon, Mantis (this is a stand-up coaster, which isn’t good for rain), and I (Cat) did a quick trip on the downward Power Tower. We were cold wet and disappointed. We headed back to the room to warm up and dry off. After about an hour of hanging out in the room we checked outside to find that everything had cleared up…we knew what we had to do. We grabbed our clothes out of the community laundry facility and went back to the park. There was almost nobody there. Every ride was a walk-on. We were able to ride almost 10 – 12 rides in almost 5 hours.
+
+We started off with the amazing Maverick. I had little expectations for this ride mostly due to the fact I knew nothing about it….it was nuts. It turns you in every direction and then right in the middle of it there’s a surprise! We decided to continue hanging out in western world and ride the Mean Streak, ouch…it hurt! Since the Mean Streak was more painful than fun we decided to lay off the old wooden coasters and just move to the newer ones. The weather finally cleared up enough and the park decided to run Top Thrill Dragster once again. I was so excited. I was going to finally ride that amazing ride I had seen 5 years prior. Jess decided early on that it just wasn’t her cup of tea, but man did she miss out. The anticipation that built up before you rocket down the track is intense and I’m glad I was able to experience it. We were able to appreciate the world breaking Millennium Force by riding when it wasn’t raining. We decided that now was the time for us to pig out. We headed over to the cheese on a stick stand…that’s right cheese on a stick. I had never heard of these, but Jess was floored and was super excited. It’s a block of cheese, about the size of corn dog, that’s breaded and fried like a corn dog and put on a stick. After 2 cheese dogs we killed a funnel cake, and washed it all down with Dip N’ Dots. We felt quite gross after that. We headed over to the Raptor, which had just started running after being shutdown all day, only to be turned away do to bad weather. Well the Iron Dragon was still running so why not? After we rode the Iron Dragon again the Raptor opened up and it was a great time. They actually record a video of you on the ride the whole time your on it…how fun! I was looking around all curious while Jess was full of grins. They also had some typical Fair type games like ring toss. The prizes of course were huge, I would of tried to win one, but how do you get back on the plane?
+
+To end our trip we hit up the Magnum XL200 one more time. We decided that the front was for us, but man watch the hills at the end…they are killer. For dinner we headed into town for some Chili’s. Good food, but extremely poor service. Our waitress pretty much through a fit for us sitting in her section so we relieved her of her tip because I’m sure that why she was mad…she didn’t want more money. Once we got back to the hotel we went to Fridays, watched a drunken couple get cut off from drinks, and then we headed to bed.
+
+5/12 Monday – Woke up early and grabbed a quick bite at the coffee shop in the hotel. Went ahead and started driving back to Columbus. We got a little lost, but nothing too major. Everything worked out great with no delays. While waiting during our 2 and ½ hour layover in Tampa we played some cards. Jess taught me Speed, Kings Corners, and Rummy. It was the best time I have ever had waiting for a plane.
+
+Well that was our trip. This was an extremely long post, but it’s our blog….and that’s how we roll.

@@ -1,0 +1,35 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getCollection } from 'astro:content';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog');
+  return posts.map(post => ({ params: { slug: post.slug }, props: { post } }));
+}
+
+const { post } = Astro.props;
+const { Content } = await post.render();
+
+function formatDate(d: Date) {
+  return d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+}
+const cats = post.data.categories.filter((c: string) => c !== 'Uncategorized');
+---
+<Base title={post.data.title}>
+  <a href="/writing" class="back-link">← All posts</a>
+
+  <header class="article-header">
+    {cats.length > 0 && (
+      <div class="article-eyebrow">{cats.join(' · ')}</div>
+    )}
+    <h1 class="article-title">{post.data.title}</h1>
+    <div class="article-meta">
+      <span>{formatDate(post.data.date)}</span>
+      <span>Anthony Catanese</span>
+    </div>
+  </header>
+
+  <div class="article-body">
+    <Content />
+  </div>
+</Base>

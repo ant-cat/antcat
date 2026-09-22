@@ -1,0 +1,37 @@
+---
+title: "Oh Savannah"
+date: 2010-08-24
+slug: "oh-savannah"
+categories: ["Review", "Trips"]
+tags: ["Bohemian Hotel", "Circa 1875", "Dos Gatos", "J. Christophers", "Krystals"]
+---
+
+It's been a long time since I've taken a real vacation and explored a new city. Besides my short 1.5 days to the [Smokys this past April](http://zoozical.com/2010/04/13/smoky-the-bear-says-only-you-can-make-you-happy/) it has almost been a year since my trip to the wonderful [Cedar Point in Sandusky, OH](http://zoozical.com/2009/08/18/cedar-point-2009/).
+
+This years trip was a little bit closer to home and little bit more chill, but still a whole lot of fun. In my 27 years of living in North Florida I've never made my way to [Savannah, GA](http://zoozical.com/2009/08/18/cedar-point-2009/). I'm not really sure why it took me so long to visit. I love St. Augustine and the travelling distance to Orlando isn't that far and Savannah is a pleasant combination of both. Now that this door has been flung open little trip are now probably going to happen quite often.
+
+I enlisted the help of the beautiful Samantha (Sam) to help show me around and explore this little city. She has been here a couple times...so I used that as an excuse to rope her into joining me and showing me around:)
+
+[](http://catknees.files.wordpress.com/2010/08/mansion-on-forsyth-park-default1.jpg)
+
+**Day 1 - Friday:**
+
+	- Traveled to Savannah and checked into the Residence Inn in Downtown. It was nice, friendly, clean and well priced. The room had a full kitchen, lots of space and a rocking chair on the balcony....woo! Rocking Chair! Cabs were super cheap to get to River St. (in the range of $4 and easy to get).
+	- Due to my extreme craving for Krystals, we split a Sack Full! I would like to think we split these evenly, but I dominated that bag and pretty much ate all fo them (i know...I know) , we were both weren't that hungry for dinner till much later. We went out at about 11 and hit up the very nice [Bohemian Hotel ](http://www.google.com/images?hl=en&gbv=2&gl=us&q=savannah%2C%20GA%20bohemian%20hotel&um=1&ie=UTF-8&source=og&sa=N&tab=wi)on the riverfront and went to their rooftop bar called [Rocks on the River](http://www.google.com/images?hl=en&gbv=2&gl=us&q=rocks%20on%20the%20river%20savannah&um=1&ie=UTF-8&source=og&sa=N&tab=wi). Great Decor, decent service, but we were looking for something a little bit more quaint...and near food. The bartender we hit Sweet Melissa's
+	- [Sweet Melissa's ](http://maps.google.com/maps?hl=en&gbv=2&gl=us&um=1&ie=UTF-8&q=sweet+melissas+savannah&fb=1&gl=us&hq=sweet+melissas&hnear=Savannah,+GA&view=text&ei=V8ZyTLbrE8OAlAeT0KjUDQ&sa=X&oi=local_group&ct=more-results&resnum=1&ved=0CBoQtQMwAA)=mmmmmmm's: The bartender at the Bohemian said this was hangover food and not that good without a lot of drinks...HA...whatevs man. I would totes go this place daily. I couldn't think of why it was so good, but Sam nailed it, "when your cheese is thicker than the main crust, but the end crust is still substantial that makes for a tornado of feelings...."
+	- We then made our way across the street at a place called [Circa 1875](http://www.circa1875.com/). Loved the layout, design and decor of this little gem. They have certain parts of the bar (the actual bar top) sectioned off with little walls making nooks and space for varying party sizes. It makes talking with somebody quietly while still ordering drinks extremely easily. My only problem with this place was the lack of knowledge of traditional drinks. I guess working at [Dos Gatos ](http://www.dosgatosjax.com)here in Jax has really spoiled me for amazing drinks. I asked for a [Sidecar](http://en.wikipedia.org/wiki/Sidecar_(cocktail)) which is pretty traditional and up there with the Manhattan and they didn't really know how to make it. A bartender by the name of Catfish came through and even though didn't make the drink they got close enough.
+	- We left Circa 1875 and walked back across the street to the other side of Sweet Melissa's to hook me up with a burger and fries. The best part was I could cruise the streets with a drink...and then get it "refreshed" at the next place....except that last refresher put me over the top. After the burger, fries and finished drink...i was asleep :0
+
+**Day 2 - Saturday:**
+
+	- We checked out of the Residence Inn and made our way to the second hotel ["The Mansion on Forsyth Park"](http://www.mansiononforsythpark.com/). It's quite the little eclectic experience and has art everywhere and neat modern designs inside this traditional building making for a cool experience. [Check out some pics!](http://www.google.com/images?hl=en&q=the%20mansion%20on%20forsyth%20park&um=1&ie=UTF-8&source=og&sa=N&tab=wi) There are some great restaurants in the area of this hotel and the hotel offers a free Chauffer service. They will pick you up and drop you off pretty much where ever you want within historic Savannah. It was great. It also across the street from a very nice park where you can watch people play Ulitmate Frisbee all day.
+	- We walked down to a cool Urban Gourmet Grocery Store called [Parkers Market](http://www.parkersav.com/parkers_market.cfm). We need one of these in Downtown Jacksonville....hardcore! It's a gas station (3 one sided pumps), convenience store, and fantastic deli. It sounds weird, but it's the coolest store that I've ever been in. We had an assortment of wonderful salads, a curry chicken salad wrap, homemade cookies, a 320z Stella Artois (Yeah...That's right!...a 32!), and a Pomegranate Leachy Fruit Iced Tea thing. All of it delicious. We then continued to walk and just explore the city. It was warm out, but it was fun.
+	- After asking around a bit we took the recommendation from our bell hop at the The Mansion and went to an awesome New York Style Italian restaurant called [Leoci's](http://leocis.com/). They hand make their pasta to order! It was very nice (a little tiny/cramped), but the food was fantastic. You have to go....bring an appetite!
+
+**Day 3 - Sunday:**
+
+	- It was a little bit of a late start, but we checked out of The Mansion and went hunting for brunch. We ended up at [J. Christophers ](http://www.jchristophers.com/)(recommendation of the front desk guy at the hotel). So glad we did. I had the billy goat omelet...it had everything and goat cheese....what's not to love. Sam had one their skillets with a sunny side up egg on top....which kicked booty as well. We then split the Blueberry Crunchy Pancakes (blueberries + granola + Pancakes = a little place not of this Earth)
+	- We made our way to [Tybee Island ](http://maps.google.com/maps?hl=en&q=Tybee+Island&um=1&ie=UTF-8&hq=&hnear=Tybee+Island,+GA&gl=us&ei=HddyTLeMI4WKlwel3aTWDg&sa=X&oi=geocode_result&ct=title&resnum=1&ved=0CCwQ8gEwAA)to enjoy the beach for a bit and hit this little random shop called Fish Art to try and find some cool antiques (We both LOVE antiques ;) ), but no go. We also had a little mexican at this place called MexiCali. It was ok...we didn't die.
+	- We then made our way back to the J-ville with little traffic, a little rain, but big smiles.
+
+It was a great weekend and can't wait to revisit. Hopefully it will be less than a year before I get to do a trip like this again...and little miss Sam is around to join me.

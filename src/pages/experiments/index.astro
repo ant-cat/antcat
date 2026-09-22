@@ -1,0 +1,105 @@
+---
+import Base from '../../layouts/Base.astro';
+
+const experiments = [
+  {
+    id: 'EXP-001',
+    title: 'Baby is a Go',
+    status: 'live',
+    color: 'coral',
+    date: 'Sep 2026',
+    description: 'Share your baby news beautifully — and never lose a reply. Compose once with personalization, send everyone their own private message via SMS or email, then manage all replies in one unified inbox. No group threads. No number-sharing.',
+    learning: 'Building for a single emotional moment — not a recurring use case — changes everything about what "done" means. The demo mode (zero credentials needed) was the unlock for sharing it widely.',
+    tags: ['next.js 14', 'typescript', 'postgresql', 'twilio', 'resend', 'vercel'],
+    demoUrl: 'https://babyisago-ten.vercel.app/',
+    writeupUrl: null,
+  },
+  {
+    id: 'EXP-002',
+    title: 'Budget Analysis Tool',
+    status: 'live',
+    color: 'teal',
+    date: 'Sep 2026',
+    description: 'A personal finance dashboard that turns a bank export into a clear picture of your money. Two views: a summary with KPIs and category breakdowns, and a drill-down explorer to interrogate individual transactions.',
+    learning: 'Financial data is personal and messy. The design work is in finding the right level of abstraction — enough signal, none of the anxiety of a raw spreadsheet.',
+    tags: ['data-viz', 'vanilla-js', 'csv-parsing', 'dark-mode'],
+    demoUrl: 'https://claude.ai/artifact/cab2fdb8-8e83-4757-ab6b-03188c8e4aaf',
+    writeupUrl: null,
+  },
+];
+
+const accentMap: Record<string, string> = {
+  coral: '#E76F51',
+  teal: '#2A9D8F',
+  amber: '#C9961A',
+};
+---
+<Base title="Experiments">
+  <div class="page-header">
+    <div style="font-family:var(--mono);font-size:0.68rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--accent);margin-bottom:8px">// active experiments</div>
+    <h1 class="page-title">Experiments</h1>
+    <p class="page-subtitle">I build small things, ship them, and write about what I learn. {experiments.filter(e=>e.status==='live').length} live now.</p>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+    {experiments.map(exp => (
+      <div style={`background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:24px;display:flex;flex-direction:column;position:relative;overflow:hidden;border-top:3px solid ${accentMap[exp.color] || 'var(--border)'}`}>
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px;gap:10px">
+          <div>
+            <div style="font-family:var(--mono);font-size:0.62rem;color:var(--text3);letter-spacing:0.08em;margin-bottom:8px">{exp.id}</div>
+            <div style="font-family:var(--serif);font-size:1.25rem;font-weight:400;color:var(--text);line-height:1.2">{exp.title}</div>
+          </div>
+          <span style={`font-family:var(--mono);font-size:0.6rem;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;padding:3px 8px;border-radius:20px;white-space:nowrap;flex-shrink:0;background:var(--accent-lt);color:var(--accent)`}>
+            {exp.status === 'live' ? '● Live' : '○ Building'}
+          </span>
+        </div>
+
+        <p style="font-size:0.82rem;color:var(--text2);line-height:1.6;margin-bottom:16px;flex:1">{exp.description}</p>
+
+        <div style="background:var(--bg2);border-radius:6px;padding:10px 12px;margin-bottom:16px">
+          <div style="font-family:var(--mono);font-size:0.6rem;font-weight:500;letter-spacing:0.07em;text-transform:uppercase;color:var(--text3);margin-bottom:3px">Key learning</div>
+          <p style="font-size:0.74rem;color:var(--text2);line-height:1.5;margin:0">{exp.learning}</p>
+        </div>
+
+        <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:18px">
+          {exp.tags.map(tag => (
+            <span style="font-family:var(--mono);font-size:0.6rem;letter-spacing:0.05em;padding:2px 7px;border-radius:3px;background:var(--bg2);color:var(--text3);border:1px solid var(--border)">{tag}</span>
+          ))}
+        </div>
+
+        <div style="display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--border);padding-top:14px;margin-top:auto">
+          <span style="font-family:var(--mono);font-size:0.62rem;color:var(--text3)">{exp.date}</span>
+          <div style="display:flex;gap:8px;align-items:center">
+            {exp.demoUrl && (
+              <a href={exp.demoUrl} target="_blank" rel="noopener" style="font-size:0.72rem;font-weight:600;color:var(--accent);text-decoration:none">Try demo →</a>
+            )}
+            {exp.writeupUrl && (
+              <>
+                <span style="width:1px;height:12px;background:var(--border);display:inline-block"></span>
+                <a href={exp.writeupUrl} style="font-size:0.72rem;font-weight:600;color:var(--text3);text-decoration:none">Write-up →</a>
+              </>
+            )}
+          </div>
+        </div>
+      </div>
+    ))}
+
+    <!-- Next slot -->
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:24px;opacity:0.6;border-top:3px solid var(--border)">
+      <div style="font-family:var(--mono);font-size:0.62rem;color:var(--text3);letter-spacing:0.08em;margin-bottom:8px">EXP-003</div>
+      <div style="font-family:var(--serif);font-size:1.25rem;font-weight:400;color:var(--text);margin-bottom:14px">Next Experiment</div>
+      <p style="font-size:0.82rem;color:var(--text2);line-height:1.6">This slot is open. Ideas in the queue — what should I build next?</p>
+      <div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--border)">
+        <a href="mailto:ranthonycatanese@gmail.com" style="font-size:0.72rem;font-weight:600;color:var(--text3)">Suggest one →</a>
+      </div>
+    </div>
+  </div>
+</Base>
+
+<style>
+@media (max-width: 600px) {
+  div[style*="grid-template-columns:1fr 1fr"] {
+    grid-template-columns: 1fr !important;
+  }
+}
+</style>

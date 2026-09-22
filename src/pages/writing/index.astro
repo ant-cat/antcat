@@ -1,0 +1,49 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getCollection } from 'astro:content';
+
+const allPosts = (await getCollection('blog'))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
+function formatDate(d: Date) {
+  return d.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+}
+
+// Group by year
+const byYear: Record<string, typeof allPosts> = {};
+for (const post of allPosts) {
+  const year = post.data.date.getFullYear().toString();
+  if (!byYear[year]) byYear[year] = [];
+  byYear[year].push(post);
+}
+const years = Object.keys(byYear).sort((a, b) => Number(b) - Number(a));
+---
+<Base title="Writing">
+  <div class="page-header">
+    <h1 class="page-title">Writing</h1>
+    <p class="page-subtitle">{allPosts.length} posts since 2006 — observations, reviews, stories, and product thinking.</p>
+  </div>
+
+  {years.map(year => (
+    <div style="margin-bottom:32px">
+      <div style="font-family:var(--mono);font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--text3);margin-bottom:8px">— {year}</div>
+      <div class="post-list">
+        {byYear[year].map(post => (
+          <div class="post-item">
+            <span class="post-date">{formatDate(post.data.date)}</span>
+            <div>
+              <a href={`/writing/${post.slug}`} class="post-title">{post.data.title}</a>
+              {post.data.categories.filter(c => c !== 'Uncategorized').length > 0 && (
+                <div class="post-cats">
+                  {post.data.categories.filter(c => c !== 'Uncategorized').map(c => (
+                    <span class="post-cat">{c}</span>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  ))}
+</Base>
