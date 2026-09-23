@@ -11,41 +11,146 @@ function formatDate(d: Date) {
 }
 ---
 <Base title="Home">
-  <div style="margin-bottom:48px">
-    <div style="font-family:var(--mono);font-size:0.68rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--accent);margin-bottom:8px">// experiments &amp; learnings</div>
-    <h1 style="font-family:var(--serif);font-size:clamp(2rem,5vw,3rem);font-weight:400;color:var(--text);line-height:1.1;margin-bottom:14px">
-      20 years of writing.<br><em style="font-style:italic;color:var(--accent)">Now building in public.</em>
-    </h1>
-    <p style="font-size:0.95rem;color:var(--text2);max-width:520px;line-height:1.7">
-      I build small AI-powered experiments, ship them, and document what I learn. Everything here is a work in progress.
-    </p>
-    <div style="margin-top:20px;display:flex;gap:12px;flex-wrap:wrap">
-      <a href="/experiments" style="display:inline-flex;align-items:center;gap:6px;background:var(--accent);color:#fff;font-size:0.82rem;font-weight:600;padding:9px 18px;border-radius:6px;text-decoration:none">
-        See Experiments →
-      </a>
-      <a href="/writing" style="display:inline-flex;align-items:center;gap:6px;background:var(--surface);border:1px solid var(--border);color:var(--text2);font-size:0.82rem;font-weight:600;padding:9px 18px;border-radius:6px;text-decoration:none">
-        Read the Blog
-      </a>
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-image-wrap">
+      <img src="/images/hero.png" alt="Four kids on a couch in the desert watching a decorated TV" class="hero-image" />
+      <div class="hero-overlay"></div>
+      <div class="hero-text">
+        <p class="hero-tagline">Built this for me, but you can read it too.</p>
+        <h1 class="hero-headline">For over 20 years I've found that the best way for me to understand something is to write it out.</h1>
+        <div class="hero-actions">
+          <a href="/experiments" class="btn-primary">See what I'm building →</a>
+          <a href="/writing" class="btn-ghost">Read the archive</a>
+        </div>
+      </div>
     </div>
   </div>
 
-  <div style="margin-bottom:16px;display:flex;justify-content:space-between;align-items:baseline">
-    <div style="font-family:var(--mono);font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--text3)">— recent writing</div>
-    <a href="/writing" style="font-size:0.75rem;font-weight:600;color:var(--accent)">All posts →</a>
-  </div>
-  <div class="post-list">
-    {posts.map(post => (
-      <div class="post-item">
-        <span class="post-date">{formatDate(post.data.date)}</span>
-        <div>
-          <a href={`/writing/${post.slug}`} class="post-title">{post.data.title}</a>
-          {post.data.categories.length > 0 && (
-            <div class="post-cats">
-              {post.data.categories.map(c => <span class="post-cat">{c}</span>)}
-            </div>
-          )}
+  <!-- Recent writing -->
+  <div style="margin-top:56px">
+    <div style="margin-bottom:16px;display:flex;justify-content:space-between;align-items:baseline">
+      <div style="font-family:var(--mono);font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--text3)">— recent writing</div>
+      <a href="/writing" style="font-size:0.75rem;font-weight:600;color:var(--accent)">All posts →</a>
+    </div>
+    <div class="post-list">
+      {posts.map(post => (
+        <div class="post-item">
+          <span class="post-date">{formatDate(post.data.date)}</span>
+          <div>
+            <a href={`/writing/${post.slug}`} class="post-title">{post.data.title}</a>
+            {post.data.categories.length > 0 && (
+              <div class="post-cats">
+                {post.data.categories.map(c => <span class="post-cat">{c}</span>)}
+              </div>
+            )}
+          </div>
         </div>
-      </div>
-    ))}
+      ))}
+    </div>
   </div>
+
 </Base>
+
+<style>
+.hero {
+  margin: 0 calc(-1 * var(--page-pad, 24px)) 0;
+}
+
+.hero-image-wrap {
+  position: relative;
+  width: 100%;
+  max-height: 520px;
+  overflow: hidden;
+  border-radius: 12px;
+}
+
+.hero-image {
+  width: 100%;
+  height: 100%;
+  max-height: 520px;
+  object-fit: cover;
+  object-position: center 40%;
+  display: block;
+}
+
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(0,0,0,0.82) 0%,
+    rgba(0,0,0,0.4) 50%,
+    rgba(0,0,0,0.1) 100%
+  );
+}
+
+.hero-text {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 32px 36px;
+}
+
+.hero-tagline {
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 10px;
+}
+
+.hero-headline {
+  font-family: var(--serif);
+  font-size: clamp(1.25rem, 3.5vw, 2rem);
+  font-weight: 400;
+  color: #fff;
+  line-height: 1.25;
+  max-width: 580px;
+  margin-bottom: 22px;
+}
+
+.hero-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  background: var(--accent);
+  color: #fff;
+  font-size: 0.82rem;
+  font-weight: 600;
+  padding: 9px 18px;
+  border-radius: 6px;
+  text-decoration: none;
+}
+
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.25);
+  color: #fff;
+  font-size: 0.82rem;
+  font-weight: 600;
+  padding: 9px 18px;
+  border-radius: 6px;
+  text-decoration: none;
+  backdrop-filter: blur(4px);
+}
+
+@media (max-width: 600px) {
+  .hero-text {
+    padding: 20px 20px;
+  }
+  .hero-image-wrap {
+    border-radius: 8px;
+  }
+}
+</style>
