@@ -46,6 +46,22 @@ body {
   padding-inline: 24px;
 }
 
+/* Time-of-day tint layer */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: var(--bg-tint, transparent);
+  pointer-events: none;
+  z-index: 0;
+  transition: background 2s ease;
+}
+
+.site-header, .main, .site-footer {
+  position: relative;
+  z-index: 1;
+}
+
 a { color: var(--accent); text-decoration: none; }
 a:hover { text-decoration: underline; }
 
