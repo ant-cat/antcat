@@ -16,5 +16,6 @@ I found this site though....and it's funny
 It explains each Marmaduke comic and makes some great points.
 
 For example:
+![280328.full](http://zoozical.files.wordpress.com/2009/06/280328-full.gif?w=269)
 
 Marmaduke's owner-man can justify it however he wants, but there is only one explanation: he lets Marmaduke dig because he is a big pussy.

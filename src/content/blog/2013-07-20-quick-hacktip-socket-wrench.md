@@ -8,7 +8,7 @@ tags: ["Life hack", "socket wrench"]
 
 Real quick tip that I just figured out and you may already know. Either way, I'm sharing.
 
-[](https://ant.cat/wp-content/uploads/2013/07/socket_wrench_and_sockets.jpg)
+[![Socket_wrench_and_sockets](https://ant.cat/wp-content/uploads/2013/07/socket_wrench_and_sockets.jpg?w=580)](https://ant.cat/wp-content/uploads/2013/07/socket_wrench_and_sockets.jpg)
 
 While working on my car I sometimes come across certain bolts and nuts that I need to unbolt blindly. Typically, I can figure out a solution for getting off the certain pain in the rear. I usually find, though,  that if it getting it off is hard, then getting it back on is even harder.
 

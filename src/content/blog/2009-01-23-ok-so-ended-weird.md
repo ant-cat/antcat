@@ -16,3 +16,4 @@ So even though the year started looking miserable with having to ride a motorcyc
 
 This years trip is to Bogota, Colombia and Cartagena...all planned for March...It's where Jessie, the girl i have been dating the past few months is from I even switched from learning German on Rosetta Stone to Spanish ...hope it works out.
 
+![](http://www.sogonow.com/static/FCKeditor/UserFiles/Image/Cartagena.jpg)

@@ -10,7 +10,7 @@ This post is and always will be a work in progress...
 and each version will have its own space.
 - [Version 1 - 2014](https://ant.cat/this-world-is-a-great-wiggly-affair/)
 
-[](https://web.archive.org/web/20180904094423/https://seahorsecarousel.files.wordpress.com/2011/05/alanwatts_formark.jpg?w=300&h=420&zoom=2)Alan Watts by Kristen Taylor Wright: http://wp.me/P1eLdD-2
+[![Alan Watts by Kristen Taylor Wright: http://wp.me/P1eLdD-2](https://web.archive.org/web/20180904094423im_/https://seahorsecarousel.files.wordpress.com/2011/05/alanwatts_formark.jpg?w=300&h=420&zoom=2)](https://web.archive.org/web/20180904094423/https://seahorsecarousel.files.wordpress.com/2011/05/alanwatts_formark.jpg?w=300&h=420&zoom=2)Alan Watts by Kristen Taylor Wright: http://wp.me/P1eLdD-2
 
 “This world is a great wiggly affair. The clouds are wiggling. The waters are wiggling. The clouds are wiggling, bouncing.
 

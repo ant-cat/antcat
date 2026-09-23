@@ -14,7 +14,7 @@ I love when groups get together and collaborate, but please try to avoid making 
 
 **A little background:** What is a design sprint and what is the typical process? Google Ventures does a great job breaking it down: [http://www.gv.com/sprint/](https://web.archive.org/web/20180904115030/http://www.gv.com/sprint/) or buy the [Sprint Book by Jake Knapp, John Zeratsky, and Brand Kowitz](https://web.archive.org/web/20180904115030/https://www.amazon.com/gp/product/150112174X/ref=as_li_tl?ie=UTF8&camp=1789&creative=9325&creativeASIN=150112174X&linkCode=as2&tag=antcat-20&linkId=3551ff4c8e5f59faeac657d0f454387d)
 
-david-marcu-69433 Photo by David Marcu on Unsplash
+![](https://web.archive.org/web/20180904115030im_/https://ant.cat/wp-content/uploads/2018/01/david-marcu-69433-Photo-by-David-Marcu-on-Unsplash.png)david-marcu-69433 Photo by David Marcu on Unsplash
 
 # When design sprints rock.
 
@@ -44,7 +44,7 @@ Context changes are your absolute enemy. It’s rare to get a dedicated team tog
 **Let participants design ideas alone, but share as a team.**
 The book[*Sprint*](https://web.archive.org/web/20180904115030/https://www.amazon.com/gp/product/150112174X/ref=as_li_tl?ie=UTF8&camp=1789&creative=9325&creativeASIN=150112174X&linkCode=as2&tag=antcat-20&linkId=3551ff4c8e5f59faeac657d0f454387d)[ by Jake Knapp, John Zeratsky, and Braden Kowitz](https://web.archive.org/web/20180904115030/https://www.amazon.com/gp/product/150112174X/ref=as_li_tl?ie=UTF8&camp=1789&creative=9325&creativeASIN=150112174X&linkCode=as2&tag=antcat-20&linkId=3551ff4c8e5f59faeac657d0f454387d) talks about giving people personal time to work by themselves. This was my biggest takeaway from the book and it created the most dramatic and positive results from our workshops. The ideas were thoughtful, more complete, and gave everyone a chance to contribute.
 
-marvin-ronsdorf-196913 Photo by Marvin Ronsdorf on Unsplash
+![](https://web.archive.org/web/20180904115030im_/https://ant.cat/wp-content/uploads/2018/01/marvin-ronsdorf-196913-Photo-by-Marvin-Ronsdorf-on-Unsplash.png)marvin-ronsdorf-196913 Photo by Marvin Ronsdorf on Unsplash
 
 # When they suck.
 

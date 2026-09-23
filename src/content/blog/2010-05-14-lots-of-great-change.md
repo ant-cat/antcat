@@ -20,7 +20,7 @@ The sweetest part of it all is that because they ran out of cubicles they gave m
 
 This is my view, but I'm 9th floor and this from around the 25th.
 
-[](http://catknees.files.wordpress.com/2010/05/the-landing-from-the-top-of-the-modis-building1.jpg)
+[![](http://catknees.files.wordpress.com/2010/05/the-landing-from-the-top-of-the-modis-building1.jpg?w=300)](http://catknees.files.wordpress.com/2010/05/the-landing-from-the-top-of-the-modis-building1.jpg)
 
 Next week I move into [11E](http://downtownjacksonville.org/directory/detail/1943/). I'm so excited. I've honestly toured that place the last 5 times I've had to move, but for some reason or another it didn't make sense for me to go there. Now I don't have a gas bill so I can afford it....wooo!
 

@@ -8,7 +8,7 @@ tags: ["Courtesy", "Gentleman", "Laundry", "Story"]
 
 > This is a short story that is completely true as I remember it. It was told to me by the parties involved about 2.5 years ago. I'm writing here because I never want to forget it and I would love to share it.
 
-[](https://antdotcat.wordpress.com/wp-content/uploads/2024/04/1919a-laundry.jpg)
+[![laundry](https://antdotcat.wordpress.com/wp-content/uploads/2024/04/1919a-laundry.jpg?w=580)](https://antdotcat.wordpress.com/wp-content/uploads/2024/04/1919a-laundry.jpg)
 
 Trying to be a gentleman can be a stressful situation. Every moment with a guest receives a bit more attention than it really deserves and can be distracting for conversation. Doors for instance:  Does the door I'm trying to open push out or pull in? How far away are we from the door, and should I ignore what this person is saying and make a mad dash to try and open, only to find out that it opens out so then I stand partially in the door while holding it, making it a bit of a tight squeeze? Or do I just walk-through and open it, but first I have to leave the conversation to sprint ahead? Do the same rules apply at a business meeting (equal treatment) or should courtesy be extended to everybody here? Is it awkward that I squeezed through a door with my boss and chest bumped with no cause for celebration?
 

@@ -12,7 +12,7 @@ This years trip was a little bit closer to home and little bit more chill, but s
 
 I enlisted the help of the beautiful Samantha (Sam) to help show me around and explore this little city. She has been here a couple times...so I used that as an excuse to rope her into joining me and showing me around:)
 
-[](http://catknees.files.wordpress.com/2010/08/mansion-on-forsyth-park-default1.jpg)
+[![](http://catknees.files.wordpress.com/2010/08/mansion-on-forsyth-park-default1.jpg?w=300)](http://catknees.files.wordpress.com/2010/08/mansion-on-forsyth-park-default1.jpg)
 
 **Day 1 - Friday:**
 

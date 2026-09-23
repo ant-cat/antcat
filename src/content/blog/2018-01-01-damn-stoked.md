@@ -6,7 +6,7 @@ categories: ["General", "Observation"]
 tags: ["2018", "COLORADO", "DENVR", "POLITICS", "VR"]
 ---
 
-Dawn meditation in Jacksonville Beach
+![](https://web.archive.org/web/20181205143901im_/https://ant.cat/wp-content/uploads/2018/01/JaxBeachSunset-1024x768.jpeg)Dawn meditation in Jacksonville Beach
 
 **Kicking off the year with a new domain!!! Welcome to Ant.Cat **
 

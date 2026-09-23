@@ -26,7 +26,7 @@ My favorite characters of yours stood for all the same things (except Donnie Dar
 
 Once again Mr. Swayze. You'll be missed very much.
 
-[](http://catknees.files.wordpress.com/2009/09/pat-and-cat1.jpg)
+[![Patrick Swayze and Anthony Catanese](http://catknees.files.wordpress.com/2009/09/pat-and-cat1.jpg?w=300)](http://catknees.files.wordpress.com/2009/09/pat-and-cat1.jpg)
 Sincerely,
 
 Anthony Catanese

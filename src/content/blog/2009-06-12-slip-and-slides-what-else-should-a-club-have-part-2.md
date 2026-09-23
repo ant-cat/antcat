@@ -10,3 +10,4 @@ About 1 year ago it was a very sad time for me. I was very excited about an even
 
 Well it's that time again for Slip and Slides and baby pools......June 20th.....OH I'm excited!!!!! And we are open!!!!!!!
 
+![](http://www.clubtsi.com/images/postings/events/wethot4.jpg)

@@ -8,7 +8,7 @@ tags: []
 
 Fun reads are back!!! It's been way too much time since I've had a chance to get into a fun sci-fi book. Huge thank you to my neighbors for gifting me Ready Player Two for Christmas. Back in May of last year, I gifted their 11yr old son the original 'Ready Player One'  which I loved. This year the two of us were going to read this at the same time so we could get into the details together.
 
-Grabbed from here: https://fandomwire.com/ready-player-two-everything-to-know-about-the-ready-player-one-sequel/ 
+![](https://antdotcat.wordpress.com/wp-content/uploads/2024/04/17242-ready-player-two-3.jpg)Grabbed from here: https://fandomwire.com/ready-player-two-everything-to-know-about-the-ready-player-one-sequel/ 
 
 The start of the book made me immediately embarrassed about suggesting this book to my neighbor's kid. I'm a new parent myself (daughter turned 1 today!!!!) and I'm not sure what is or isn't age-appropriate.
 

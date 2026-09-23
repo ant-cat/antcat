@@ -10,12 +10,12 @@ tags: ["Cedar Point", "Ohio", "Roller Coasters", "Top Thrill Dragster", "Vacatio
 
 Well 2008 was our chance to take on Cedar Point…we did it…and it was FANTASTIC!!
 
-[](http://catknees.files.wordpress.com/2008/05/dsc012361.jpg)
+[![Hyatt on Captiol Square](http://catknees.files.wordpress.com/2008/05/dsc012361.jpg?w=128)](http://catknees.files.wordpress.com/2008/05/dsc012361.jpg)
 
-[](http://catknees.files.wordpress.com/2008/05/dsc01257.jpg)[](http://catknees.files.wordpress.com/2008/05/dsc01257.jpg)
+[![Millennium Force](http://catknees.files.wordpress.com/2008/05/dsc01257.jpg?w=128)](http://catknees.files.wordpress.com/2008/05/dsc01257.jpg)[](http://catknees.files.wordpress.com/2008/05/dsc01257.jpg)
 
 [](http://catknees.files.wordpress.com/2008/05/dsc01257.jpg)
-[](http://catknees.files.wordpress.com/2008/05/dsc012501.jpg)
+[![Giant Stuffed Monkey](http://catknees.files.wordpress.com/2008/05/dsc012501.jpg?w=128)](http://catknees.files.wordpress.com/2008/05/dsc012501.jpg)
 
 [](http://catknees.files.wordpress.com/2008/05/dsc01257.jpg)
 

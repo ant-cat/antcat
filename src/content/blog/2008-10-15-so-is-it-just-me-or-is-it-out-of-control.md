@@ -6,7 +6,7 @@ categories: ["General", "Observation"]
 tags: ["Drugs"]
 ---
 
-[](http://catknees.files.wordpress.com/2008/10/hm36drugs-are-bad-posters1.jpg)
+![](http://catknees.files.wordpress.com/2008/10/hm36drugs-are-bad-posters1.jpg)
 
 The other weekend I was working my night job and started asking about one of the other employees. I hadn't seen them in like 7 months. It was this awesome 20 year old guy that just seemed to know something about everything. Anyway...it turns out that he is addicted to heroine. Really? Heroine?! That baffles me. I can understand certain drugs, but I have never understood whatever caused anybody to even try it or want to.
 

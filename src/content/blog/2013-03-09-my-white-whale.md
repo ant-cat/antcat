@@ -24,7 +24,7 @@ Wait...wait...I need to adjust the "Search Tools" to search only the latest in t
 
 Wait! What? What's that? There it is! There it is!!!!!! Samantha! There it is! The words I've been waiting for! And they've been waiting for me for nearly 4 days and I didn't know it. The talk of something new. Not based on a movie. Not based on an assumption. But crap your pants proof that something is coming. It's an article about posters going up all over SXSW. Maybe not exactly "crap your pants", but pretty damn close. It's proof! Something is happening! Why am I not at SXSW!!!?
 
-[](http://catknees.files.wordpress.com/2013/03/541634_535227183188496_909798353_n.jpg)
+[![Daft Punk 2013](http://catknees.files.wordpress.com/2013/03/541634_535227183188496_909798353_n.jpg?w=580)](http://catknees.files.wordpress.com/2013/03/541634_535227183188496_909798353_n.jpg)
 
 Then I find out about an [SNL ad](http://youtu.be/AN1ItiEDBpw) that ran during last weeks episode... I've just crapped my pants. Where have I been these last weeks!? Why do my parents who watch SNL every week subconsciously know about this and I don't. They probably didn't even see the ad. They probably were looking down at their dogs who just pee everywhere. Don't waste your ad there. Waste it on me!
 

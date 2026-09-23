@@ -18,7 +18,7 @@ On another note, women think chivalry is dead, but I think a general respect fo
 
 **October:**
 
-[](http://catknees.files.wordpress.com/2010/10/20091017_flaming-lips-dark-side-moon-cover-album1.jpg)
+[![](http://catknees.files.wordpress.com/2010/10/20091017_flaming-lips-dark-side-moon-cover-album1.jpg?w=300)](http://catknees.files.wordpress.com/2010/10/20091017_flaming-lips-dark-side-moon-cover-album1.jpg)
 This week I might be going to Vampire Weekend with Beach House opening for them, but I will def. be seeing the Flaming Lips on Friday at the St. Augustine Amphitheater though with my very amazing woman. Please see picture above for an amazing shot of what's to come.
 
 From the evening of 20th until late the 24th will be my [Smoky Trip Do Over](http://www.youtube.com/watch?v=s4_4abCWw-w). It's going to be cold, but I can't wait. I'm scared, nervous and excited all at once. I bought the ["Zen and the Art of Motorcycle Maintenance" ](http://en.wikipedia.org/wiki/Zen_and_the_Art_of_Motorcycle_Maintenance), the 1974 philosophical novel, to keep me company. If you don't know anything about the book it's not what it seems.

@@ -48,3 +48,4 @@ Day 6: Tuesday
 
 May look like a boring itinerary, but there is going to be a ton of walking, fishing, and just good ole' enjoying nature.
 
+![](http://www.bon-voyage.co.uk/img/uploads/734_fit588x588.jpg)

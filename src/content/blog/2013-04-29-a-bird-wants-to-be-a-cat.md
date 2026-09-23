@@ -6,7 +6,7 @@ categories: ["General", "Observation"]
 tags: ["After Life", "Birds", "Cats"]
 ---
 
-[](https://antdotcat.wordpress.com/wp-content/uploads/2024/04/25c61-cat_sleeping_with_baby_chicks_cute_pic.jpg)
+[![Cat_sleeping_with_baby_chicks_cute_pic](https://antdotcat.wordpress.com/wp-content/uploads/2024/04/25c61-cat_sleeping_with_baby_chicks_cute_pic.jpg?w=580)](https://antdotcat.wordpress.com/wp-content/uploads/2024/04/25c61-cat_sleeping_with_baby_chicks_cute_pic.jpg)
 
 I was at work the other day and I happen to be sitting by the window. We are on the 4th floor of a building that is in the shape of a U and the window was on the inner part of U. It over looks the other arm of the U and there is a pit at the bottom where another building caps off the open side of the U shape. This is some unnecessary details, but don't you just feel like you're there.
 

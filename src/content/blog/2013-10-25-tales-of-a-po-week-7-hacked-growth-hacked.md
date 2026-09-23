@@ -9,10 +9,12 @@ tags: ["Age of Empires", "Command and Conquer", "Diablo", "Growth Hackings", "Ne
 During the last few weeks, the hot topic around the office has been focused on growth hacking. We've each been learning as much we can through researching, experiments, and  sharing how the latest startup was able to pull it off. These articles were the most helpful so far: [21 Actionable Growth Hacking Tactics](http://yongfook.com/actionable-growth-hacking-tactics.html), [Growth Hacking, Email and Mullets ](http://blog.mailgun.com/post/growth-hacking-email-and-mullets/)and then there this is one: [The Definitive Guide to Growth Hacking](http://www.quicksprout.com/the-definitive-guide-to-growth-hacking/).
 
 The following is what stuck out to me the most, especially since I work in a intrapreneurial startup incubator:
+
 > There are some areas of growth hacking that larger companies cannot get away with. Some growth hacking tactics flirt with the boundaries of either legality or good citizenship, that are really only employable when you are small, scrappy and easily forgiven.
+
 It's all so Machiavellian, growing users by any means possible.
 
-[](https://antdotcat.wordpress.com/wp-content/uploads/2024/04/bf94d-machiavelli_af.jpg)
+[![Machiavelli](https://antdotcat.wordpress.com/wp-content/uploads/2024/04/bf94d-machiavelli_af.jpg)](https://antdotcat.wordpress.com/wp-content/uploads/2024/04/bf94d-machiavelli_af.jpg)
 
 It then struck me...I've growth hacked in the past. It was 16 years ago, but whatever.... I did it like a CHAMP! In the span of one day I grew the users of my first website by 900%.
 
@@ -22,7 +24,7 @@ It was 1997ish when my family bought our first REAL computer, a [Micron](http:/
 
 Building pages became my life. Making text flash, marquee, and animating GIFs was the jam, as well as using MIDI files to set the page's mood. I hosted on either AOL or [Geocities](http://en.wikipedia.org/wiki/GeoCities), and I remember the first time I had to upload everything to a site... with no clue or understanding of what I was doing. I thought I was essentially building a complicated MSWord document.
 
- Animating my own GIF's. One of my life passions...one pixel at a time with screenshots
+![](https://antdotcat.wordpress.com/wp-content/uploads/2024/04/1a334-horse.gif)
 
 The site was called "The Basement" (I so wish I had some kind of screenshot). It encompassed everything I knew about my favorite PC games; [Command and Conquer](http://en.wikipedia.org/wiki/Command_&_Conquer), [the Neverhood](http://en.wikipedia.org/wiki/The_Neverhood), [Age of Empires](http://en.wikipedia.org/wiki/Age_of_Empires), [Resident Evil](http://en.wikipedia.org/wiki/Resident_Evil), and [Diablo](http://en.wikipedia.org/wiki/Diablo_(video_game)). I posted cheats, videos, saved game files, and there was even a hosted crack for Paint Shop Pro  6...dumb kid.
 

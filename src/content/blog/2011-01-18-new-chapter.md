@@ -13,7 +13,7 @@ December and November were quite the busy months, as I'm sure they were for ever
 
 Movember! Jacksonville kicked some booty in Movember this year. We raised over $14,000 and worldwide the organization brought in over $60,000,000. YeeehaW
 
-[](http://catknees.files.wordpress.com/2011/01/movember1.jpg)
+[![Movember - Jacksonville - Before and After](http://catknees.files.wordpress.com/2011/01/movember1.jpg)](http://catknees.files.wordpress.com/2011/01/movember1.jpg)
 
 New Years though took the cake for good times. Exhausting, but good. My friend Jon, his fiance Dominique, her sister and husband, and Sam and I all met up at Epcot around 3:00 in the afternoon New Years Eve. It was the busiest I had ever seen the parks. They closed Magic Kingdom at around 10:00 am due to capacity. They wouldn't even let you park at the transportation and ticket center or take the monorail from Epcot to the Magic Kingdom.
 

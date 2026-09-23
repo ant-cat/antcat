@@ -26,7 +26,7 @@ Today is actually when it sold, money in hand and I'm a tiny bit sad, kinda, sor
 
 We'll miss you little Prof. X, but there is a new tiny twerp on it's way...and I'm so excited! But I'm probably jinxing myself...so shhhhh.
 
-[](https://antdotcat.wordpress.com/wp-content/uploads/2024/04/12d90-3e13k63n55n25ka5mbd5a2cc015e216b91a57.jpg)
+[![2004 Hyundai XG350L](https://antdotcat.wordpress.com/wp-content/uploads/2024/04/12d90-3e13k63n55n25ka5mbd5a2cc015e216b91a57.jpg?w=580)](https://antdotcat.wordpress.com/wp-content/uploads/2024/04/12d90-3e13k63n55n25ka5mbd5a2cc015e216b91a57.jpg)
 
 What song would absolutely tie this post together for the "Song of the Post"?
 

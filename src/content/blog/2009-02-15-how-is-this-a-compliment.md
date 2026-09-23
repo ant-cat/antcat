@@ -6,7 +6,7 @@ categories: ["Observation"]
 tags: ["90's Music", "Dumps Like a Truck", "Sysqo Thong Song", "Winamp"]
 ---
 
-   
+![Dumps like a truck](http://catknees.files.wordpress.com/2009/02/dump-truck1.jpg)   
 Listening to Winamp on play all and Random while cleaning can bring back memories. I remember driving to high school listening to Oasis, Limp Bizkit, Daft Punk, Stained and whole slew of other good stuff, but then the notorious Sysqo - Thong Song snuck in...DAMNIT!
 
 but I couldn't stop dancing and in the middle of my jig I stopped to think about the lyrics

@@ -6,7 +6,7 @@ categories: ["General", "Observation"]
 tags: []
 ---
 
-En Power and Light, Tyson Family, and the Cats
+![](https://antdotcat.wordpress.com/wp-content/uploads/2024/04/44635-img_0754-1024x768-1.jpeg)En Power and Light, Tyson Family, and the Cats
 
 While going through some old emails today, I found the last newsletter that I sent to my old meetup group, #StartupJax. Coincidently, it happens to be almost the 1 year anniversary that I sent it announcing my wife and I would be moving from Jacksonville, FL to Denver, CO.
 

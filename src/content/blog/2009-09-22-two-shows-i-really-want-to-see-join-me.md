@@ -20,7 +20,7 @@ Elvis Perkins in Deerland 11/6 $10 -
 
 [youtube=http://www.youtube.com/watch?v=NmEoUNWQrwg&feature=player_embedded]
 
-[](http://catknees.files.wordpress.com/2009/09/karen-kurycki-dog-pony-showprints-collaborations-elvis-perkins-in-deerland.jpg)
+![](http://catknees.files.wordpress.com/2009/09/karen-kurycki-dog-pony-showprints-collaborations-elvis-perkins-in-deerland.jpg?w=197)
 
 There is another show I would love to go see, but I'm not sure I can make it out. I had never heard of them until I saw this YouTube video on the Cafe Eleven website, [BLK JKS](http://www.cafeeleven.com/wordpress/2009/08/blk-jks/). I could listen to this all day and I can't figure out what it reminds me of, but I love it.
 

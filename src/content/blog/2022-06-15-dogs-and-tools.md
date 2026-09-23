@@ -12,7 +12,7 @@ I stumbled across this site: [https://untools.co/ ](https://untools.co/) that is
 
 What's funny is that I've spent the better part of 10yrs facilitating innovation sessions for groups of 20+ people specifically around breaking your thinking. It's just really hard to do this for yourself. Turns out people need people.
 
-Old Ignite Workshops
+![](https://antdotcat.wordpress.com/wp-content/uploads/2024/04/b85df-anthony-mashup-green-10311.jpg?w=1024&h=683)Old Ignite Workshops
 
 ## Untool - Conflict Resolution Diagram
 

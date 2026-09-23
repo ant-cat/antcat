@@ -8,3 +8,4 @@ tags: ["Grown Up", "Sugar Cookies"]
 
 Because I can eat a sugar cookie at 9:55 am and not give a dang about spoiling any kind of meal.
 
+![](http://www.coralheightsfl.org/Social/Calender/July/Sugar%20Cookie.jpg)

@@ -6,7 +6,7 @@ categories: ["General", "Review"]
 tags: ["Alex Blumberg", "David Sedaris", "Ira Glass", "Nancy Updike", "Public Radio"]
 ---
 
-[](http://catknees.files.wordpress.com/2010/03/tal-logo1.jpg)Well I did it. It took me 1 year and 4 months, but I have listened to all **402** hour long episodes of [This American Life](http://www.ThisAmericanLife.com).
+[![This American Life](http://catknees.files.wordpress.com/2010/03/tal-logo1.jpg)](http://catknees.files.wordpress.com/2010/03/tal-logo1.jpg)Well I did it. It took me 1 year and 4 months, but I have listened to all **402** hour long episodes of [This American Life](http://www.ThisAmericanLife.com).
 
 What started this OCD mess? [20 Acts in 60 Minutes](http://www.thisamericanlife.org/radio-archives/episode/241/20-Acts-in-60-Minutes) did in December of 2008. I accidentally caught this show while driving on a Saturday afternoon and then I started listening most weekends on [89.9 WJCT](http://www.wjct.org). Then I found them online and it was on!
 

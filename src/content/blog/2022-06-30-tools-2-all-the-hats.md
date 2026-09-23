@@ -14,7 +14,7 @@ The Untool of the week is - [https://untools.co/six-thinking-hats](https://untoo
 
 Based on the book Six Thinking Hats, Edward de Bono - [https://www.goodreads.com/book/show/97030.Six_Thinking_Hats](https://www.goodreads.com/book/show/97030.Six_Thinking_Hats)
 
-Illustration of the Six Thinking Hats: Yellow for positivity, Green for creativity, Red for emotions, White for data, Black for negativity and Blue for control.
+![](https://antdotcat.wordpress.com/wp-content/uploads/2024/04/0458f-image.png?w=1024&h=622)Illustration of the Six Thinking Hats: Yellow for positivity, Green for creativity, Red for emotions, White for data, Black for negativity and Blue for control.
 
 ## Notes
 

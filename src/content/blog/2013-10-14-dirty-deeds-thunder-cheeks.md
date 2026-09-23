@@ -14,17 +14,19 @@ Every year it's a blast. There's lots of food, friendly people, and boats....ohh
 
 About 5 years ago I was enjoying this yearly outing as much as any other. We had good beer, lots of food, and we even decided that in our old age of 24 we would go tubing. Three person tubing to be more accurate.
 
-[](https://antdotcat.wordpress.com/wp-content/uploads/2024/04/690f5-tube.jpg) What you think tubing looks like.
+![](https://antdotcat.wordpress.com/wp-content/uploads/2024/04/690f5-tube.jpg)
 
 We climbed in ready to go. Three best buds holding on for dear life while our good pal towed us around the glassy lake.
 
-[](https://antdotcat.wordpress.com/wp-content/uploads/2024/04/e2c3f-tube2.jpg) Reality of tubing
+![](https://antdotcat.wordpress.com/wp-content/uploads/2024/04/e2c3f-tube2.jpg)
 
 We lasted about 40 seconds.
 
 We regrouped and this time we had a game plan. We would work together as a team and ride this thing out. We would defeat them.
 
 It started off fantastic. First turn, check. Second turn across the wake, no biggie. Third turn, no sweat. Fourth turn, WTF is that! A sea of churn laid before us. Four foot swells bouncing around the lake waiting to launch us. Our so-called friend kicked in high-gear and raced towards the waves at about 30-40 mph. I said screw that. I bailed...I jumped out to take the safe route. Why would I want to smack my face against my buddies skulls or why would I want break my neck? I bailed to be safe...
+
+![FishEar](https://antdotcat.wordpress.com/wp-content/uploads/2024/04/50dfe-fishear.jpg)
 
 I should of stayed on. When I ejected myself from the tube I happen to hit the water at the perfect (sucky perfect) angle and I blew my right ear drum out. 1/3 of the sweet little drum gone. Fish food. Sweet sounding fish food. Makes me wonder if the fish that ate it now have impeccable hearing as I once did (that's not true...)
 

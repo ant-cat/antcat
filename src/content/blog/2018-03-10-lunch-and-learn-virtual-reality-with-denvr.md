@@ -8,7 +8,7 @@ tags: ["DENVR", "LUNCH AND LEARNS", "PRESENTATIONS", "RESEARCH", "TALKS"]
 
 A few Friday’s ago I had the pleasure of hosting a “Lunch and Learn” with my colleagues at [Cognizant Accelerator in Boulder](https://web.archive.org/web/20180904132116/https://twitter.com/quickleft). I brought my team from [DenvVR](https://web.archive.org/web/20180904132116/http://denvrlive.co/),  Ben Tyson and Morgan McIntosh, who run the VR artist collective to help show the amazing potential of virtual reality.
 
-Bud Anin Aminof with Cognizant at the DenVR Lunch and Learn
+![](https://antdotcat.wordpress.com/wp-content/uploads/2024/04/fdb92-img_1756-1024x682-1.jpeg)Bud Anin Aminof with Cognizant at the DenVR Lunch and Learn
 
 # Goals
 
@@ -16,7 +16,7 @@ Bud Anin Aminof with Cognizant at the DenVR Lunch and Learn
 
 # The Day
 
-DenVR at Cognizant Accelerator w/ Morgan McIntosh, Ben Tyson, Anthony Catanese
+![](https://antdotcat.wordpress.com/wp-content/uploads/2024/04/1c965-img_1746-300x269-1.png)DenVR at Cognizant Accelerator w/ Morgan McIntosh, Ben Tyson, Anthony Catanese
 
 We brought in our HTC Vive room-scale setup with our main gaming PC rig.
 
@@ -33,9 +33,13 @@ Throughout the day, people could book up to 15 mins of time to try out the Vive 
 
 A year ago I found myself at this odd little bar in LoDo Denver called the [Syntax Physic Opera](https://web.archive.org/web/20180904132116/http://syntaxphysicopera.com/) where my friends [Ben Tyson](https://web.archive.org/web/20180904132116/http://betakillers.com/) and Morgan McIntosh were throwing a party….a VR art and music party. Ben has an infectious way of inspiring people to try off the wall stuff, he used his powers to get me to travel across the country (Jacksonville, FL to Denver, CO) to see what his new group, DenVR, was up to.
 
+![](https://antdotcat.wordpress.com/wp-content/uploads/2024/04/52f89-denvr_cover-300x300-1.jpeg)
+
 What I found was a sold-out show of people from all walks of life: a ton of college students, parents, grandparents, a conductor of the symphony all watching one of the first VR art events of its kind happening. At the back of the venue, I watched and overheard someone with excitement saying, “Is this where the VR stuff is?” ….nobody knew what this show was about, but the room was full of amazement. My hope is to bring that same feeling I had to you.
 
 Today’s Lunch and Learn will introduce you to the DenVR team, get a brief history of VR, and get into the fun stuff of what’s happening today in this world.
+
+![](https://antdotcat.wordpress.com/wp-content/uploads/2024/04/af062-denvr_background-1024x265-1.png)
 
 ## 1. What Are We Talking About
 
@@ -49,7 +53,7 @@ There is a big debate about which of the technologies will win. Augmented Realit
 
 Today we are talking about room-scale VR. This allows a user to experience the application with more freedom than ever before.
 
-Room-scale VR – photo provided by SteamVR Room Setup
+![](https://antdotcat.wordpress.com/wp-content/uploads/2024/04/688f4-techpartner-inset-roomscale.jpeg)Room-scale VR – photo provided by SteamVR Room Setup
 
 Vive’s[ blog ](https://web.archive.org/web/20180904132116/https://blog.vive.com/us/2017/10/25/roomscale-101/)does a better job of explaining it:
 
@@ -127,7 +131,7 @@ During this part of the talk, we covered companies that are leveraging the immer
 
 What questions does VR create for you?
 
-Anthony Catanese photo by Joe Valley
+![](https://antdotcat.wordpress.com/wp-content/uploads/2024/04/f028e-img_1722-1024x682-1.jpeg)Anthony Catanese photo by Joe Valley
 
 Anthony Catanese photo by Joe Valley
 

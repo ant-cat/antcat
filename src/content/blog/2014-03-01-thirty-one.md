@@ -16,8 +16,8 @@ Today's my birthday...and I'm 31. Holy crap. The only song I know to post is...
 
 Ten years ago I went skydiving to celebrate:
 
-[](https://antdotcat.wordpress.com/wp-content/uploads/2024/04/9748b-anthonyskydiving4-1.jpg)
+[![Image](https://antdotcat.wordpress.com/wp-content/uploads/2024/04/9748b-anthonyskydiving4-1.jpg?w=487)](https://antdotcat.wordpress.com/wp-content/uploads/2024/04/9748b-anthonyskydiving4-1.jpg)
 
 Now I'm hyped about chocolate :)
 
-[](https://antdotcat.wordpress.com/wp-content/uploads/2024/04/de4aa-31st-bday-1.jpg)
+[![Image](https://antdotcat.wordpress.com/wp-content/uploads/2024/04/de4aa-31st-bday-1.jpg?w=487)](https://antdotcat.wordpress.com/wp-content/uploads/2024/04/de4aa-31st-bday-1.jpg)

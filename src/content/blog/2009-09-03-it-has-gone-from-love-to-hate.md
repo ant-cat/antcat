@@ -12,7 +12,7 @@ What happened Weeds? We were getting along so well. In the beginning, Season 1, 
 
 Season 2 then started. Right were we left off. Like a best friend who left for college and then came back. It was as if the conversation had never stopped.  Everything went very well, and what an ending I might add. Season 2 you are one of the few (rhymes!).
 
-[](http://catknees.files.wordpress.com/2009/09/weeds-season-4-promo-poster1.jpg)
+[![WEEDS (season 4)](http://catknees.files.wordpress.com/2009/09/weeds-season-4-promo-poster1.jpg?w=240)](http://catknees.files.wordpress.com/2009/09/weeds-season-4-promo-poster1.jpg)
 
 Season 3. I was so excited with glee. I had no idea what was in store. How could you top the beloved Season 2! Well in the end my question was answered. You didn't. It was still fun and lots of the adventures were really quite crazy, but why Nancy...why have you become so... slutty.
 
@@ -22,10 +22,10 @@ Season 5. I was in New York back in May and I saw buses sporting the green spide
 
 now I watch TrueBlood...which is following down the same weed ridden path. Who could of thought that a story about Vampires who drink manufactured blood could get too far fetched.
 
-[](http://catknees.files.wordpress.com/2009/09/trueblood-cmcl1.jpg)
+[![trueblood cmcl](http://catknees.files.wordpress.com/2009/09/trueblood-cmcl1.jpg?w=300)](http://catknees.files.wordpress.com/2009/09/trueblood-cmcl1.jpg)
 
 MadMen...please keep true!
 
 (but damn you Don Draper and all your womanizing...your the man...you know, but you still suck!)
 
-[](http://catknees.files.wordpress.com/2009/09/mad_men_style1.jpg)
+[![mad_men_style](http://catknees.files.wordpress.com/2009/09/mad_men_style1.jpg?w=300)](http://catknees.files.wordpress.com/2009/09/mad_men_style1.jpg)

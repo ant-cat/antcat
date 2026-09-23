@@ -17,7 +17,7 @@ I don't get the same feeling from swimming. This is probably because I'm not ver
 I've left out writing because it's a special one for me. Writing is really hard for me because my mind wanders so much that my point is almost lost in the middle of it. My boss actually made a point the other day to say that Twitter is probably a better forum for me...yeah that's right...I picked up what you were putting down. Honestly though it helps me really cut the crap out of what I'm thinking (if I take the time rewrite it), and it helps me understand where I'm coming from and the story I'm trying to tell. It's time consuming though and that's why I went from a post everyday back in March/April to one every so often.
 
 I used to write when I was really struggling in life in late teens/early twenties and it helped tremendously figure things out. It's embarrassing to go back and read, but I actually transcribed them and hid them somewhere in this blog if you can find them. Until then...here is a pic from those days :) It's better if you look at this picture and then read it...if you find them.
-[](https://antdotcat.wordpress.com/wp-content/uploads/2024/04/d704c-megan-and-me-at-normal-party.jpg)
+[![Fun in Orlando](https://antdotcat.wordpress.com/wp-content/uploads/2024/04/d704c-megan-and-me-at-normal-party.jpg?w=580)](https://antdotcat.wordpress.com/wp-content/uploads/2024/04/d704c-megan-and-me-at-normal-party.jpg)
 
  
 

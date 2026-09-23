@@ -8,6 +8,6 @@ tags: ["Cartoon", "English Humor", "Frauline", "Invitation"]
 
 Things I made
 
-[](http://catknees.files.wordpress.com/2011/02/invite.jpg)
+![](http://catknees.files.wordpress.com/2011/02/invite.jpg?w=300)
 
-[](http://catknees.files.wordpress.com/2011/02/possesives1.jpg)
+![](http://catknees.files.wordpress.com/2011/02/possesives1.jpg?w=300)

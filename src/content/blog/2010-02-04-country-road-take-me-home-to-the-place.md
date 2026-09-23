@@ -41,3 +41,4 @@ There is only a few times in your life that you can take a trip like this. I'm n
 
 Below: My bike, but I don't have the front fairing and this is a 1200. I have the 600. I have to buy a windscreen.
 
+![](http://www.nelsonrigg.com/customerphotos/archive/cust_pics/Pat%20Taylor.JPG)

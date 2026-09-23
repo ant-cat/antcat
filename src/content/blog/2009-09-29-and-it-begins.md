@@ -10,6 +10,6 @@ A little scared, but super excited.... I just signed up!
 
 My first marathon though the 4 parks of the  happiest place on earth: 26.2 on 1/10/10
 
-[](http://catknees.files.wordpress.com/2009/09/large_disney-marathon1.jpg)
+![](http://catknees.files.wordpress.com/2009/09/large_disney-marathon1.jpg?w=300)
 
 Here is write-up about this past years [marathon](http://gosublogger.com/2009/01/2009-walt-disney-world-marathon-winner/).

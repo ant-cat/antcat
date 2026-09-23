@@ -10,7 +10,7 @@ I talk way too much about [Daft Punk](http://en.wikipedia.org/wiki/Daft_Punk). I
 
 Well here it comes.
 
-[](https://antdotcat.wordpress.com/wp-content/uploads/2024/04/6775e-concrete.jpg)
+[![concrete](https://antdotcat.wordpress.com/wp-content/uploads/2024/04/6775e-concrete.jpg)](https://antdotcat.wordpress.com/wp-content/uploads/2024/04/6775e-concrete.jpg)
 
 What is a Daft Punk? It's a fun/serious electronic musical duo that have songs that can be listened to over and over and over again. They have relatively been unknown in the U.S. until this past May when their latest album was released. Except they were only unknown by name. Nearly the whole world over the past 20 years has heard parts of their tracks or were listening to tunes that were influenced by them in some way.
 

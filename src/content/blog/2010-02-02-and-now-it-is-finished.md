@@ -14,10 +14,10 @@ It's been 2 months and here is the run down:
 
 Thanksgiving Half Marathon:
 
-[](http://catknees.files.wordpress.com/2010/02/thanksgiving-outback-classic-200911.jpg)
+![](http://catknees.files.wordpress.com/2010/02/thanksgiving-outback-classic-200911.jpg?w=300)
 [Movember](http://www.movember.com) - A mustache growing event that helps raise funds for Testicular and Prostate cancer awareness. Yes...you read that right.
 
-[](http://catknees.files.wordpress.com/2010/02/movember1.jpg)
+![](http://catknees.files.wordpress.com/2010/02/movember1.jpg?w=300)
 **December:**
 
 Cruise (pictures to come) - Super awesome, but the ocean was angry my friends.
@@ -34,14 +34,14 @@ The day before the race though I had a great idea to dress like Mickey for the r
 
 Jessie made my shorts and then surprised me by picking me up at the finish line dressed like Minnie. She's such a cutie. (pics to come of us together. Camera needs to be developed...old school).
 
-[](http://catknees.files.wordpress.com/2010/02/run-castle1.jpg)
+![](http://catknees.files.wordpress.com/2010/02/run-castle1.jpg?w=205)
 
-[](http://catknees.files.wordpress.com/2010/02/run-finish1.jpg)
+![](http://catknees.files.wordpress.com/2010/02/run-finish1.jpg?w=198)
 
-[](http://catknees.files.wordpress.com/2010/02/run-medal1.jpg)
+![](http://catknees.files.wordpress.com/2010/02/run-medal1.jpg?w=198)
 
 Lastly was the "Race 5 to keep kids alive" this past weekend at Treaty Oak and then throughout the bridges. It was fun and I was proud of my time. It was a total last minute race. If you don't believe look at my race number! Literally I paid my entrance fee with 10 min. before start. I had just come from the Pancake House after eating...pancakes and I felt so terrible afterwards, but it helps children.
 
 It's a terrible picture and looks kind of flamboyant (not that there's anything wrong with that),  but it's the only one I have.
 
-[](http://catknees.files.wordpress.com/2010/02/run-5-to-keep-kids-alive1.jpg)
+![](http://catknees.files.wordpress.com/2010/02/run-5-to-keep-kids-alive1.jpg?w=224)

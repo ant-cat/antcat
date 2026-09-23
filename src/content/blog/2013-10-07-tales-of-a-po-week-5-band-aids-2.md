@@ -10,10 +10,12 @@ How did the telephone get traction?
 
 Seriously. I thought of this while watching [Downton Abbey](http://en.wikipedia.org/wiki/Downton_Abbey) with my wife. I know...but it's pretty good.
 
-[](https://antdotcat.wordpress.com/wp-content/uploads/2024/04/68715-diddy-phone.jpg)
+[![Image](https://antdotcat.wordpress.com/wp-content/uploads/2024/04/68715-diddy-phone.jpg?w=487)](https://antdotcat.wordpress.com/wp-content/uploads/2024/04/68715-diddy-phone.jpg)
 
 They install a telephone and the younger generation is completely taken by it, but the older sir's and madam's are unsure of it. They just didn't get how it could be used, but there is one comment that I thought was interesting.
+
 > "Who are we going to call if nobody we know has one?"
+
 Yeah, who would they call?  When you're trying to grow users in a social way, how do you grow your early-adopters? The first installs of the phone weren't cheap either. Lines were not run, there was no wireless. There was also stiff competition: telegraph, couriers, and letters. These are people that are set in their ways.
 
 So how do you spur traction? On Quora, http://www.quora.com/How-did-the-telephone-gain-initial-traction, it's a pretty simple answer: they sold to businesses first.
@@ -27,4 +29,5 @@ The moral of the story for this weeks PO lesson is: business problems are busine
 Architecture In Helsinki - Heart It Races
 
 [youtube=http://www.youtube.com/watch?v=sZjpWs1h7pU&w=420&h=315]
+
 > "and we're slow to acknowledge the knots in our laces"
