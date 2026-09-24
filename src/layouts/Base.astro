@@ -19,11 +19,13 @@ const currentPath = Astro.url.pathname;
   <link rel="icon" type="image/png" href="/favicon.png" />
 </head>
 <body>
+  <div id="reading-progress"></div>
   <header class="site-header">
     <a href="/" class="site-brand">ant.cat <em>lab</em></a>
     <nav class="site-nav">
       <a href="/experiments" class={currentPath.startsWith('/experiments') ? 'active' : ''}>Experiments</a>
       <a href="/writing" class={currentPath.startsWith('/writing') ? 'active' : ''}>Writing</a>
+      <a href="/now" class={currentPath === '/now' ? 'active' : ''}>Now</a>
       <a href="/about" class={currentPath === '/about' ? 'active' : ''}>About</a>
     </nav>
   </header>

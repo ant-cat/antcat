@@ -1,20 +1,14 @@
 (function () {
+
   // 1. TIME-OF-DAY BACKGROUND TINT
   function applyTimeTint() {
     if (window.matchMedia('(prefers-color-scheme: dark)').matches) return;
     var hour = new Date().getHours() + new Date().getMinutes() / 60;
     var stops = [
-      [0,   242,239,232,0.00],
-      [5,   242,239,232,0.00],
-      [6,   255,220,180,0.08],
-      [8,   255,235,200,0.05],
-      [12,  230,245,255,0.04],
-      [15,  242,239,232,0.00],
-      [17,  255,210,160,0.07],
-      [19,  240,190,150,0.09],
-      [21,  200,180,220,0.06],
-      [23,  242,239,232,0.00],
-      [24,  242,239,232,0.00],
+      [0,   242,239,232,0.00],[5,   242,239,232,0.00],[6,   255,220,180,0.08],
+      [8,   255,235,200,0.05],[12,  230,245,255,0.04],[15,  242,239,232,0.00],
+      [17,  255,210,160,0.07],[19,  240,190,150,0.09],[21,  200,180,220,0.06],
+      [23,  242,239,232,0.00],[24,  242,239,232,0.00],
     ];
     var i = 0;
     while (i < stops.length - 1 && stops[i+1][0] <= hour) i++;
@@ -44,10 +38,81 @@
   }
 
   // 3. POST TITLE HOVER DRIFT
-  var titles = document.querySelectorAll('.post-title');
-  titles.forEach(function(el) {
+  document.querySelectorAll('.post-title').forEach(function(el) {
     el.style.transition = 'transform 0.25s cubic-bezier(0.25,0.46,0.45,0.94), color 0.15s';
     el.addEventListener('mouseenter', function() { el.style.transform = 'translateX(4px)'; });
     el.addEventListener('mouseleave', function() { el.style.transform = 'translateX(0)'; });
   });
+
+  // 4. READING PROGRESS BAR
+  var bar = document.getElementById('reading-progress');
+  if (bar) {
+    window.addEventListener('scroll', function() {
+      var doc = document.documentElement;
+      var scrollTop = doc.scrollTop || document.body.scrollTop;
+      var scrollHeight = doc.scrollHeight - doc.clientHeight;
+      bar.style.width = (scrollHeight > 0 ? (scrollTop / scrollHeight) * 100 : 0) + '%';
+    }, { passive: true });
+  }
+
+  // 5. VARIABLE FONT WEIGHT ON HERO HEADLINE
+  var heroHeadline = document.querySelector('.hero-headline');
+  if (heroHeadline) {
+    window.addEventListener('scroll', function() {
+      var weight = Math.min(700, 400 + window.scrollY * 0.75);
+      heroHeadline.style.fontWeight = weight;
+    }, { passive: true });
+  }
+
+  // 6. FADE-IN ON SCROLL
+  var fadeEls = document.querySelectorAll('.fade-in');
+  if (fadeEls.length && 'IntersectionObserver' in window) {
+    var observer = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('fade-in--visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.08, rootMargin: '0px 0px -30px 0px' });
+    fadeEls.forEach(function(el) { observer.observe(el); });
+  }
+
+  // 7. AMBIENT SOUND
+  var soundBtn = document.getElementById('ambient-toggle');
+  if (soundBtn) {
+    var ctx = null, gainNode = null, oscillators = [], playing = false;
+    function startAmbient() {
+      ctx = new (window.AudioContext || window.webkitAudioContext)();
+      gainNode = ctx.createGain();
+      gainNode.gain.setValueAtTime(0, ctx.currentTime);
+      gainNode.gain.linearRampToValueAtTime(0.04, ctx.currentTime + 3);
+      gainNode.connect(ctx.destination);
+      [[110, 0], [110.3, 5], [220, -3]].forEach(function(pair) {
+        var osc = ctx.createOscillator();
+        osc.type = 'sine';
+        osc.frequency.value = pair[0];
+        osc.detune.value = pair[1];
+        osc.connect(gainNode);
+        osc.start();
+        oscillators.push(osc);
+      });
+      playing = true;
+      soundBtn.classList.add('active');
+    }
+    function stopAmbient() {
+      if (!ctx) return;
+      gainNode.gain.linearRampToValueAtTime(0, ctx.currentTime + 1.5);
+      setTimeout(function() {
+        oscillators.forEach(function(o) { try { o.stop(); } catch(e){} });
+        oscillators = []; ctx.close(); ctx = null;
+      }, 1600);
+      playing = false;
+      soundBtn.classList.remove('active');
+    }
+    soundBtn.addEventListener('click', function() {
+      if (playing) { stopAmbient(); } else { startAmbient(); }
+    });
+  }
+
 })();

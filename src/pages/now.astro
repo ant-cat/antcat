@@ -1,0 +1,57 @@
+---
+import Base from '../layouts/Base.astro';
+const updated = "September 2026";
+---
+<Base title="Now" description="What Anthony Catanese is up to right now.">
+  <div class="page-header">
+    <div style="font-family:var(--mono);font-size:0.68rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--accent);margin-bottom:8px">// what I'm up to</div>
+    <h1 class="page-title">Now</h1>
+    <p class="page-subtitle">Updated {updated} · <a href="https://nownownow.com/about" target="_blank" rel="noopener" style="color:var(--text3);font-size:0.82rem">What is a now page?</a></p>
+  </div>
+
+  <div style="max-width:620px" class="fade-in">
+
+    <section class="now-section">
+      <h2 class="now-heading">Building</h2>
+      <p>Turning ant.cat into something alive — migrating 20 years of writing from WordPress and building small AI-powered experiments in public. The experiments page is where the new work lives.</p>
+      <p>Current focus: <a href="/experiments">Baby is a Go</a> — a broadcast tool for sharing big life news without the chaos of group texts.</p>
+    </section>
+
+    <section class="now-section">
+      <h2 class="now-heading">Reading</h2>
+      <p>Working through my backlog. Always have three books going at once and finish none of them on schedule.</p>
+    </section>
+
+    <section class="now-section">
+      <h2 class="now-heading">Thinking about</h2>
+      <p>What it means to build software for a single emotional moment. Most software is designed for recurring use — retention, habit, the returning user. But some of the most meaningful things only happen once.</p>
+      <p>Also: how AI changes what a personal website can be. This site is part of that experiment.</p>
+    </section>
+
+    <section class="now-section">
+      <h2 class="now-heading">Life</h2>
+      <p>Based in the northeast. New baby on the way. Finding that the best ideas come from building things for myself first.</p>
+    </section>
+
+    <div style="margin-top:48px;padding-top:24px;border-top:1px solid var(--border)">
+      <p style="font-family:var(--mono);font-size:0.68rem;color:var(--text3);letter-spacing:0.04em">
+        This is a <a href="https://nownownow.com/about" target="_blank" rel="noopener" style="color:var(--text3)">now page</a>. 
+        If you have one too, <a href="mailto:ranthonycatanese@gmail.com" style="color:var(--accent)">send it to me</a>.
+      </p>
+    </div>
+  </div>
+</Base>
+
+<style>
+.now-section { margin-bottom: 36px; }
+.now-heading {
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 12px;
+}
+.now-section p { font-size: 0.95rem; color: var(--text2); line-height: 1.75; margin-bottom: 0.8em; }
+.now-section a { color: var(--accent); }
+</style>
