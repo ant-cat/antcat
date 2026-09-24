@@ -9,6 +9,22 @@ const posts = (await getCollection('blog'))
 function formatDate(d: Date) {
   return d.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
 }
+
+function getLead(body: string): string {
+  const stripped = body
+    .replace(/^---[\s\S]*?---/, '')
+    .replace(/!\[.*?\]\(.*?\)/g, '')
+    .replace(/\[([^\]]+)\]\([^\)]+\)/g, '$1')
+    .replace(/#{1,6}\s+.+/g, '')
+    .replace(/\*\*([^*]+)\*\*/g, '$1')
+    .replace(/\*([^*]+)\*/g, '$1')
+    .replace(/<[^>]+>/g, '')
+    .trim();
+  const paras = stripped.split(/\n\n+/).map(p => p.trim()).filter(p => p.length > 40);
+  if (!paras.length) return '';
+  const lead = paras[0].replace(/\n/g, ' ').trim();
+  return lead.length > 180 ? lead.slice(0, 177) + '…' : lead;
+}
 ---
 <Base title="Home">
 
@@ -30,34 +46,39 @@ function formatDate(d: Date) {
 
   <!-- Recent writing -->
   <div style="margin-top:56px">
-    <div style="margin-bottom:16px;display:flex;justify-content:space-between;align-items:baseline">
+    <div style="margin-bottom:12px;display:flex;justify-content:space-between;align-items:baseline">
       <div style="font-family:var(--mono);font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--text3)">— recent writing</div>
       <a href="/writing" style="font-size:0.75rem;font-weight:600;color:var(--accent)">All posts →</a>
     </div>
     <div class="post-list">
-      {posts.map(post => (
-        <div class="post-item">
-          <span class="post-date">{formatDate(post.data.date)}</span>
-          <div>
-            <a href={`/writing/${post.slug}`} class="post-title">{post.data.title}</a>
-            {post.data.categories.length > 0 && (
-              <div class="post-cats">
-                {post.data.categories.map(c => <span class="post-cat">{c}</span>)}
-              </div>
-            )}
-          </div>
-        </div>
-      ))}
+      {posts.map((post, i) => {
+        const lead = getLead(post.body);
+        const cats = post.data.categories.filter(c => c !== 'Uncategorized');
+        return (
+          <a href={`/writing/${post.slug}`} class="post-card" style={`--i:${i}`}>
+            <div class="post-card-top">
+              <span class="post-date">{formatDate(post.data.date)}</span>
+              {cats.length > 0 && (
+                <div class="post-cats">
+                  {cats.map(c => <span class="post-cat">{c}</span>)}
+                </div>
+              )}
+            </div>
+            <h2 class="post-title">{post.data.title}</h2>
+            {lead && <p class="post-lead">{lead}</p>}
+          </a>
+        );
+      })}
     </div>
   </div>
 
 </Base>
 
 <style>
+/* ── HERO ── */
 .hero {
   margin: 0 calc(-1 * var(--page-pad, 24px)) 0;
 }
-
 .hero-image-wrap {
   position: relative;
   width: 100%;
@@ -65,7 +86,6 @@ function formatDate(d: Date) {
   overflow: hidden;
   border-radius: 12px;
 }
-
 .hero-image {
   width: 100%;
   height: 100%;
@@ -74,7 +94,6 @@ function formatDate(d: Date) {
   object-position: center 40%;
   display: block;
 }
-
 .hero-overlay {
   position: absolute;
   inset: 0;
@@ -85,7 +104,6 @@ function formatDate(d: Date) {
     rgba(0,0,0,0.1) 100%
   );
 }
-
 .hero-text {
   position: absolute;
   bottom: 0;
@@ -93,7 +111,6 @@ function formatDate(d: Date) {
   right: 0;
   padding: 32px 36px;
 }
-
 .hero-tagline {
   font-family: var(--mono);
   font-size: 0.68rem;
@@ -102,7 +119,6 @@ function formatDate(d: Date) {
   color: var(--accent);
   margin-bottom: 10px;
 }
-
 .hero-headline {
   font-family: var(--serif);
   font-size: clamp(1.25rem, 3.5vw, 2rem);
@@ -112,13 +128,7 @@ function formatDate(d: Date) {
   max-width: 580px;
   margin-bottom: 22px;
 }
-
-.hero-actions {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
+.hero-actions { display: flex; gap: 10px; flex-wrap: wrap; }
 .btn-primary {
   display: inline-flex;
   align-items: center;
@@ -130,7 +140,6 @@ function formatDate(d: Date) {
   border-radius: 6px;
   text-decoration: none;
 }
-
 .btn-ghost {
   display: inline-flex;
   align-items: center;
@@ -145,12 +154,110 @@ function formatDate(d: Date) {
   backdrop-filter: blur(4px);
 }
 
+/* ── POST CARDS ── */
+.post-list { display: flex; flex-direction: column; }
+
+.post-card {
+  display: block;
+  padding: 20px 0;
+  border-bottom: 1px solid var(--border);
+  text-decoration: none;
+  color: inherit;
+  position: relative;
+  opacity: 0;
+  transform: translateY(20px);
+  transition:
+    opacity 0.45s ease calc(var(--i, 0) * 40ms),
+    transform 0.45s ease calc(var(--i, 0) * 40ms);
+}
+.post-card:first-child { border-top: 1px solid var(--border); }
+.post-card.visible { opacity: 1; transform: translateY(0); }
+
+.post-card::before {
+  content: '';
+  position: absolute;
+  inset: 0 -12px;
+  background: var(--bg2);
+  border-radius: 6px;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  pointer-events: none;
+}
+.post-card:hover::before { opacity: 1; }
+
+.post-card-top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 6px;
+  position: relative;
+}
+.post-date {
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  color: var(--text3);
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+.post-cats { display: flex; gap: 6px; flex-wrap: wrap; }
+.post-cat {
+  font-size: 0.62rem;
+  font-family: var(--mono);
+  letter-spacing: 0.05em;
+  color: var(--accent);
+  text-transform: uppercase;
+}
+.post-title {
+  font-family: var(--serif);
+  font-size: 1.15rem;
+  font-weight: 400;
+  color: var(--text);
+  line-height: 1.3;
+  margin-bottom: 8px;
+  position: relative;
+  transition: color 0.15s;
+}
+.post-card:hover .post-title { color: var(--accent); }
+
+.post-lead {
+  font-size: 0.85rem;
+  color: var(--text3);
+  line-height: 1.6;
+  position: relative;
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: max-height 0.3s ease, opacity 0.25s ease 0.05s;
+  margin: 0;
+}
+.post-card:hover .post-lead {
+  max-height: 120px;
+  opacity: 1;
+}
+
 @media (max-width: 600px) {
-  .hero-text {
-    padding: 20px 20px;
-  }
-  .hero-image-wrap {
-    border-radius: 8px;
-  }
+  .hero-text { padding: 20px; }
+  .hero-image-wrap { border-radius: 8px; }
+  .post-card { padding: 16px 0; }
+  .post-title { font-size: 1rem; }
 }
 </style>
+
+<script is:inline>
+  (function() {
+    var cards = document.querySelectorAll('.post-card');
+    if (!('IntersectionObserver' in window)) {
+      cards.forEach(function(c) { c.classList.add('visible'); });
+      return;
+    }
+    var obs = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          obs.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.05, rootMargin: '0px 0px -20px 0px' });
+    cards.forEach(function(c) { obs.observe(c); });
+  })();
+</script>
