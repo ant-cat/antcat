@@ -38,6 +38,126 @@ const currentPath = Astro.url.pathname;
     <span class="footer-note">ant.cat — Anthony Catanese — est. 2006</span>
     <span class="footer-note"><a href="mailto:ranthonycatanese@gmail.com" style="color:var(--accent)">ranthonycatanese@gmail.com</a></span>
   </footer>
-  <script src="/scripts/alive.js"></script>
+  <script is:inline>
+(function () {
+
+  // 1. TIME-OF-DAY BACKGROUND TINT
+  function applyTimeTint() {
+    if (window.matchMedia('(prefers-color-scheme: dark)').matches) return;
+    var hour = new Date().getHours() + new Date().getMinutes() / 60;
+    var stops = [
+      [0,   242,239,232,0.00],[5,   242,239,232,0.00],[6,   255,220,180,0.08],
+      [8,   255,235,200,0.05],[12,  230,245,255,0.04],[15,  242,239,232,0.00],
+      [17,  255,210,160,0.07],[19,  240,190,150,0.09],[21,  200,180,220,0.06],
+      [23,  242,239,232,0.00],[24,  242,239,232,0.00],
+    ];
+    var i = 0;
+    while (i < stops.length - 1 && stops[i+1][0] <= hour) i++;
+    var s0 = stops[i], s1 = stops[Math.min(i+1, stops.length-1)];
+    var t = s1[0] > s0[0] ? (hour - s0[0]) / (s1[0] - s0[0]) : 0;
+    var lerp = function(a,b){ return Math.round(a+(b-a)*t); };
+    var r=lerp(s0[1],s1[1]), g=lerp(s0[2],s1[2]), b=lerp(s0[3],s1[3]);
+    var a=(s0[4]+(s1[4]-s0[4])*t).toFixed(3);
+    document.documentElement.style.setProperty('--bg-tint','rgba('+r+','+g+','+b+','+a+')');
+  }
+  applyTimeTint();
+  setInterval(applyTimeTint, 5*60*1000);
+
+  // 2. HERO PARALLAX
+  var heroImg = document.querySelector('.hero-image');
+  if (heroImg) {
+    var ticking = false;
+    window.addEventListener('scroll', function() {
+      if (!ticking) {
+        requestAnimationFrame(function() {
+          heroImg.style.transform = 'translateY(' + (window.scrollY * 0.30) + 'px)';
+          ticking = false;
+        });
+        ticking = true;
+      }
+    }, { passive: true });
+  }
+
+  // 3. POST TITLE HOVER DRIFT
+  document.querySelectorAll('.post-title').forEach(function(el) {
+    el.style.transition = 'transform 0.25s cubic-bezier(0.25,0.46,0.45,0.94), color 0.15s';
+    el.addEventListener('mouseenter', function() { el.style.transform = 'translateX(4px)'; });
+    el.addEventListener('mouseleave', function() { el.style.transform = 'translateX(0)'; });
+  });
+
+  // 4. READING PROGRESS BAR
+  var bar = document.getElementById('reading-progress');
+  if (bar) {
+    window.addEventListener('scroll', function() {
+      var doc = document.documentElement;
+      var scrollTop = doc.scrollTop || document.body.scrollTop;
+      var scrollHeight = doc.scrollHeight - doc.clientHeight;
+      bar.style.width = (scrollHeight > 0 ? (scrollTop / scrollHeight) * 100 : 0) + '%';
+    }, { passive: true });
+  }
+
+  // 5. VARIABLE FONT WEIGHT ON HERO HEADLINE
+  var heroHeadline = document.querySelector('.hero-headline');
+  if (heroHeadline) {
+    window.addEventListener('scroll', function() {
+      var weight = Math.min(700, 400 + window.scrollY * 0.75);
+      heroHeadline.style.fontWeight = weight;
+    }, { passive: true });
+  }
+
+  // 6. FADE-IN ON SCROLL
+  var fadeEls = document.querySelectorAll('.fade-in');
+  if (fadeEls.length && 'IntersectionObserver' in window) {
+    var observer = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('fade-in--visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.08, rootMargin: '0px 0px -30px 0px' });
+    fadeEls.forEach(function(el) { observer.observe(el); });
+  }
+
+  // 7. AMBIENT SOUND
+  var soundBtn = document.getElementById('ambient-toggle');
+  if (soundBtn) {
+    var ctx = null, gainNode = null, oscillators = [], playing = false;
+    function startAmbient() {
+      ctx = new (window.AudioContext || window.webkitAudioContext)();
+      gainNode = ctx.createGain();
+      gainNode.gain.setValueAtTime(0, ctx.currentTime);
+      gainNode.gain.linearRampToValueAtTime(0.04, ctx.currentTime + 3);
+      gainNode.connect(ctx.destination);
+      [[110, 0], [110.3, 5], [220, -3]].forEach(function(pair) {
+        var osc = ctx.createOscillator();
+        osc.type = 'sine';
+        osc.frequency.value = pair[0];
+        osc.detune.value = pair[1];
+        osc.connect(gainNode);
+        osc.start();
+        oscillators.push(osc);
+      });
+      playing = true;
+      soundBtn.classList.add('active');
+    }
+    function stopAmbient() {
+      if (!ctx) return;
+      gainNode.gain.linearRampToValueAtTime(0, ctx.currentTime + 1.5);
+      setTimeout(function() {
+        oscillators.forEach(function(o) { try { o.stop(); } catch(e){} });
+        oscillators = []; ctx.close(); ctx = null;
+      }, 1600);
+      playing = false;
+      soundBtn.classList.remove('active');
+    }
+    soundBtn.addEventListener('click', function() {
+      if (playing) { stopAmbient(); } else { startAmbient(); }
+    });
+  }
+
+})();
+
+  </script>
 </body>
 </html>
