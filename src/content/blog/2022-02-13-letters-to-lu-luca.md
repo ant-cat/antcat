@@ -21,4 +21,4 @@ Your Dad
 
 **The Blaze - Heaven**
 
-https://youtu.be/YxVZbMgA3p0
+<iframe width="100%" style="aspect-ratio:16/9;border-radius:6px;margin:1em 0" src="https://www.youtube.com/embed/YxVZbMgA3p0" frameborder="0" allowfullscreen></iframe>

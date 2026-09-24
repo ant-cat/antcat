@@ -14,14 +14,14 @@ I have found that October-November are the months to catch good shows in North F
 
 Junior Boys 10/27 $12
 
-[youtube=http://www.youtube.com/watch?v=BiI-3uRfaSc&feature=player_embedded]
+<iframe width="100%" style="aspect-ratio:16/9;border-radius:6px;margin:1em 0" src="https://www.youtube.com/embed/BiI-3uRfaSc" frameborder="0" allowfullscreen></iframe>
 
 Elvis Perkins in Deerland 11/6 $10 -
 
-[youtube=http://www.youtube.com/watch?v=NmEoUNWQrwg&feature=player_embedded]
+<iframe width="100%" style="aspect-ratio:16/9;border-radius:6px;margin:1em 0" src="https://www.youtube.com/embed/NmEoUNWQrwg" frameborder="0" allowfullscreen></iframe>
 
 ![](http://catknees.files.wordpress.com/2009/09/karen-kurycki-dog-pony-showprints-collaborations-elvis-perkins-in-deerland.jpg?w=197)
 
 There is another show I would love to go see, but I'm not sure I can make it out. I had never heard of them until I saw this YouTube video on the Cafe Eleven website, [BLK JKS](http://www.cafeeleven.com/wordpress/2009/08/blk-jks/). I could listen to this all day and I can't figure out what it reminds me of, but I love it.
 
-[youtube=http://www.youtube.com/watch?v=3Pv9PivRJUE&feature=player_embedded]
+<iframe width="100%" style="aspect-ratio:16/9;border-radius:6px;margin:1em 0" src="https://www.youtube.com/embed/3Pv9PivRJUE" frameborder="0" allowfullscreen></iframe>

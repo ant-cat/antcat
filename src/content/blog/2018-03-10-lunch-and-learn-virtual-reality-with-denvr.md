@@ -23,7 +23,7 @@ We brought in our HTC Vive room-scale setup with our main gaming PC rig.
 Throughout the day, people could book up to 15 mins of time to try out the Vive with 1:1 guidance and explore a list of apps. (pro-tip: we used [Calendly.com](https://web.archive.org/web/20180904132116/https://calendly.com/) to book everyone). In total there were  32 people who had a chance to try it out first hand. The apps we used were:
 – [Google Tilt Brush
 ](https://web.archive.org/web/20180904132116/https://www.youtube.com/watch?v=TckqNdrdbgk)– [theBlue by Wevr](https://web.archive.org/web/20180904132116/https://www.youtube.com/watch?v=hUpkVa4UkMg)
-– [Google Earth VR](https://web.archive.org/web/20180904132116/https://www.youtube.com/watch?v=SCrkZOx5Q1M&t=1s)
+– [Google Earth VR](https://web.archive.org/web/20180904132116/<iframe width="100%" style="aspect-ratio:16/9;border-radius:6px;margin:1em 0" src="https://www.youtube.com/embed/SCrkZOx5Q1M" frameborder="0" allowfullscreen></iframe>s)
 – [QuiVr](https://web.archive.org/web/20180904132116/https://www.youtube.com/watch?v=fZ1VAQO4Mno)
 – [SUPERHOT](https://web.archive.org/web/20180904132116/https://www.youtube.com/watch?v=pzG7Wc6mbwE)
 
@@ -83,7 +83,7 @@ We spoke to the cast member and they asked if we would like to test out an exper
 
 > This is the same attraction Randy Pausch worked on while he was an Imagineer.
 
-https://youtu.be/ji5_MqicxSo
+<iframe width="100%" style="aspect-ratio:16/9;border-radius:6px;margin:1em 0" src="https://www.youtube.com/embed/ji5_MqicxSo" frameborder="0" allowfullscreen></iframe>
 
 During the late 90’s there was also a handful of movies that helped propel the movement forward (all but the Matrix were all pretty bad):
 
@@ -97,7 +97,7 @@ During the mid-2000’s things on the VR front began to wind down.
 
 Years later in 2016 while on a road trip with my wife, we went to Cedar Point and got to experience the new line of VR…while on a roller coaster. Yeah, VR *while* riding a roller coaster. At Cedar Point in Sandusky, OH they were testing out the tech on their Iron Dragon roller coaster. It was an amazing concept. During the First Wave, the hardware was used to mimic a roller coaster. Now the hardware was to enhance an existing roller coaster!
 
-https://youtu.be/6HYfivFxb28
+<iframe width="100%" style="aspect-ratio:16/9;border-radius:6px;margin:1em 0" src="https://www.youtube.com/embed/6HYfivFxb28" frameborder="0" allowfullscreen></iframe>
 
 ## 6. The Technology
 
@@ -111,7 +111,7 @@ If you were to compare VR to video game consoles, the Vive (in my opinion) is a
 
 The immersive experience of VR is unmatched with any other tech that I’ve experienced. When you’re in the virtual world, your mind believes it’s in the place, situation, or interacting with the person/thing in front of you. It’s weird…
 
-**Note:** At this time we had a volunteer (a pro mountain biker) come up and try at Richie’s Plank Experience – https://youtu.be/ImbhUHhWmSM
+**Note:** At this time we had a volunteer (a pro mountain biker) come up and try at Richie’s Plank Experience – <iframe width="100%" style="aspect-ratio:16/9;border-radius:6px;margin:1em 0" src="https://www.youtube.com/embed/ImbhUHhWmSM" frameborder="0" allowfullscreen></iframe>
 
 >  “Walk a mile in someone else’s shoes.”
 
@@ -139,4 +139,4 @@ BALL PARK MUSIC – WHIPPING BOY
 
 Google Tilt Brush Music Video
 
-https://www.youtube.com/watch?v=DVhXd2GttSU&ab_channel=BallParkMusic
+<iframe width="100%" style="aspect-ratio:16/9;border-radius:6px;margin:1em 0" src="https://www.youtube.com/embed/DVhXd2GttSU" frameborder="0" allowfullscreen></iframe>

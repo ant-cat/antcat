@@ -19,4 +19,4 @@ I hadn't heard it in forever and it's still good.
 
 Bush - Machinehead
 
-[youtube http://www.youtube.com/watch?v=Er1bwzZCik0&w=420&h=315]
+<iframe width="100%" style="aspect-ratio:16/9;border-radius:6px;margin:1em 0" src="https://www.youtube.com/embed/Er1bwzZCik0" frameborder="0" allowfullscreen></iframe>

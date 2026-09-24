@@ -12,7 +12,7 @@ but this weeks Tuesday was action packed. A couple of buddies and I headed over 
 
 We missed the first band downfall, but it didn't matter. We were there to see one of our favorite local bands, [Snore](http://www.myspace.com/snoretheband). Their songs Thin and Geronimo are quite good. They label themselves as Grime, Experimental, and Alternative. I label them as a new beginning of rock. The show was great...way to go to guys.
 
-[youtube=http://www.youtube.com/watch?v=UREN64-GEa8&eurl=http%3A%2F%2Fwww.facebook.com%2Fhome.php%3F&feature=player_embedded#t=63]
+<iframe width="100%" style="aspect-ratio:16/9;border-radius:6px;margin:1em 0" src="https://www.youtube.com/embed/UREN64-GEa8" frameborder="0" allowfullscreen></iframe>
 
 ![](http://catknees.files.wordpress.com/2009/08/snore1.jpg?w=300)
 

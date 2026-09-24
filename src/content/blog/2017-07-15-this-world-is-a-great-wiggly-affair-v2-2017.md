@@ -52,4 +52,4 @@ This is the perfect place to play Will Smith — Get Jiggy With It, but I have t
 
 **STRFKR — Florida**
 
-https://youtu.be/28KOYyT56Rg
+<iframe width="100%" style="aspect-ratio:16/9;border-radius:6px;margin:1em 0" src="https://www.youtube.com/embed/28KOYyT56Rg" frameborder="0" allowfullscreen></iframe>

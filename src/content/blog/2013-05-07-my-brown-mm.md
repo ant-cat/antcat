@@ -32,4 +32,4 @@ I always feel like I'm in a disguise when people call me Robert. It's a really w
 
 You knew it was coming: Van Halen - Jump (released the year I became Robert)
 
-[youtube http://www.youtube.com/watch?v=BNy3-6ooMTc&w=420&h=315]
+<iframe width="100%" style="aspect-ratio:16/9;border-radius:6px;margin:1em 0" src="https://www.youtube.com/embed/BNy3-6ooMTc" frameborder="0" allowfullscreen></iframe>

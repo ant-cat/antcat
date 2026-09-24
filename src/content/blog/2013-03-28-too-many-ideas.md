@@ -16,4 +16,4 @@ So that's that...
 
 Here is the music I promised. This song makes me want to just give my wife the biggest hug. It could be the Stella talking, but she is seriously the most wonderful thing ever.
 
-[youtube http://www.youtube.com/watch?v=NsLykJ17Oxc&w=420&h=315] EVER!
+<iframe width="100%" style="aspect-ratio:16/9;border-radius:6px;margin:1em 0" src="https://www.youtube.com/embed/NsLykJ17Oxc" frameborder="0" allowfullscreen></iframe> EVER!

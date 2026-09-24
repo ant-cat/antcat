@@ -54,4 +54,4 @@ Act as if.....you were a 14 year old kid who has nothing to lose.
 
 **Diablo - Soundtrack**
 
-[youtube=http://www.youtube.com/watch?v=vcTAVQYMZv0&w=560&h=315]
+<iframe width="100%" style="aspect-ratio:16/9;border-radius:6px;margin:1em 0" src="https://www.youtube.com/embed/vcTAVQYMZv0" frameborder="0" allowfullscreen></iframe>

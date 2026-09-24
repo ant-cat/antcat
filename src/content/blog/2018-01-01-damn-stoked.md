@@ -24,4 +24,4 @@ Keeping up with the tradition of adding a music video to each post. This time t
 
 **DENVR ARTIST **[**BEN TYSON’S**](https://web.archive.org/web/20181205143901/http://www.betakillers.com/)** REMIX OF **[**GEOGRAPHER — KITES**](https://web.archive.org/web/20181205143901/https://www.youtube.com/watch?v=talOq6wp8kk)** USING **[**LYRA**](https://web.archive.org/web/20181205143901/http://lyravr.com/)**:**
 
-https://youtu.be/Vnmpfh5qlQ0
+<iframe width="100%" style="aspect-ratio:16/9;border-radius:6px;margin:1em 0" src="https://www.youtube.com/embed/Vnmpfh5qlQ0" frameborder="0" allowfullscreen></iframe>

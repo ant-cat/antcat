@@ -34,4 +34,4 @@ Something that is my favorite (new car), somewhat hippie (new car), and named af
 
 Xavier Rudd - Messages
 
-[youtube http://www.youtube.com/watch?v=9xv-yQK4_A4&w=420&h=315]
+<iframe width="100%" style="aspect-ratio:16/9;border-radius:6px;margin:1em 0" src="https://www.youtube.com/embed/9xv-yQK4_A4" frameborder="0" allowfullscreen></iframe>

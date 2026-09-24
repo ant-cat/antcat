@@ -31,4 +31,4 @@ Then I find out about an [SNL ad](http://youtu.be/AN1ItiEDBpw) that ran during
 I'm so excited. While writing this I put on a YouTube playlist and just let it run. Oh man my hopes are so high, and hate having high hopes. You don't want to set your heroes up to fail. Nobody wins. This is why I refuse to watch movie trailers. Nothing ruined, no expectations. They've blown my expectations out of the water every time. They're so beloved by so many groups including the groups that hate "main stream" and these guys ran an ad on SNL. They're last  shows have been seen as some of the best in the world and I just want to be apart of it.
 
 Now I just hope they do it....one more time.
-[youtube http://www.youtube.com/watch?v=y2fHQs_HG6Y&w=560&h=315]
+<iframe width="100%" style="aspect-ratio:16/9;border-radius:6px;margin:1em 0" src="https://www.youtube.com/embed/y2fHQs_HG6Y" frameborder="0" allowfullscreen></iframe>

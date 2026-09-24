@@ -6,7 +6,7 @@ categories: ["General"]
 tags: ["jobs"]
 ---
 
-[youtube http://www.youtube.com/watch?v=fy_u7Cviyhk?rel=0]
+<iframe width="100%" style="aspect-ratio:16/9;border-radius:6px;margin:1em 0" src="https://www.youtube.com/embed/fy_u7Cviyhk" frameborder="0" allowfullscreen></iframe>
 
 Many of the posts that I write are actually for myself. It helps remind me about the things I enjoy and I've done that spark in my life. This is one of those posts, but you're welcome to read.
 

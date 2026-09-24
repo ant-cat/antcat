@@ -18,4 +18,4 @@ When he started trying to find his new career he went about it by being a "Go-Gi
 
 Thank you.
 
-https://youtu.be/6s8ZEFUSYAI
+<iframe width="100%" style="aspect-ratio:16/9;border-radius:6px;margin:1em 0" src="https://www.youtube.com/embed/6s8ZEFUSYAI" frameborder="0" allowfullscreen></iframe>

@@ -44,4 +44,4 @@ After surgery and a few years later, things are a bit better, but the moral of t
 
 **AC/DC - Dirty Deeds Done Dirt Cheap**
 
-[youtube=http://www.youtube.com/watch?v=PepRBMXKCFs&w=420&h=315]
+<iframe width="100%" style="aspect-ratio:16/9;border-radius:6px;margin:1em 0" src="https://www.youtube.com/embed/PepRBMXKCFs" frameborder="0" allowfullscreen></iframe>

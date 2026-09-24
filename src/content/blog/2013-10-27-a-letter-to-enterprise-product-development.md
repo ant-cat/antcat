@@ -34,4 +34,4 @@ That's where the the last 2 lines of the letter come in. You say, "Ok, now what?
 
 **Le Loup - We are Gods! We Are Wolves!**
 
-[youtube=http://www.youtube.com/watch?v=zCzUW38zv0E&w=560&h=315]
+<iframe width="100%" style="aspect-ratio:16/9;border-radius:6px;margin:1em 0" src="https://www.youtube.com/embed/zCzUW38zv0E" frameborder="0" allowfullscreen></iframe>

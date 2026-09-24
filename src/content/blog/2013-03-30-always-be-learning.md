@@ -22,4 +22,4 @@ So the key is Always Be Learning. You never what you'll need.
 
 Today's music video is not a music video, because it's time to learn and not listen to tunes!
 
-[youtube http://www.youtube.com/watch?v=JIpm6M6ecBM&w=420&h=315]
+<iframe width="100%" style="aspect-ratio:16/9;border-radius:6px;margin:1em 0" src="https://www.youtube.com/embed/JIpm6M6ecBM" frameborder="0" allowfullscreen></iframe>

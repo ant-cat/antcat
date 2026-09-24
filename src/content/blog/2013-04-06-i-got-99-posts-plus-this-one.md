@@ -32,8 +32,8 @@ Double feature of music this week. One is to celebrate the title...but the first
 
 **Twin Shadow - Five Seconds**
 
-[youtube http://www.youtube.com/watch?v=HiC9XNQSxFQ&w=560&h=315]
+<iframe width="100%" style="aspect-ratio:16/9;border-radius:6px;margin:1em 0" src="https://www.youtube.com/embed/HiC9XNQSxFQ" frameborder="0" allowfullscreen></iframe>
 
 **Jay-Z - 99 Problems**
 
-[youtube http://www.youtube.com/watch?v=WwoM5fLITfk&w=420&h=315]
+<iframe width="100%" style="aspect-ratio:16/9;border-radius:6px;margin:1em 0" src="https://www.youtube.com/embed/WwoM5fLITfk" frameborder="0" allowfullscreen></iframe>

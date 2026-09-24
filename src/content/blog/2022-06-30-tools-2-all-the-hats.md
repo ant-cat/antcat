@@ -28,4 +28,4 @@ Key Takeaway: We all need facilitators and Blue Hat
 
 My daughter's favorite video/music is a great fit for this one. 
 
-https://youtu.be/fj_z6zGQVyM
+<iframe width="100%" style="aspect-ratio:16/9;border-radius:6px;margin:1em 0" src="https://www.youtube.com/embed/fj_z6zGQVyM" frameborder="0" allowfullscreen></iframe>

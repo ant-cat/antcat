@@ -32,4 +32,4 @@ This isn't any different when launching a business. The founders job is to pour 
 
 **George Barnett - Get Lucky**
 
-[youtube=http://www.youtube.com/watch?v=s6NDY8FSr9M&w=560&h=315]
+<iframe width="100%" style="aspect-ratio:16/9;border-radius:6px;margin:1em 0" src="https://www.youtube.com/embed/s6NDY8FSr9M" frameborder="0" allowfullscreen></iframe>

@@ -16,4 +16,4 @@ I want to be clear, I'm not making fun of them. It's an honest question. What do
 
 Music of the day by Chet Haze...not my normal cup o tea, but it suits the message.
 
-[youtube http://www.youtube.com/watch?v=5gmpREs-pVU?rel=0&w=560&h=315]
+<iframe width="100%" style="aspect-ratio:16/9;border-radius:6px;margin:1em 0" src="https://www.youtube.com/embed/5gmpREs-pVU" frameborder="0" allowfullscreen></iframe>

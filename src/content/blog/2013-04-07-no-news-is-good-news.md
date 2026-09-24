@@ -14,4 +14,4 @@ Short post, but I'm on way to see Chad Valley. Great summer tunes!
 
 **Chad Valley - Now That I'm Real**
 
-[youtube http://www.youtube.com/watch?v=CGrE3s0wdjA&w=420&h=315]
+<iframe width="100%" style="aspect-ratio:16/9;border-radius:6px;margin:1em 0" src="https://www.youtube.com/embed/CGrE3s0wdjA" frameborder="0" allowfullscreen></iframe>

@@ -37,4 +37,4 @@ It could be wild but it would maybe help or maybe things a lot shittier. But at 
 
 **Tune-Yards - Bizness**
 
-https://youtu.be/YQ1LI-NTa2s
+<iframe width="100%" style="aspect-ratio:16/9;border-radius:6px;margin:1em 0" src="https://www.youtube.com/embed/YQ1LI-NTa2s" frameborder="0" allowfullscreen></iframe>

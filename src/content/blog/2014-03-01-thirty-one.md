@@ -10,7 +10,7 @@ Today's my birthday...and I'm 31. Holy crap. The only song I know to post is...
 
 **The Doors - This is the End**
 
-[youtube https://www.youtube.com/watch?v=1b26BD5KjH0&w=560&h=315]
+<iframe width="100%" style="aspect-ratio:16/9;border-radius:6px;margin:1em 0" src="https://www.youtube.com/embed/1b26BD5KjH0" frameborder="0" allowfullscreen></iframe>
 
  
 

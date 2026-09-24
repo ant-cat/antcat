@@ -10,4 +10,4 @@ You realize how old you are when the use of netting has reappeared in your "boar
 
 Go explore with some Washed Out - Amor Fati
 
-[youtube http://www.youtube.com/watch?v=7fYnfE5Cycg&w=560&h=315]
+<iframe width="100%" style="aspect-ratio:16/9;border-radius:6px;margin:1em 0" src="https://www.youtube.com/embed/7fYnfE5Cycg" frameborder="0" allowfullscreen></iframe>

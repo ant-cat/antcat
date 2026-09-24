@@ -22,7 +22,7 @@ Well I'm planning on making up some time. I'm thinking about doing a cross count
 
 If you need anymore inspiration for a trip this video will help. It's a car trip that went to all 48 states, but they made a wonderful 3.5 min video:
 
-[youtube=http://www.youtube.com/watch?v=tvWmkRtPmZM]
+<iframe width="100%" style="aspect-ratio:16/9;border-radius:6px;margin:1em 0" src="https://www.youtube.com/embed/tvWmkRtPmZM" frameborder="0" allowfullscreen></iframe>
 
 **The process...**
 

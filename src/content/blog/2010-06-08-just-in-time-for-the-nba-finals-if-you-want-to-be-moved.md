@@ -12,4 +12,4 @@ If you want to absolutely  be inspired to work your ever living ass off at what
 
 This episode is about the Nike commercial Freestyle that aired in 2001 during the playoffs. I didn't even like basketball until I listened to this episode.
 
- [youtube=http://www.youtube.com/watch?v=pPmfbhVGbIQ]
+ <iframe width="100%" style="aspect-ratio:16/9;border-radius:6px;margin:1em 0" src="https://www.youtube.com/embed/pPmfbhVGbIQ" frameborder="0" allowfullscreen></iframe>

@@ -42,4 +42,4 @@ Another fast read, the first one I finished in three days because of how excited
 
 ## Today's tune by John Orr, aka Kid Overdrive, performing an arrangement from his 2006 VGM album, Get Equipped With Kid Overdrive. It's badass. 
 
-https://youtu.be/y_beln9gr0U
+<iframe width="100%" style="aspect-ratio:16/9;border-radius:6px;margin:1em 0" src="https://www.youtube.com/embed/y_beln9gr0U" frameborder="0" allowfullscreen></iframe>

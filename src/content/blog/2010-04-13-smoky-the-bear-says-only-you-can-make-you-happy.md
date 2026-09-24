@@ -12,7 +12,7 @@ Well Thursday (4/15: End of Tax Season) I'm getting laid off and I'm Super Excit
 
 This trip doesn't include my motorcycle, but it does involve hiking and camping....so 2 out of 3 isn't bad. Plus, I still needed to buy a new wind screen for my bike and some decent saddlebags. When I get money...those items are going to happen. There is a road that we'll be traveling down that I wish I could take my bike on known as [Tail of the Dragon](http://voyageunbound.com/cars/i/030810_the_dragon/dragon_map.jpg). It's 318 curves within 11 miles!
 
-[youtube=http://www.youtube.com/watch?v=oqtdJKM5Mfk]
+<iframe width="100%" style="aspect-ratio:16/9;border-radius:6px;margin:1em 0" src="https://www.youtube.com/embed/oqtdJKM5Mfk" frameborder="0" allowfullscreen></iframe>
 
 So what is there to do in a National Park? Wrong question: What can't you do? The weather is supposed to be great. Highs in the lower 70's and lows in the mid 40's. Now that's great walking and sleeping weather.
 

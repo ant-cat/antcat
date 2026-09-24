@@ -12,4 +12,4 @@ http://en.blogotheque.net/
 
 Have fun and enjoy the music.
 
-[youtube http://www.youtube.com/watch?v=t1tbX_NJn98&w=560&h=315]
+<iframe width="100%" style="aspect-ratio:16/9;border-radius:6px;margin:1em 0" src="https://www.youtube.com/embed/t1tbX_NJn98" frameborder="0" allowfullscreen></iframe>

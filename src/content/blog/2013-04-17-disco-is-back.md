@@ -14,4 +14,4 @@ Yeah it was released!!!!!!!
 
 Daft Punk - Get Lucky
 
-[youtube http://www.youtube.com/watch?v=vxp0PFoIdmU&w=420&h=315]
+<iframe width="100%" style="aspect-ratio:16/9;border-radius:6px;margin:1em 0" src="https://www.youtube.com/embed/vxp0PFoIdmU" frameborder="0" allowfullscreen></iframe>

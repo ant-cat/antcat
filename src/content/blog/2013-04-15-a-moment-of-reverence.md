@@ -10,4 +10,4 @@ I had a post all laid out, but with everything going on in Boston nothing seem
 
 Bon Iver to think of the day.
 
-[youtube https://www.youtube.com/watch?v=BMgyIR2qPEU&w=560&h=315]
+<iframe width="100%" style="aspect-ratio:16/9;border-radius:6px;margin:1em 0" src="https://www.youtube.com/embed/BMgyIR2qPEU" frameborder="0" allowfullscreen></iframe>

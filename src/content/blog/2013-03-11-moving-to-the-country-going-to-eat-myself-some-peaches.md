@@ -8,7 +8,7 @@ tags: ["Expectations", "Road Trip"]
 
 Get ready for some good ole’ fashion tangents.
 
-[youtube http://www.youtube.com/watch?v=VvcohzJvviQ&w=420&h=315]
+<iframe width="100%" style="aspect-ratio:16/9;border-radius:6px;margin:1em 0" src="https://www.youtube.com/embed/VvcohzJvviQ" frameborder="0" allowfullscreen></iframe>
 
 Road trips are the best thing on earth, if you do them right. Right is when you just get in the car and go. Maybe you have a couple days notice to plan for a minute, but anything over a week and it’s going to just go to crap. In fact most trips are better on a whim, depending on how complicated of a trip it is.
 

@@ -19,4 +19,4 @@ Your dad
 
 Music I hope we dance to later: Khruangbin - So We Won't Forget
 
-https://youtu.be/lo4KMGiy--Y
+<iframe width="100%" style="aspect-ratio:16/9;border-radius:6px;margin:1em 0" src="https://www.youtube.com/embed/lo4KMGiy--Y" frameborder="0" allowfullscreen></iframe>

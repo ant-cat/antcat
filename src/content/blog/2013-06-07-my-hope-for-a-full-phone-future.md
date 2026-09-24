@@ -12,4 +12,4 @@ So so so close. Oh but wait, that sweet looking aluminum case on your iPhone 5 m
 
 **STRFKR - Rawnald Gregory Erickson the Second**
 
-[youtube https://www.youtube.com/watch?v=5Z8oYH_bhnA&w=560&h=315]
+<iframe width="100%" style="aspect-ratio:16/9;border-radius:6px;margin:1em 0" src="https://www.youtube.com/embed/5Z8oYH_bhnA" frameborder="0" allowfullscreen></iframe>

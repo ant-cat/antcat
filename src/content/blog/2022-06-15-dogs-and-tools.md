@@ -24,4 +24,4 @@ This reminds me of a reverse flow Opportunity Solution Tree that Teresa Torres t
 
 Remember: focus on the outcomes and let that help dictate the path...hopefully a path takes into account kindness :D
 
-https://youtu.be/wJoh236m5RU
+<iframe width="100%" style="aspect-ratio:16/9;border-radius:6px;margin:1em 0" src="https://www.youtube.com/embed/wJoh236m5RU" frameborder="0" allowfullscreen></iframe>

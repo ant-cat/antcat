@@ -86,4 +86,4 @@ P.S. here’s a quick tip on remote user interviews:
 
 CAKE – THE DISTANCE
 
-https://youtu.be/F_HoMkkRHv8
+<iframe width="100%" style="aspect-ratio:16/9;border-radius:6px;margin:1em 0" src="https://www.youtube.com/embed/F_HoMkkRHv8" frameborder="0" allowfullscreen></iframe>

@@ -13,4 +13,4 @@ A few months ago, I was "knighted" to be best-man in my friend's wedding in Octo
 I needed a way to kick-things off right. I needed a way to hype up my semi-dork friends and prepare them for a good time.
 
 This is what I came up with. I had MUCH help from the folks at [MindBendStudios](http://www.youtube.com/user/MindbendStudios). I really appreciate it!
-[youtube=http://www.youtube.com/watch?v=Knd6KRJBd9I]
+<iframe width="100%" style="aspect-ratio:16/9;border-radius:6px;margin:1em 0" src="https://www.youtube.com/embed/Knd6KRJBd9I" frameborder="0" allowfullscreen></iframe>

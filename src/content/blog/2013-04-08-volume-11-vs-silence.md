@@ -18,4 +18,4 @@ That's it. Just a small observation in my own behavior.
 
 **Portugal. The Man - Sleep Forever**
 
-[youtube https://www.youtube.com/watch?v=jieN2Hp5hS4?rel=0&w=560&h=315]
+<iframe width="100%" style="aspect-ratio:16/9;border-radius:6px;margin:1em 0" src="https://www.youtube.com/embed/jieN2Hp5hS4" frameborder="0" allowfullscreen></iframe>

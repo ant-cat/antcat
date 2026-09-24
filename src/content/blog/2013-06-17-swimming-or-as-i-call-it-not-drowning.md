@@ -24,4 +24,4 @@ I used to write when I was really struggling in life in late teens/early twentie
 New Music Today...actually found when I researched "Not Drowning"
 Not Drowning, Waving - Sweat
 
-[youtube https://www.youtube.com/watch?v=XDww4XAs4wY&w=420&h=315]
+<iframe width="100%" style="aspect-ratio:16/9;border-radius:6px;margin:1em 0" src="https://www.youtube.com/embed/XDww4XAs4wY" frameborder="0" allowfullscreen></iframe>

@@ -28,6 +28,6 @@ The moral of the story for this weeks PO lesson is: business problems are busine
 
 Architecture In Helsinki - Heart It Races
 
-[youtube=http://www.youtube.com/watch?v=sZjpWs1h7pU&w=420&h=315]
+<iframe width="100%" style="aspect-ratio:16/9;border-radius:6px;margin:1em 0" src="https://www.youtube.com/embed/sZjpWs1h7pU" frameborder="0" allowfullscreen></iframe>
 
 > "and we're slow to acknowledge the knots in our laces"

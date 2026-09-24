@@ -12,7 +12,7 @@ tags: ["Daft Punk Helmet", "Daft Punk Jacket", "EL Wire", "Florida Georgia", "Ha
 
 After many months of working on this project I finally finished. It took forever and I got about 2.5 hours of full use out of it. I wore this as I checked ID's at the bar I worked at.
 
-[embed]http://www.youtube.com/watch?v=K1djmfozYIo[/embed]
+[embed]<iframe width="100%" style="aspect-ratio:16/9;border-radius:6px;margin:1em 0" src="https://www.youtube.com/embed/K1djmfozYIo" frameborder="0" allowfullscreen></iframe>]
 
 As the drunken crowd of people continued to slap the helmet (out of excitement that they thought I was RoboCop) they screwed up some of the electronics, and due to the wonderful weather of Jacksonville that doesn't like jackets....I had to take it off, but I'm proud that I actually finished it.
 

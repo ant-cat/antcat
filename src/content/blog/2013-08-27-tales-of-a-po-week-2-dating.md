@@ -32,4 +32,4 @@ So the lesson is, don't worry about it. Go on with your life and treat your lead
 
 **Yeasayer - Ambling Alp**
 
-[youtube=http://www.youtube.com/watch?v=ZKXujEphWS8&w=560&h=315]
+<iframe width="100%" style="aspect-ratio:16/9;border-radius:6px;margin:1em 0" src="https://www.youtube.com/embed/ZKXujEphWS8" frameborder="0" allowfullscreen></iframe>
