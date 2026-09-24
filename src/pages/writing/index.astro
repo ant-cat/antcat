@@ -9,6 +9,28 @@ function formatDate(d: Date) {
   return d.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
 }
 
+function formatYear(d: Date) {
+  return d.getFullYear().toString();
+}
+
+// Extract first meaningful paragraph as lead-in
+function getLead(body: string): string {
+  const stripped = body
+    .replace(/^---[\s\S]*?---/, '')        // remove frontmatter
+    .replace(/!\[.*?\]\(.*?\)/g, '')        // remove images
+    .replace(/\[([^\]]+)\]\([^\)]+\)/g, '$1') // unwrap links
+    .replace(/#{1,6}\s+.+/g, '')           // remove headings
+    .replace(/\*\*([^*]+)\*\*/g, '$1')     // unwrap bold
+    .replace(/\*([^*]+)\*/g, '$1')         // unwrap italic
+    .replace(/<[^>]+>/g, '')               // strip HTML tags
+    .trim();
+
+  const paras = stripped.split(/\n\n+/).map(p => p.trim()).filter(p => p.length > 40);
+  if (!paras.length) return '';
+  const lead = paras[0].replace(/\n/g, ' ').trim();
+  return lead.length > 180 ? lead.slice(0, 177) + '…' : lead;
+}
+
 // Group by year
 const byYear: Record<string, typeof allPosts> = {};
 for (const post of allPosts) {
@@ -25,25 +47,163 @@ const years = Object.keys(byYear).sort((a, b) => Number(b) - Number(a));
   </div>
 
   {years.map(year => (
-    <div style="margin-bottom:32px">
-      <div style="font-family:var(--mono);font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--text3);margin-bottom:8px">— {year}</div>
+    <div class="year-group">
+      <div class="year-label">— {year}</div>
       <div class="post-list">
-        {byYear[year].map(post => (
-          <div class="post-item">
-            <span class="post-date">{formatDate(post.data.date)}</span>
-            <div>
-              <a href={`/writing/${post.slug}`} class="post-title">{post.data.title}</a>
-              {post.data.categories.filter(c => c !== 'Uncategorized').length > 0 && (
-                <div class="post-cats">
-                  {post.data.categories.filter(c => c !== 'Uncategorized').map(c => (
-                    <span class="post-cat">{c}</span>
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
-        ))}
+        {byYear[year].map((post, i) => {
+          const lead = getLead(post.body);
+          const cats = post.data.categories.filter(c => c !== 'Uncategorized');
+          return (
+            <a href={`/writing/${post.slug}`} class="post-card" style={`--i:${i}`}>
+              <div class="post-card-top">
+                <span class="post-date">{formatDate(post.data.date)}</span>
+                {cats.length > 0 && (
+                  <div class="post-cats">
+                    {cats.map(c => <span class="post-cat">{c}</span>)}
+                  </div>
+                )}
+              </div>
+              <h2 class="post-title">{post.data.title}</h2>
+              {lead && <p class="post-lead">{lead}</p>}
+            </a>
+          );
+        })}
       </div>
     </div>
   ))}
 </Base>
+
+<style>
+.year-group {
+  margin-bottom: 48px;
+}
+.year-label {
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text3);
+  margin-bottom: 12px;
+}
+.post-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+/* Card */
+.post-card {
+  display: block;
+  padding: 20px 0;
+  border-bottom: 1px solid var(--border);
+  text-decoration: none;
+  color: inherit;
+  position: relative;
+  /* entrance animation */
+  opacity: 0;
+  transform: translateY(20px);
+  transition:
+    opacity 0.45s ease calc(var(--i, 0) * 40ms),
+    transform 0.45s ease calc(var(--i, 0) * 40ms),
+    background 0.2s;
+}
+.post-card:first-child { border-top: 1px solid var(--border); }
+.post-card.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Hover reveal background */
+.post-card::before {
+  content: '';
+  position: absolute;
+  inset: 0 -12px;
+  background: var(--bg2);
+  border-radius: 6px;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  pointer-events: none;
+}
+.post-card:hover::before { opacity: 1; }
+
+.post-card-top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 6px;
+  position: relative;
+}
+.post-date {
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  color: var(--text3);
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+.post-cats {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.post-cat {
+  font-size: 0.62rem;
+  font-family: var(--mono);
+  letter-spacing: 0.05em;
+  color: var(--accent);
+  text-transform: uppercase;
+}
+
+.post-title {
+  font-family: var(--serif);
+  font-size: 1.15rem;
+  font-weight: 400;
+  color: var(--text);
+  line-height: 1.3;
+  margin-bottom: 8px;
+  position: relative;
+  transition: color 0.15s;
+}
+.post-card:hover .post-title { color: var(--accent); }
+
+/* Lead-in — hidden until hover */
+.post-lead {
+  font-size: 0.85rem;
+  color: var(--text3);
+  line-height: 1.6;
+  position: relative;
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: max-height 0.3s ease, opacity 0.25s ease 0.05s;
+  margin: 0;
+}
+.post-card:hover .post-lead {
+  max-height: 120px;
+  opacity: 1;
+}
+
+@media (max-width: 560px) {
+  .post-card { padding: 16px 0; }
+  .post-title { font-size: 1rem; }
+}
+</style>
+
+<script is:inline>
+  // Staggered entrance on scroll
+  (function() {
+    var cards = document.querySelectorAll('.post-card');
+    if (!('IntersectionObserver' in window)) {
+      cards.forEach(function(c) { c.classList.add('visible'); });
+      return;
+    }
+    var obs = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          obs.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.05, rootMargin: '0px 0px -20px 0px' });
+    cards.forEach(function(c) { obs.observe(c); });
+  })();
+</script>
