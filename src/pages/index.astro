@@ -23,23 +23,26 @@ function getLead(body: string): string {
   const paras = stripped.split(/\n\n+/).map(p => p.trim()).filter(p => p.length > 40);
   if (!paras.length) return '';
   const lead = paras[0].replace(/\n/g, ' ').trim();
-  return lead.length > 180 ? lead.slice(0, 177) + '…' : lead;
+  return lead.length > 180 ? lead.slice(0, 177) + '...' : lead;
 }
 ---
 <Base title="Home">
 
-  <!-- Hero -->
-  <div class="hero">
-    <div class="hero-image-wrap">
-      <img src="/images/hero.png" alt="Four kids on a couch in the desert watching a decorated TV" class="hero-image" />
-      <div class="hero-overlay"></div>
-      <div class="hero-text">
-        <p class="hero-tagline">Built this for me, but you can read it too.</p>
-        <h1 class="hero-headline">For over 20 years I've found that the best way for me to understand something is to write it out.</h1>
-        <div class="hero-actions">
-          <a href="/experiments" class="btn-primary">See what I'm building →</a>
-          <a href="/writing" class="btn-ghost">Read the archive</a>
-        </div>
+  <!-- WebGL Hero -->
+  <div class="hero-webgl-wrap" id="hero-wrap">
+    <canvas id="hero-canvas"></canvas>
+    <nav class="hero-nav" id="hero-nav">
+      <a href="/writing" class="hero-pill" data-float="0">Mind Grapes</a>
+      <a href="/about" class="hero-pill" data-float="1">About</a>
+      <a href="/now" class="hero-pill" data-float="2">Now</a>
+      <a href="/experiments" class="hero-pill" data-float="3">Experiments</a>
+    </nav>
+    <div class="hero-copy">
+      <p class="hero-tagline">Built this for me, but you can read it too.</p>
+      <h1 class="hero-headline">For over 20 years I've found that the best way for me to understand something is to write it out.</h1>
+      <div class="hero-actions">
+        <a href="/experiments" class="btn-primary">See what I'm building &rarr;</a>
+        <a href="/writing" class="btn-ghost">Read the archive</a>
       </div>
     </div>
   </div>
@@ -47,8 +50,8 @@ function getLead(body: string): string {
   <!-- Recent writing -->
   <div style="margin-top:56px">
     <div style="margin-bottom:12px;display:flex;justify-content:space-between;align-items:baseline">
-      <div style="font-family:var(--mono);font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--text3)">— recent writing</div>
-      <a href="/writing" style="font-size:0.75rem;font-weight:600;color:var(--accent)">All posts →</a>
+      <div style="font-family:var(--mono);font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--text3)">&mdash; recent writing</div>
+      <a href="/writing" style="font-size:0.75rem;font-weight:600;color:var(--accent)">All posts &rarr;</a>
     </div>
     <div class="post-list">
       {posts.map((post, i) => {
@@ -75,41 +78,57 @@ function getLead(body: string): string {
 </Base>
 
 <style>
-/* ── HERO ── */
-.hero {
-  margin: 0 calc(-1 * var(--page-pad, 24px)) 0;
-}
-.hero-image-wrap {
+.hero-webgl-wrap {
   position: relative;
-  width: 100%;
-  max-height: 520px;
-  overflow: hidden;
+  margin: 0 calc(-1 * var(--page-pad, 24px));
+  height: 520px;
   border-radius: 12px;
+  overflow: hidden;
+  background: #060a12;
 }
-.hero-image {
-  width: 100%;
-  height: 100%;
-  max-height: 520px;
-  object-fit: cover;
-  object-position: center 40%;
-  display: block;
-}
-.hero-overlay {
+#hero-canvas {
   position: absolute;
   inset: 0;
-  background: linear-gradient(
-    to top,
-    rgba(0,0,0,0.82) 0%,
-    rgba(0,0,0,0.4) 50%,
-    rgba(0,0,0,0.1) 100%
-  );
+  width: 100%;
+  height: 100%;
+  display: block;
 }
-.hero-text {
+.hero-nav {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 10;
+}
+.hero-pill {
+  position: absolute;
+  pointer-events: all;
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(180,220,255,0.9);
+  background: rgba(10,20,40,0.55);
+  border: 1px solid rgba(100,180,255,0.3);
+  padding: 7px 16px;
+  border-radius: 999px;
+  text-decoration: none;
+  backdrop-filter: blur(6px);
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+  white-space: nowrap;
+}
+.hero-pill:hover {
+  background: rgba(80,160,255,0.25);
+  color: #fff;
+  border-color: rgba(100,180,255,0.7);
+}
+.hero-copy {
   position: absolute;
   bottom: 0;
   left: 0;
   right: 0;
   padding: 32px 36px;
+  background: linear-gradient(to top, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.2) 70%, transparent 100%);
+  z-index: 10;
 }
 .hero-tagline {
   font-family: var(--mono);
@@ -121,143 +140,180 @@ function getLead(body: string): string {
 }
 .hero-headline {
   font-family: var(--serif);
-  font-size: clamp(1.25rem, 3.5vw, 2rem);
+  font-size: clamp(1.1rem, 3vw, 1.75rem);
   font-weight: 400;
-  color: #fff;
-  line-height: 1.25;
-  max-width: 580px;
-  margin-bottom: 22px;
+  color: rgba(255,255,255,0.92);
+  line-height: 1.3;
+  max-width: 520px;
+  margin-bottom: 20px;
 }
 .hero-actions { display: flex; gap: 10px; flex-wrap: wrap; }
 .btn-primary {
-  display: inline-flex;
-  align-items: center;
-  background: var(--accent);
-  color: #fff;
-  font-size: 0.82rem;
-  font-weight: 600;
-  padding: 9px 18px;
-  border-radius: 6px;
-  text-decoration: none;
+  display: inline-flex; align-items: center;
+  background: var(--accent); color: #fff;
+  font-size: 0.82rem; font-weight: 600;
+  padding: 9px 18px; border-radius: 6px; text-decoration: none;
 }
 .btn-ghost {
-  display: inline-flex;
-  align-items: center;
+  display: inline-flex; align-items: center;
   background: rgba(255,255,255,0.12);
-  border: 1px solid rgba(255,255,255,0.25);
-  color: #fff;
-  font-size: 0.82rem;
-  font-weight: 600;
-  padding: 9px 18px;
-  border-radius: 6px;
-  text-decoration: none;
+  border: 1px solid rgba(255,255,255,0.25); color: #fff;
+  font-size: 0.82rem; font-weight: 600;
+  padding: 9px 18px; border-radius: 6px; text-decoration: none;
   backdrop-filter: blur(4px);
 }
-
-/* ── POST CARDS ── */
 .post-list { display: flex; flex-direction: column; }
-
 .post-card {
-  display: block;
-  padding: 20px 0;
+  display: block; padding: 20px 0;
   border-bottom: 1px solid var(--border);
-  text-decoration: none;
-  color: inherit;
-  position: relative;
-  opacity: 0;
-  transform: translateY(20px);
-  transition:
-    opacity 0.45s ease calc(var(--i, 0) * 40ms),
-    transform 0.45s ease calc(var(--i, 0) * 40ms);
+  text-decoration: none; color: inherit; position: relative;
+  opacity: 0; transform: translateY(20px);
+  transition: opacity 0.45s ease calc(var(--i, 0) * 40ms), transform 0.45s ease calc(var(--i, 0) * 40ms);
 }
 .post-card:first-child { border-top: 1px solid var(--border); }
 .post-card.visible { opacity: 1; transform: translateY(0); }
-
 .post-card::before {
-  content: '';
-  position: absolute;
-  inset: 0 -12px;
-  background: var(--bg2);
-  border-radius: 6px;
-  opacity: 0;
-  transition: opacity 0.2s ease;
-  pointer-events: none;
+  content: ''; position: absolute; inset: 0 -12px;
+  background: var(--bg2); border-radius: 6px;
+  opacity: 0; transition: opacity 0.2s ease; pointer-events: none;
 }
 .post-card:hover::before { opacity: 1; }
-
-.post-card-top {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 6px;
-  position: relative;
-}
-.post-date {
-  font-family: var(--mono);
-  font-size: 0.68rem;
-  color: var(--text3);
-  letter-spacing: 0.04em;
-  white-space: nowrap;
-}
+.post-card-top { display: flex; align-items: center; gap: 12px; margin-bottom: 6px; position: relative; }
+.post-date { font-family: var(--mono); font-size: 0.68rem; color: var(--text3); letter-spacing: 0.04em; white-space: nowrap; }
 .post-cats { display: flex; gap: 6px; flex-wrap: wrap; }
-.post-cat {
-  font-size: 0.62rem;
-  font-family: var(--mono);
-  letter-spacing: 0.05em;
-  color: var(--accent);
-  text-transform: uppercase;
-}
-.post-title {
-  font-family: var(--serif);
-  font-size: 1.15rem;
-  font-weight: 400;
-  color: var(--text);
-  line-height: 1.3;
-  margin-bottom: 8px;
-  position: relative;
-  transition: color 0.15s;
-}
+.post-cat { font-size: 0.62rem; font-family: var(--mono); letter-spacing: 0.05em; color: var(--accent); text-transform: uppercase; }
+.post-title { font-family: var(--serif); font-size: 1.15rem; font-weight: 400; color: var(--text); line-height: 1.3; margin-bottom: 8px; position: relative; transition: color 0.15s; }
 .post-card:hover .post-title { color: var(--accent); }
-
-.post-lead {
-  font-size: 0.85rem;
-  color: var(--text3);
-  line-height: 1.6;
-  position: relative;
-  max-height: 0;
-  overflow: hidden;
-  opacity: 0;
-  transition: max-height 0.3s ease, opacity 0.25s ease 0.05s;
-  margin: 0;
-}
-.post-card:hover .post-lead {
-  max-height: 120px;
-  opacity: 1;
-}
-
+.post-lead { font-size: 0.85rem; color: var(--text3); line-height: 1.6; position: relative; max-height: 0; overflow: hidden; opacity: 0; transition: max-height 0.3s ease, opacity 0.25s ease 0.05s; margin: 0; }
+.post-card:hover .post-lead { max-height: 120px; opacity: 1; }
 @media (max-width: 600px) {
-  .hero-text { padding: 20px; }
-  .hero-image-wrap { border-radius: 8px; }
+  .hero-webgl-wrap { height: 420px; border-radius: 8px; }
+  .hero-copy { padding: 20px; }
   .post-card { padding: 16px 0; }
   .post-title { font-size: 1rem; }
 }
 </style>
 
 <script is:inline>
-  (function() {
-    var cards = document.querySelectorAll('.post-card');
-    if (!('IntersectionObserver' in window)) {
-      cards.forEach(function(c) { c.classList.add('visible'); });
-      return;
+(function() {
+  'use strict';
+  function loadThree(cb) {
+    if (window.THREE) { cb(); return; }
+    var s = document.createElement('script');
+    s.src = 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js';
+    s.onload = cb;
+    document.head.appendChild(s);
+  }
+  function initHero() {
+    var canvas = document.getElementById('hero-canvas');
+    var wrap   = document.getElementById('hero-wrap');
+    if (!canvas || !wrap || !window.THREE) return;
+    var T = window.THREE;
+    var W = wrap.offsetWidth, H = wrap.offsetHeight;
+    var renderer = new T.WebGLRenderer({ canvas: canvas, antialias: true });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setSize(W, H);
+    renderer.setClearColor(0x060a12, 1);
+    var scene  = new T.Scene();
+    var camera = new T.PerspectiveCamera(55, W/H, 0.1, 200);
+    camera.position.set(0, 0, 22);
+    scene.fog = new T.FogExp2(0x060a12, 0.018);
+    /* stars */
+    (function(){
+      var geo = new T.BufferGeometry();
+      var pos = new Float32Array(6000);
+      for(var i=0;i<6000;i++) pos[i]=(Math.random()-0.5)*200;
+      geo.setAttribute('position',new T.BufferAttribute(pos,3));
+      scene.add(new T.Points(geo,new T.PointsMaterial({color:0x8ab4f8,size:0.12,transparent:true,opacity:0.45})));
+    })();
+    /* grid */
+    (function(){
+      var g=new T.PlaneGeometry(80,80,40,40);
+      var m=new T.MeshBasicMaterial({color:0x1a3a6a,wireframe:true,transparent:true,opacity:0.18});
+      var mesh=new T.Mesh(g,m);
+      mesh.rotation.x=-Math.PI/2.2;
+      mesh.position.y=-8;
+      scene.add(mesh);
+    })();
+    /* constellation glyphs */
+    var GLYPHS={
+      'A':[[0,0,1,1,0,0],[0,1,0,0,1,0],[1,0,0,0,0,1],[1,1,1,1,1,1],[1,0,0,0,0,1],[1,0,0,0,0,1],[1,0,0,0,0,1]],
+      'N':[[1,0,0,0,0,1],[1,1,0,0,0,1],[1,0,1,0,0,1],[1,0,0,1,0,1],[1,0,0,0,1,1],[1,0,0,0,0,1],[1,0,0,0,0,1]],
+      'T':[[1,1,1,1,1,1],[0,0,1,1,0,0],[0,0,1,1,0,0],[0,0,1,1,0,0],[0,0,1,1,0,0],[0,0,1,1,0,0],[0,0,1,1,0,0]],
+      '>':[[1,1,0,0,0,0],[0,0,1,1,0,0],[0,0,0,0,1,1],[0,0,0,0,0,1],[0,0,0,0,1,1],[0,0,1,1,0,0],[1,1,0,0,0,0]],
+      '<':[[0,0,0,0,1,1],[0,0,1,1,0,0],[1,1,0,0,0,0],[1,0,0,0,0,0],[1,1,0,0,0,0],[0,0,1,1,0,0],[0,0,0,0,1,1]],
+      'C':[[0,1,1,1,1,0],[1,0,0,0,0,1],[1,0,0,0,0,0],[1,0,0,0,0,0],[1,0,0,0,0,0],[1,0,0,0,0,1],[0,1,1,1,1,0]],
+    };
+    var TEXT=['A','N','T','>','<','C','A','T'];
+    var GW=6,GH=7,GAP=1.2,CELL=1.0;
+    var dots=[];
+    var tW=TEXT.length*(GW*CELL+GAP)-GAP;
+    var sx=-tW/2;
+    TEXT.forEach(function(ch,gi){
+      var g=GLYPHS[ch];
+      var ox=sx+gi*(GW*CELL+GAP);
+      for(var r=0;r<GH;r++) for(var c=0;c<GW;c++) if(g[r]&&g[r][c]) dots.push({x:ox+c*CELL,y:(GH-1-r)*CELL-(GH*CELL/2)+4,gi:gi});
+    });
+    var dGeo=new T.SphereGeometry(0.12,6,6);
+    var dMat=new T.MeshBasicMaterial({color:0x60aaff});
+    var dummy=new T.Object3D();
+    var iMesh=new T.InstancedMesh(dGeo,dMat,dots.length);
+    dots.forEach(function(d,i){dummy.position.set(d.x,d.y,0);dummy.updateMatrix();iMesh.setMatrixAt(i,dummy.matrix);});
+    iMesh.instanceMatrix.needsUpdate=true;
+    scene.add(iMesh);
+    var ePos=[];
+    for(var i=0;i<dots.length;i++) for(var j=i+1;j<dots.length;j++){
+      var dx=dots[i].x-dots[j].x,dy=dots[i].y-dots[j].y;
+      if(Math.sqrt(dx*dx+dy*dy)<1.55&&dots[i].gi===dots[j].gi){ePos.push(dots[i].x,dots[i].y,0,dots[j].x,dots[j].y,0);}
     }
-    var obs = new IntersectionObserver(function(entries) {
-      entries.forEach(function(entry) {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('visible');
-          obs.unobserve(entry.target);
-        }
-      });
-    }, { threshold: 0.05, rootMargin: '0px 0px -20px 0px' });
-    cards.forEach(function(c) { obs.observe(c); });
+    var lGeo=new T.BufferGeometry();
+    lGeo.setAttribute('position',new T.Float32BufferAttribute(ePos,3));
+    var lMat=new T.LineBasicMaterial({color:0x2060c0,transparent:true,opacity:0.5});
+    scene.add(new T.LineSegments(lGeo,lMat));
+    var rings=[];
+    for(var r=0;r<6;r++){
+      var d=dots[Math.floor(Math.random()*dots.length)];
+      var rm=new T.MeshBasicMaterial({color:0x4090ff,transparent:true,opacity:0.8,side:T.DoubleSide});
+      var rms=new T.Mesh(new T.RingGeometry(0.15,0.25,16),rm);
+      rms.position.set(d.x,d.y,0.05);
+      rms.userData.ph=Math.random()*Math.PI*2;
+      scene.add(rms); rings.push(rms);
+    }
+    var pGeo=new T.BufferGeometry();
+    var PN=120,pp=new Float32Array(PN*3),pv=new Float32Array(PN*3);
+    for(var i=0;i<PN;i++){pp[i*3]=(Math.random()-.5)*40;pp[i*3+1]=(Math.random()-.5)*20;pp[i*3+2]=(Math.random()-.5)*10;pv[i*3]=(Math.random()-.5)*.008;pv[i*3+1]=(Math.random()-.5)*.005;}
+    pGeo.setAttribute('position',new T.BufferAttribute(pp,3));
+    scene.add(new T.Points(pGeo,new T.PointsMaterial({color:0x3070c0,size:0.08,transparent:true,opacity:0.6})));
+    var mouse={x:0,y:0},ct={x:0,y:0};
+    wrap.addEventListener('mousemove',function(e){var r=wrap.getBoundingClientRect();mouse.x=((e.clientX-r.left)/r.width-.5)*2;mouse.y=((e.clientY-r.top)/r.height-.5)*2;});
+    wrap.addEventListener('mouseleave',function(){mouse.x=0;mouse.y=0;});
+    var SLOTS=[{left:'5%',top:'12%'},{left:'72%',top:'10%'},{left:'8%',top:'55%'},{left:'68%',top:'60%'}];
+    var pills=document.querySelectorAll('.hero-pill');
+    pills.forEach(function(p,i){var s=SLOTS[i]||{left:'50%',top:'50%'};p.style.left=s.left;p.style.top=s.top;});
+    var pph=[0,1.2,2.4,3.6];
+    window.addEventListener('resize',function(){W=wrap.offsetWidth;H=wrap.offsetHeight;renderer.setSize(W,H);camera.aspect=W/H;camera.updateProjectionMatrix();});
+    var clk=new T.Clock();
+    (function loop(){
+      requestAnimationFrame(loop);
+      var t=clk.getElapsedTime();
+      ct.x+=(mouse.x-ct.x)*.04; ct.y+=(mouse.y-ct.y)*.04;
+      camera.position.x=ct.x*2.5; camera.position.y=-ct.y*1.5; camera.lookAt(0,2,0);
+      iMesh.rotation.y=Math.sin(t*.12)*.08;
+      lMat.opacity=.3+.2*Math.sin(t*.4);
+      rings.forEach(function(rg){var s=1+.5*Math.abs(Math.sin(t*1.5+rg.userData.ph));rg.scale.setScalar(s);rg.material.opacity=.8-.5*Math.abs(Math.sin(t*1.5+rg.userData.ph));});
+      for(var i=0;i<PN;i++){pp[i*3]+=pv[i*3];pp[i*3+1]+=pv[i*3+1];if(pp[i*3]>20)pp[i*3]=-20;if(pp[i*3]<-20)pp[i*3]=20;if(pp[i*3+1]>10)pp[i*3+1]=-10;if(pp[i*3+1]<-10)pp[i*3+1]=10;}
+      pGeo.attributes.position.needsUpdate=true;
+      pills.forEach(function(p,i){var dy=Math.sin(t*.6+pph[i])*4;p.style.transform='translate('+((-ct.x*(3+i)))+'px,'+((-ct.y*(2+i*.5)+dy))+'px)';});
+      renderer.render(scene,camera);
+    })();
+  }
+  loadThree(initHero);
+  /* post card entrance */
+  (function(){
+    var cards=document.querySelectorAll('.post-card');
+    if(!('IntersectionObserver' in window)){cards.forEach(function(c){c.classList.add('visible');});return;}
+    var obs=new IntersectionObserver(function(entries){entries.forEach(function(e){if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});},{threshold:.05,rootMargin:'0px 0px -20px 0px'});
+    cards.forEach(function(c){obs.observe(c);});
   })();
+})();
 </script>
