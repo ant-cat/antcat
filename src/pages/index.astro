@@ -1,5 +1,5 @@
 ---
-// Full-viewport splash — clicking nav zooms into the TV, then navigates
+// ant.cat — immersive Three.js splash
 ---
 <!doctype html>
 <html lang="en">
@@ -9,217 +9,520 @@
   <meta name="description" content="ant.cat — Anthony Catanese" />
   <title>ant.cat</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap" />
   <link rel="icon" type="image/png" href="/favicon.png" />
 </head>
 <body>
 
-  <div class="stage" id="stage">
-    <img class="hero-img" id="heroImg" src="/images/hero.png" alt="" />
+  <!-- WebGL canvas behind everything -->
+  <canvas id="c"></canvas>
 
-    <!-- Brand -->
-    <div class="brand">ant.cat <em>lab</em></div>
+  <!-- HTML overlay: nav pills + brand -->
+  <div id="ui">
+    <div id="brand">ant.cat <em>lab</em></div>
 
-    <!-- Nav links -->
-    <nav class="splash-nav">
-      <a class="nav-link" href="/writing">Mind Grapes</a>
-      <a class="nav-link" href="/experiments">Experiments</a>
-      <a class="nav-link" href="/about">About</a>
-      <a class="nav-link" href="/now">Now</a>
+    <nav id="pills">
+      <a class="pill" id="pill-mg" href="/writing">Mind Grapes</a>
+      <a class="pill" href="/about">About</a>
+      <a class="pill" href="/now">Now</a>
+      <a class="pill" href="/experiments">Experiments</a>
     </nav>
 
-    <!-- Tagline -->
-    <div class="tagline">Built this for me, but you can read it too.</div>
-
-    <!-- Zoom overlay (black) fades in on top during transition -->
-    <div class="zoom-overlay" id="zoomOverlay"></div>
+    <div id="tagline">Built this for me, but you can read it too.</div>
   </div>
+
+  <!-- Black fade overlay for nav transitions -->
+  <div id="fade"></div>
 
 </body>
 </html>
 
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 100%; height: 100%; overflow: hidden; background: #050810; }
 
-  html, body {
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    background: #0a0a0a;
-  }
-
-  .stage {
-    position: relative;
+  /* Canvas fills 100vh */
+  #c {
+    position: fixed;
+    inset: 0;
     width: 100vw;
     height: 100vh;
-    overflow: hidden;
+    display: block;
   }
 
-  /* Hero image fills viewport, slight Ken Burns idle drift */
-  .hero-img {
-    position: absolute;
+  /* UI layer */
+  #ui {
+    position: fixed;
     inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center 40%;
-    transform-origin: center center;
-    animation: idleDrift 18s ease-in-out infinite alternate;
-    transition: transform 1.2s cubic-bezier(0.4, 0, 0.2, 1),
-                transform-origin 0s;
-    will-change: transform;
-    user-select: none;
     pointer-events: none;
-  }
-
-  @keyframes idleDrift {
-    0%   { transform: scale(1.04) translate(0%, 0%); }
-    100% { transform: scale(1.08) translate(-1.5%, -1%); }
-  }
-
-  /* Dark gradient at bottom */
-  .stage::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(
-      to top,
-      rgba(0,0,0,0.65) 0%,
-      rgba(0,0,0,0.2) 40%,
-      rgba(0,0,0,0.0) 70%
-    );
-    pointer-events: none;
-    z-index: 1;
-  }
-
-  /* Brand top-left */
-  .brand {
-    position: absolute;
-    top: 28px;
-    left: 32px;
     z-index: 10;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.78rem;
-    font-weight: 500;
-    letter-spacing: 0.06em;
-    color: rgba(255,255,255,0.9);
-    text-shadow: 0 1px 6px rgba(0,0,0,0.5);
   }
-  .brand em { font-style: normal; color: rgba(255,255,255,0.5); }
 
-  /* Nav — centered horizontally, upper third */
-  .splash-nav {
+  #brand {
     position: absolute;
-    top: 50%;
+    top: 24px; left: 28px;
+    font-family: 'Inter', monospace;
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    color: rgba(255,255,255,0.75);
+    text-shadow: 0 0 12px rgba(0,220,200,0.4);
+    pointer-events: all;
+  }
+  #brand em { font-style: normal; color: rgba(255,255,255,0.35); }
+
+  /* Nav pills positioned at mid-screen, two rows */
+  #pills {
+    position: absolute;
+    top: 52%;
     left: 50%;
     transform: translate(-50%, -50%);
-    z-index: 10;
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: auto auto;
+    gap: 14px 20px;
     align-items: center;
-    gap: 4px;
+    justify-items: center;
+    pointer-events: all;
   }
 
-  .nav-link {
-    font-family: 'DM Serif Display', Georgia, serif;
-    font-size: clamp(2.4rem, 5.5vw, 4.2rem);
+  .pill {
+    display: inline-block;
+    padding: 10px 26px;
+    border: 1.5px solid rgba(0, 220, 190, 0.55);
+    border-radius: 6px;
+    background: rgba(0, 30, 40, 0.35);
+    backdrop-filter: blur(8px);
+    color: rgba(255,255,255,0.88);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.88rem;
     font-weight: 400;
-    color: rgba(255,255,255,0.92);
+    letter-spacing: 0.04em;
     text-decoration: none;
-    line-height: 1.15;
-    letter-spacing: -0.01em;
-    text-shadow: 0 2px 20px rgba(0,0,0,0.6);
-    transition: color 0.2s, text-shadow 0.2s;
+    white-space: nowrap;
     cursor: pointer;
+    transition: background 0.2s, border-color 0.2s, box-shadow 0.2s, color 0.2s;
+    position: relative;
+    clip-path: polygon(8px 0%, calc(100% - 8px) 0%, 100% 50%, calc(100% - 8px) 100%, 8px 100%, 0% 50%);
   }
 
-  .nav-link:hover {
+  .pill:hover,
+  .pill.pulsing {
+    background: rgba(0, 200, 180, 0.18);
+    border-color: rgba(0, 255, 220, 0.9);
     color: #fff;
-    text-shadow: 0 0 40px rgba(255,255,255,0.3), 0 2px 20px rgba(0,0,0,0.7);
+    box-shadow:
+      0 0 18px rgba(0, 255, 210, 0.5),
+      0 0 40px rgba(0, 200, 180, 0.2),
+      inset 0 0 12px rgba(0, 255, 210, 0.08);
   }
 
-  /* Tagline bottom-left */
-  .tagline {
+  /* Mind Grapes is top-left, bigger */
+  #pill-mg {
+    font-size: 1rem;
+    padding: 12px 32px;
+  }
+
+  #tagline {
     position: absolute;
-    bottom: 28px;
-    left: 32px;
-    z-index: 10;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.68rem;
-    letter-spacing: 0.1em;
+    bottom: 24px; left: 28px;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: rgba(255,255,255,0.5);
-    text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+    color: rgba(255,255,255,0.35);
+    pointer-events: none;
   }
 
-  /* Black overlay for the zoom transition */
-  .zoom-overlay {
-    position: absolute;
+  /* Fade overlay */
+  #fade {
+    position: fixed;
     inset: 0;
     background: #000;
     opacity: 0;
     pointer-events: none;
-    z-index: 20;
-    transition: opacity 0.4s ease;
+    z-index: 100;
+    transition: opacity 0.5s ease;
   }
-  .zoom-overlay.fading { opacity: 1; pointer-events: all; }
-
-  /* Zooming state on the image */
-  .hero-img.zooming {
-    animation: none;
-    transition: transform 1.1s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
-  }
-
-  @media (max-width: 600px) {
-    .nav-link { font-size: clamp(1.8rem, 9vw, 2.8rem); }
-    .brand { top: 20px; left: 20px; }
-    .tagline { left: 20px; bottom: 20px; }
-  }
+  #fade.on { opacity: 1; pointer-events: all; }
 </style>
 
 <script is:inline>
 (function () {
+  /* ── Load Three.js then boot ── */
+  var s = document.createElement('script');
+  s.src = 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js';
+  s.onload = boot;
+  document.head.appendChild(s);
 
-  // The TV screen in the hero image lives roughly at 58% from left, 45% from top.
-  // These coords are the transform-origin we zoom toward.
-  var TV_X = 58;  // percent from left
-  var TV_Y = 45;  // percent from top
+  /* ── Mouse tracking ── */
+  var mx = 0, my = 0;   // normalised -1..1
+  window.addEventListener('mousemove', function(e) {
+    mx = (e.clientX / window.innerWidth  - 0.5) * 2;
+    my = (e.clientY / window.innerHeight - 0.5) * 2;
+  });
 
-  var heroImg = document.getElementById('heroImg');
-  var overlay = document.getElementById('zoomOverlay');
+  /* ── Nav: zoom-to-TV on click ── */
+  document.querySelectorAll('.pill').forEach(function(pill) {
+    pill.addEventListener('click', function(e) {
+      e.preventDefault();
+      var href = pill.getAttribute('href');
+      var fade = document.getElementById('fade');
+      fade.classList.add('on');
+      setTimeout(function() { window.location.href = href; }, 550);
+    });
+  });
 
-  function zoomTo(href) {
-    // 1. Stop idle drift, set transform-origin to TV center
-    heroImg.classList.add('zooming');
-    heroImg.style.transformOrigin = TV_X + '% ' + TV_Y + '%';
+  /* ── Mind Grapes pulse on hover ── */
+  var mg = document.getElementById('pill-mg');
+  mg.addEventListener('mouseenter', function() { mg.classList.add('pulsing'); });
+  mg.addEventListener('mouseleave', function() { mg.classList.remove('pulsing'); });
 
-    // 2. Scale up dramatically (zoom into the TV)
-    requestAnimationFrame(function () {
-      requestAnimationFrame(function () {
-        heroImg.style.transform = 'scale(8)';
+  function boot() {
+    var T   = window.THREE;
+    var cnv = document.getElementById('c');
+    var W   = window.innerWidth, H = window.innerHeight;
+
+    /* ── Renderer ── */
+    var renderer = new T.WebGLRenderer({ canvas: cnv, antialias: true });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setSize(W, H);
+    renderer.shadowMap.enabled = false;
+    renderer.setClearColor(0x030608, 1);
+
+    /* ── Scene & Camera ── */
+    var scene  = new T.Scene();
+    var camera = new T.PerspectiveCamera(60, W / H, 0.1, 500);
+    camera.position.set(0, 2, 28);
+    camera.lookAt(0, 4, 0);
+
+    /* ══════════════════════════════════════════════
+       1. BACKGROUND — hero photo with twilight grade
+       ══════════════════════════════════════════════ */
+    var bgLoader  = new T.TextureLoader();
+    var bgTex     = bgLoader.load('/images/hero.png');
+    bgTex.minFilter = T.LinearFilter;
+
+    // Fullscreen background quad
+    var bgGeo  = new T.PlaneGeometry(2, 2);
+    var bgMat  = new T.ShaderMaterial({
+      uniforms: {
+        uTex:    { value: bgTex },
+        uTime:   { value: 0 },
+      },
+      vertexShader: `
+        varying vec2 vUv;
+        void main() {
+          vUv = uv;
+          gl_Position = vec4(position.xy, 0.999, 1.0);
+        }
+      `,
+      fragmentShader: `
+        uniform sampler2D uTex;
+        uniform float uTime;
+        varying vec2 vUv;
+
+        vec3 twilightGrade(vec3 c) {
+          // Desaturate slightly
+          float lum = dot(c, vec3(0.299, 0.587, 0.114));
+          c = mix(vec3(lum), c, 0.75);
+          // Deep blue sky tint in upper half
+          float skyMask = smoothstep(0.35, 0.85, vUv.y);
+          vec3 skyColor = vec3(0.04, 0.06, 0.18);
+          c = mix(c, skyColor, skyMask * 0.72);
+          // Warm amber at horizon
+          float horizMask = (1.0 - abs(vUv.y - 0.42) / 0.22);
+          horizMask = clamp(horizMask, 0.0, 1.0);
+          vec3 amber = vec3(0.55, 0.28, 0.04);
+          c = mix(c, c + amber * 0.18, horizMask * 0.6);
+          // Overall darken
+          c *= 0.52;
+          // Subtle vignette
+          vec2 uv2 = vUv * 2.0 - 1.0;
+          float vig = 1.0 - dot(uv2 * vec2(0.5, 0.7), uv2 * vec2(0.5, 0.7));
+          c *= clamp(vig, 0.3, 1.0);
+          return c;
+        }
+
+        void main() {
+          // Correct aspect for cover behaviour
+          vec2 uv = vUv;
+          gl_FragColor = vec4(twilightGrade(texture2D(uTex, uv).rgb), 1.0);
+        }
+      `,
+      depthTest: false,
+      depthWrite: false,
+    });
+    var bgMesh = new T.Mesh(bgGeo, bgMat);
+    bgMesh.renderOrder = -1;
+    scene.add(bgMesh);
+
+    /* ══════════════════════════════════════════════
+       2. EYEBALL GLOW — top-right of scene
+          The real eyeballs live at ~80% x, 25% y in photo.
+          We add a pulsing sphere glow at that approximate world pos.
+       ══════════════════════════════════════════════ */
+    function makeEyeGlow(x, y, z) {
+      var g = new T.Group();
+
+      // Core white sphere
+      var cGeo = new T.SphereGeometry(0.35, 16, 16);
+      var cMat = new T.MeshBasicMaterial({ color: 0xffffff });
+      g.add(new T.Mesh(cGeo, cMat));
+
+      // Iris — blue
+      var iGeo = new T.SphereGeometry(0.18, 16, 16);
+      var iMat = new T.MeshBasicMaterial({ color: 0x1090ff });
+      var iris = new T.Mesh(iGeo, iMat);
+      iris.position.z = 0.22;
+      g.add(iris);
+
+      // Glow halo (additive sprite-like ring)
+      var hGeo = new T.RingGeometry(0.45, 1.1, 32);
+      var hMat = new T.MeshBasicMaterial({ color: 0x0066ff, transparent: true, opacity: 0.25, side: T.DoubleSide });
+      var halo = new T.Mesh(hGeo, hMat);
+      halo.position.z = -0.1;
+      g.add(halo);
+      g.userData.halo = halo;
+      g.userData.iris = iris;
+
+      g.position.set(x, y, z);
+      g.lookAt(camera.position);
+      scene.add(g);
+      return g;
+    }
+
+    var eye1 = makeEyeGlow( 9.5, 5.2, -4);
+    var eye2 = makeEyeGlow(11.2, 4.4, -4);
+
+    /* ══════════════════════════════════════════════
+       3. TV LIGHT BEAM — projects upward from TV position
+       ══════════════════════════════════════════════ */
+    (function() {
+      var bGeo = new T.CylinderGeometry(0.05, 1.8, 14, 16, 1, true);
+      var bMat = new T.MeshBasicMaterial({
+        color: 0x40ffee,
+        transparent: true,
+        opacity: 0.06,
+        side: T.DoubleSide,
+        depthWrite: false,
+      });
+      var beam = new T.Mesh(bGeo, bMat);
+      beam.position.set(0.3, 8, -2);
+      scene.add(beam);
+    })();
+
+    /* ══════════════════════════════════════════════
+       4. CONSTELLATION MESH — geodesic dome above scene
+       ══════════════════════════════════════════════ */
+    var constellationGroup = new T.Group();
+    scene.add(constellationGroup);
+
+    // Build a sphere geometry then keep only upper hemisphere edges
+    var icoGeo  = new T.IcosahedronGeometry(8, 2);
+    var icoPos  = icoGeo.attributes.position;
+    var edgePts = [];
+    var idxArr  = icoGeo.index ? icoGeo.index.array : null;
+    var triCount = idxArr ? idxArr.length / 3 : icoPos.count / 3;
+
+    for (var t = 0; t < triCount; t++) {
+      var ai = idxArr ? idxArr[t*3]   : t*3;
+      var bi = idxArr ? idxArr[t*3+1] : t*3+1;
+      var ci = idxArr ? idxArr[t*3+2] : t*3+2;
+      var pts = [ai, bi, ci, ai].map(function(i) {
+        return new T.Vector3(icoPos.getX(i), icoPos.getY(i), icoPos.getZ(i));
+      });
+      // Only keep if at least one vertex is above y=0
+      if (pts.some(function(p){ return p.y > -1; })) {
+        for (var e = 0; e < 3; e++) {
+          edgePts.push(pts[e].x, pts[e].y, pts[e].z);
+          edgePts.push(pts[e+1].x, pts[e+1].y, pts[e+1].z);
+        }
+      }
+    }
+
+    var netGeo = new T.BufferGeometry();
+    netGeo.setAttribute('position', new T.Float32BufferAttribute(edgePts, 3));
+    var netMat = new T.LineBasicMaterial({ color: 0x00ddc0, transparent: true, opacity: 0.35 });
+    var netMesh = new T.LineSegments(netGeo, netMat);
+    netMesh.position.set(0, 3, -1);
+    constellationGroup.add(netMesh);
+
+    // Node dots at icosahedron vertices
+    var uniqueVerts = [];
+    var seen = {};
+    for (var vi = 0; vi < icoPos.count; vi++) {
+      var vx = icoPos.getX(vi), vy = icoPos.getY(vi), vz = icoPos.getZ(vi);
+      var key = Math.round(vx*10)+','+Math.round(vy*10)+','+Math.round(vz*10);
+      if (!seen[key] && vy > -2) { seen[key]=1; uniqueVerts.push(vx,vy,vz); }
+    }
+    var nodeGeo = new T.BufferGeometry();
+    nodeGeo.setAttribute('position', new T.Float32BufferAttribute(uniqueVerts, 3));
+    var nodeMat = new T.PointsMaterial({ color: 0x00ffee, size: 0.18, transparent: true, opacity: 0.9 });
+    var nodes   = new T.Points(nodeGeo, nodeMat);
+    nodes.position.copy(netMesh.position);
+    constellationGroup.add(nodes);
+
+    /* ══════════════════════════════════════════════
+       5. "ANT>CAT" — large outlined glowing text
+          Built from THREE.js line segments (custom pixel font)
+       ══════════════════════════════════════════════ */
+    var textGroup = new T.Group();
+    constellationGroup.add(textGroup);
+
+    // Each glyph: list of polylines (arrays of [x,y] normalised 0..1 coords)
+    // Grid is 4 wide x 6 tall per cell
+    var FONT = {
+      'A': [[[1,0],[0,3],[0,5],[4,5],[4,3],[3,0]],[[0,3],[4,3]]],
+      'N': [[[0,0],[0,5],[3,5],[4,4],[4,0]],[[0,0],[4,0]]],
+      'T': [[[0,5],[4,5]],[[2,5],[2,0]]],
+      '>': [[[0,5],[4,3],[0,1]]],
+      'C': [[[4,5],[0,5],[0,0],[4,0]]],
+      'A2':[[[1,0],[0,3],[0,5],[4,5],[4,3],[3,0]],[[0,3],[4,3]]],
+      'T2':[[[0,5],[4,5]],[[2,5],[2,0]]],
+    };
+
+    // Simpler: use stroke font paths via line segments
+    // Each letter defined as list of [x0,y0,x1,y1] segments in a 0-1 unit square
+    var STROKES = {
+      'A': [[0,0, 0.5,1],[0.5,1, 1,0],[0.25,0.5, 0.75,0.5]],
+      'N': [[0,0, 0,1],[0,1, 1,0],[1,0, 1,1]],
+      'T': [[0,1, 1,1],[0.5,1, 0.5,0]],
+      '>': [[0,1, 1,0.5],[1,0.5, 0,0]],
+      'C': [[1,0.85, 0.5,1],[0.5,1, 0,0.75],[0,0.75, 0,0.25],[0,0.25, 0.5,0],[0.5,0, 1,0.15]],
+    };
+
+    var TEXT = 'ANT>CAT';
+    var GW   = 2.8;   // glyph width in world units
+    var GH   = 4.2;   // glyph height
+    var GAP  = 0.5;
+    var totalW = TEXT.length * (GW + GAP) - GAP;
+
+    var glowMat  = new T.LineBasicMaterial({ color: 0x00ffcc, linewidth: 1 });
+    var glowMat2 = new T.LineBasicMaterial({ color: 0x80ffee, transparent: true, opacity: 0.4 });
+
+    TEXT.split('').forEach(function(ch, ci) {
+      var strokes = STROKES[ch === 'C' && ci > 2 ? 'C' : ch] || STROKES['A'];
+      var ox = -totalW / 2 + ci * (GW + GAP);
+      strokes.forEach(function(seg) {
+        var pts = [
+          new T.Vector3(ox + seg[0]*GW, seg[1]*GH, 0),
+          new T.Vector3(ox + seg[2]*GW, seg[3]*GH, 0),
+        ];
+        var geo = new T.BufferGeometry().setFromPoints(pts);
+        textGroup.add(new T.Line(geo, glowMat));
+        // Duplicate with slight offset for glow thickness
+        var pts2 = [
+          new T.Vector3(ox + seg[0]*GW, seg[1]*GH, 0.05),
+          new T.Vector3(ox + seg[2]*GW, seg[3]*GH, 0.05),
+        ];
+        var geo2 = new T.BufferGeometry().setFromPoints(pts2);
+        textGroup.add(new T.Line(geo2, glowMat2));
       });
     });
 
-    // 3. Fade overlay to black a bit after zoom starts
-    setTimeout(function () {
-      overlay.classList.add('fading');
-    }, 600);
+    // Position text in upper-center of scene, above constellation
+    textGroup.position.set(-0.3, 7.5, 1);
+    textGroup.scale.setScalar(1.0);
 
-    // 4. Navigate once black
-    setTimeout(function () {
-      window.location.href = href;
-    }, 1100);
-  }
+    /* ══════════════════════════════════════════════
+       6. STARS — sparse, in upper half
+       ══════════════════════════════════════════════ */
+    (function() {
+      var sGeo = new T.BufferGeometry();
+      var sPos = [];
+      for (var i = 0; i < 600; i++) {
+        sPos.push(
+          (Math.random()-0.5)*120,
+          Math.random()*30 + 2,
+          (Math.random()-0.5)*60 - 20
+        );
+      }
+      sGeo.setAttribute('position', new T.Float32BufferAttribute(sPos, 3));
+      scene.add(new T.Points(sGeo, new T.PointsMaterial({ color: 0xaaccff, size: 0.08, transparent: true, opacity: 0.7 })));
+    })();
 
-  // Attach to all nav links
-  var links = document.querySelectorAll('.nav-link');
-  links.forEach(function (link) {
-    link.addEventListener('click', function (e) {
-      e.preventDefault();
-      var href = link.getAttribute('href');
-      zoomTo(href);
+    /* ══════════════════════════════════════════════
+       7. AMBIENT LIGHT PARTICLES — floating cyan motes
+       ══════════════════════════════════════════════ */
+    var moteGeo = new T.BufferGeometry();
+    var moteN   = 80;
+    var motePos = new Float32Array(moteN * 3);
+    var moteVel = new Float32Array(moteN * 3);
+    for (var m = 0; m < moteN; m++) {
+      motePos[m*3]   = (Math.random()-0.5)*30;
+      motePos[m*3+1] = Math.random()*14 + 1;
+      motePos[m*3+2] = (Math.random()-0.5)*15;
+      moteVel[m*3]   = (Math.random()-0.5)*0.012;
+      moteVel[m*3+1] = Math.random()*0.006 + 0.002;
+      moteVel[m*3+2] = (Math.random()-0.5)*0.006;
+    }
+    moteGeo.setAttribute('position', new T.BufferAttribute(motePos, 3));
+    scene.add(new T.Points(moteGeo, new T.PointsMaterial({ color: 0x00ddcc, size: 0.07, transparent: true, opacity: 0.55 })));
+
+    /* ══════════════════════════════════════════════
+       8. RESIZE
+       ══════════════════════════════════════════════ */
+    window.addEventListener('resize', function() {
+      W = window.innerWidth; H = window.innerHeight;
+      renderer.setSize(W, H);
+      camera.aspect = W / H;
+      camera.updateProjectionMatrix();
     });
-  });
+
+    /* ══════════════════════════════════════════════
+       9. ANIMATION LOOP
+       ══════════════════════════════════════════════ */
+    var smx = 0, smy = 0; // smoothed mouse
+    var t = 0;
+
+    (function loop() {
+      requestAnimationFrame(loop);
+      t += 0.016;
+
+      // Smooth mouse
+      smx += (mx - smx) * 0.05;
+      smy += (my - smy) * 0.05;
+
+      // Parallax — constellation tilts opposite to mouse
+      constellationGroup.rotation.y = smx * 0.12;
+      constellationGroup.rotation.x = -smy * 0.07;
+
+      // Camera very slight drift following mouse
+      camera.position.x = smx * 0.8;
+      camera.position.y = 2 - smy * 0.4;
+      camera.lookAt(0, 6, 0);
+
+      // Net glow pulse
+      netMat.opacity = 0.28 + 0.12 * Math.sin(t * 0.8);
+      nodeMat.opacity = 0.7 + 0.3 * Math.sin(t * 1.2);
+
+      // Text glow pulse
+      glowMat.color.setHSL(0.47 + 0.02*Math.sin(t*0.5), 1, 0.6 + 0.1*Math.sin(t*1.1));
+
+      // Eyeball pulse
+      [eye1, eye2].forEach(function(eye, ei) {
+        var ph = t * 1.4 + ei * 1.2;
+        eye.userData.halo.material.opacity = 0.15 + 0.18 * Math.abs(Math.sin(ph));
+        var sc = 1 + 0.08 * Math.sin(ph);
+        eye.userData.iris.scale.setScalar(sc);
+        eye.userData.iris.material.color.setHSL(0.58, 1, 0.45 + 0.12 * Math.sin(ph));
+      });
+
+      // Mote drift
+      for (var mi = 0; mi < moteN; mi++) {
+        motePos[mi*3]   += moteVel[mi*3];
+        motePos[mi*3+1] += moteVel[mi*3+1];
+        motePos[mi*3+2] += moteVel[mi*3+2];
+        if (motePos[mi*3+1] > 16) motePos[mi*3+1] = 1;
+      }
+      moteGeo.attributes.position.needsUpdate = true;
+
+      // Update bg shader time
+      bgMat.uniforms.uTime.value = t;
+
+      renderer.render(scene, camera);
+    })();
+  }
 
 })();
 </script>
