@@ -9,7 +9,7 @@
   <title>ant.cat</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
+    html, body { width: 100%; height: 100%; max-height: 100%; overflow: hidden; background: #000; position: fixed; }
     #c { display: block; width: 100%; height: 100%; }
     #ui {
       position: fixed; inset: 0; z-index: 10;
@@ -261,9 +261,11 @@
     // TV screen center — fixed % of screen, matches hero photo
     // TV is roughly 50% across, 55% down
     function tvScreenPos(){
+      var portrait = window.innerHeight > window.innerWidth;
+      // In portrait, photo crops to show more of the top, so TV sits higher
       return {
         x: window.innerWidth  * 0.515,
-        y: window.innerHeight * 0.40
+        y: window.innerHeight * (portrait ? 0.52 : 0.40)
       };
     }
 
