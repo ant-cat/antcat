@@ -108,9 +108,9 @@
 
     var scene = new T.Scene();
     var isPortrait = window.innerHeight > window.innerWidth;
-    var baseFov = isPortrait ? 72 : 55;
+    var baseFov = isPortrait ? 82 : 55;
     var camera = new T.PerspectiveCamera(baseFov, window.innerWidth/window.innerHeight, 0.1, 100);
-    var camZ = isPortrait ? 12 : 10;
+    var camZ = isPortrait ? 14.5 : 10;
     camera.position.set(0,2,camZ);
     camera.lookAt(0,1,0);
 
@@ -191,7 +191,8 @@
     var totalW=CHARS.length*GW+(CHARS.length-1)*GAP;
 
     var tGroup=new T.Group();
-    tGroup.position.set(0,3.4,0);
+    var portrait0 = window.innerHeight > window.innerWidth;
+    tGroup.position.set(0, portrait0 ? 2.8 : 3.4, 0);
     scene.add(tGroup);
 
     // Build glyph meshes — all start at opacity 0, animate together
@@ -362,11 +363,12 @@
 
     window.addEventListener('resize',function(){
       var port = window.innerHeight > window.innerWidth;
-      camera.fov = port ? 72 : 55;
+      camera.fov = port ? 82 : 55;
       camera.aspect=window.innerWidth/window.innerHeight;
       camera.updateProjectionMatrix();
-      camZ = port ? 12 : 10;
+      camZ = port ? 14.5 : 10;
       camera.position.z = camZ;
+      tGroup.position.y = port ? 2.8 : 3.4;
       renderer.setSize(window.innerWidth,window.innerHeight);
       resizeBeamCanvas();
     });
@@ -390,7 +392,8 @@
       camera.lookAt(0,1,0);
 
       // Title float — also update tGroup.position.y for worldToScreen
-      var floatY = 3.4 + Math.sin(t*0.4)*0.06;
+      var baseY = (window.innerHeight > window.innerWidth) ? 2.8 : 3.4;
+      var floatY = baseY + Math.sin(t*0.4)*0.06;
       tGroup.position.y = floatY;
 
       // Global intro fade + continuous pulse
