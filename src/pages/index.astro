@@ -66,6 +66,7 @@
       clip-path: circle(0px at 51.5% 40%);
     }
     /* photo drains to near-grey as wave expands */
+    /* photo pre-drained inline on click — cartoonize just keeps it that way */
     #zoom-layer.cartoonize #zoom-photo { filter: saturate(0.05) brightness(1.15); }
     /* both images zoom together */
     #zoom-layer.zooming #zoom-photo,
@@ -233,6 +234,10 @@
         var tvx=tv.x, tvy=tv.y;
         var maxR=Math.sqrt(Math.max(tvx,window.innerWidth-tvx)*Math.max(tvx,window.innerWidth-tvx)+Math.max(tvy,window.innerHeight-tvy)*Math.max(tvy,window.innerHeight-tvy))*1.05;
 
+        // Pre-drain the photo immediately so it matches the dark hero on-screen look
+        photo.style.transition='none';
+        photo.style.filter='saturate(0.05) brightness(1.15)';
+
         // Start illustrated fully clipped at TV point — wave expands this outward
         illus.style.transition='none';
         illus.style.clipPath='circle(0px at '+tvx+'px '+tvy+'px)';
@@ -290,7 +295,7 @@
         }
         requestAnimationFrame(drawIris);
 
-        // 400ms: cartoonize — photo drains to grey, scanlines fade in
+        // 400ms: cartoonize — scanlines fade in (photo already pre-drained)
         setTimeout(function(){ layer.classList.add('cartoonize'); }, 400);
 
         // 2600ms: wave has filled screen — zoom punch into TV origin
