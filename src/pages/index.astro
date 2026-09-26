@@ -67,7 +67,7 @@
     }
     #zoom-layer.cartoonize #zoom-photo { filter: saturate(0) brightness(1.4); }
     #zoom-layer.zooming #zoom-photo, #zoom-layer.zooming #zoom-illustrated { transform: scale(18); }
-    #zoom-glitch { position: absolute; inset: 0; background: #fff; opacity: 0; pointer-events: none; mix-blend-mode: screen; }
+    #zoom-glitch { position: absolute; inset: 0; background: #000; opacity: 0; pointer-events: none; mix-blend-mode: multiply; }
     #zoom-scanlines {
       position: absolute; inset: 0; pointer-events: none; opacity: 0;
       background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,255,180,0.06) 3px, rgba(0,255,180,0.06) 4px);
@@ -214,15 +214,12 @@
         illus.style.transformOrigin=xPct+' '+yPct;
         // Show layer
         layer.classList.add('active');
-        // Phase 1: glitch flashes (0-800ms) — slow TV interference
-        var flashCount=0,maxFlash=7;
-        function flash(){
-          glitch.style.opacity=(flashCount%2===0)?'0.75':'0';
-          flashCount++;
-          if(flashCount<maxFlash*2) setTimeout(flash, 55+flashCount*12);
-          else glitch.style.opacity='0';
-        }
-        flash();
+        // Phase 1: 2 gentle dark dips (0-600ms) — seizure-safe
+        glitch.style.transition='opacity 0.18s ease';
+        setTimeout(function(){ glitch.style.opacity='0.7'; }, 0);
+        setTimeout(function(){ glitch.style.opacity='0'; }, 200);
+        setTimeout(function(){ glitch.style.opacity='0.6'; }, 420);
+        setTimeout(function(){ glitch.style.opacity='0'; }, 620);
         // Phase 2: cartoonize — desaturate photo, fade in illustrated over 2s (800ms)
         setTimeout(function(){ layer.classList.add('cartoonize'); illus.style.opacity='1'; }, 800);
         // Phase 3: zoom into TV (2800ms — after 2s conversion)
