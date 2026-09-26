@@ -1223,6 +1223,13 @@ declare module 'astro:content' {
   collection: "blog";
   data: InferEntrySchema<"blog">
 } & { render(): Render[".md"] };
+"2026-09-22-baby-is-a-go.md": {
+	id: "2026-09-22-baby-is-a-go.md";
+  slug: "2026-09-22-baby-is-a-go";
+  body: string;
+  collection: "blog";
+  data: InferEntrySchema<"blog">
+} & { render(): Render[".md"] };
 };
 
 	};
