@@ -1,529 +1,341 @@
 ---
-// ant.cat — immersive Three.js splash
+// ant.cat — immersive Three.js splash v2
 ---
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="ant.cat — Anthony Catanese" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>ant.cat</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap" />
-  <link rel="icon" type="image/png" href="/favicon.png" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
+    #c { display: block; width: 100%; height: 100%; }
+
+    #ui {
+      position: fixed; inset: 0; z-index: 10;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: flex-end;
+      padding-bottom: 8vh;
+      pointer-events: none;
+    }
+    #brand {
+      font-family: 'Courier New', monospace;
+      font-size: clamp(0.75rem, 1.5vw, 1rem);
+      letter-spacing: 0.25em;
+      color: rgba(180,220,255,0.55);
+      text-transform: uppercase;
+      margin-bottom: 2.5rem;
+    }
+    #brand em { font-style: normal; color: rgba(0,255,200,0.6); }
+
+    #pills {
+      display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;
+      margin-bottom: 1.5rem;
+      pointer-events: all;
+    }
+    .pill {
+      font-family: 'Courier New', monospace;
+      font-size: clamp(0.7rem, 1.4vw, 0.85rem);
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(0,255,200,0.85);
+      border: 1px solid rgba(0,255,200,0.35);
+      padding: 0.45em 1.1em;
+      border-radius: 2em;
+      text-decoration: none;
+      background: rgba(0,20,30,0.45);
+      backdrop-filter: blur(6px);
+      transition: background 0.2s, color 0.2s, border-color 0.2s, box-shadow 0.2s;
+      cursor: pointer;
+    }
+    .pill:hover {
+      background: rgba(0,255,200,0.12);
+      border-color: rgba(0,255,200,0.85);
+      color: #fff;
+      box-shadow: 0 0 18px rgba(0,255,200,0.35);
+    }
+    #tagline {
+      font-family: 'Courier New', monospace;
+      font-size: clamp(0.6rem, 1.1vw, 0.75rem);
+      letter-spacing: 0.15em;
+      color: rgba(180,220,255,0.3);
+      text-transform: uppercase;
+    }
+
+    /* Zoom transition layer */
+    #zoom-layer {
+      position: fixed; inset: 0; z-index: 50;
+      pointer-events: none; overflow: hidden; opacity: 0;
+    }
+    #zoom-layer.active { pointer-events: all; }
+    #zoom-img {
+      position: absolute; inset: 0; width: 100%; height: 100%;
+      object-fit: cover; object-position: center 40%;
+      transform-origin: 50% 48%;
+      transform: scale(1);
+      transition: transform 1.05s cubic-bezier(0.25,0.46,0.45,0.94);
+    }
+    #zoom-layer.active #zoom-img { transform: scale(14); }
+    #zoom-fade {
+      position: absolute; inset: 0; background: #000;
+      opacity: 0; transition: opacity 0.4s ease 0.6s;
+    }
+    #zoom-layer.active #zoom-fade { opacity: 1; }
+  </style>
 </head>
 <body>
-
-  <!-- WebGL canvas behind everything -->
   <canvas id="c"></canvas>
-
-  <!-- HTML overlay: nav pills + brand -->
   <div id="ui">
     <div id="brand">ant.cat <em>lab</em></div>
-
     <nav id="pills">
       <a class="pill" id="pill-mg" href="/writing">Mind Grapes</a>
       <a class="pill" href="/about">About</a>
       <a class="pill" href="/now">Now</a>
       <a class="pill" href="/experiments">Experiments</a>
     </nav>
-
     <div id="tagline">Built this for me, but you can read it too.</div>
   </div>
 
-  <!-- Black fade overlay for nav transitions -->
-  <div id="fade"></div>
+  <div id="zoom-layer">
+    <img id="zoom-img" src="/images/hero.png" alt="" />
+    <div id="zoom-fade"></div>
+  </div>
 
-</body>
-</html>
+  <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script is:inline>
+  (function(){
+    var T = THREE;
 
-<style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  html, body { width: 100%; height: 100%; overflow: hidden; background: #050810; }
-
-  /* Canvas fills 100vh */
-  #c {
-    position: fixed;
-    inset: 0;
-    width: 100vw;
-    height: 100vh;
-    display: block;
-  }
-
-  /* UI layer */
-  #ui {
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    z-index: 10;
-  }
-
-  #brand {
-    position: absolute;
-    top: 24px; left: 28px;
-    font-family: 'Inter', monospace;
-    font-size: 0.75rem;
-    font-weight: 500;
-    letter-spacing: 0.08em;
-    color: rgba(255,255,255,0.75);
-    text-shadow: 0 0 12px rgba(0,220,200,0.4);
-    pointer-events: all;
-  }
-  #brand em { font-style: normal; color: rgba(255,255,255,0.35); }
-
-  /* Nav pills positioned at mid-screen, two rows */
-  #pills {
-    position: absolute;
-    top: 52%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    display: grid;
-    grid-template-columns: auto auto;
-    gap: 14px 20px;
-    align-items: center;
-    justify-items: center;
-    pointer-events: all;
-  }
-
-  .pill {
-    display: inline-block;
-    padding: 10px 26px;
-    border: 1.5px solid rgba(0, 220, 190, 0.55);
-    border-radius: 6px;
-    background: rgba(0, 30, 40, 0.35);
-    backdrop-filter: blur(8px);
-    color: rgba(255,255,255,0.88);
-    font-family: 'Inter', sans-serif;
-    font-size: 0.88rem;
-    font-weight: 400;
-    letter-spacing: 0.04em;
-    text-decoration: none;
-    white-space: nowrap;
-    cursor: pointer;
-    transition: background 0.2s, border-color 0.2s, box-shadow 0.2s, color 0.2s;
-    position: relative;
-    clip-path: polygon(8px 0%, calc(100% - 8px) 0%, 100% 50%, calc(100% - 8px) 100%, 8px 100%, 0% 50%);
-  }
-
-  .pill:hover,
-  .pill.pulsing {
-    background: rgba(0, 200, 180, 0.18);
-    border-color: rgba(0, 255, 220, 0.9);
-    color: #fff;
-    box-shadow:
-      0 0 18px rgba(0, 255, 210, 0.5),
-      0 0 40px rgba(0, 200, 180, 0.2),
-      inset 0 0 12px rgba(0, 255, 210, 0.08);
-  }
-
-  /* Mind Grapes is top-left, bigger */
-  #pill-mg {
-    font-size: 1rem;
-    padding: 12px 32px;
-  }
-
-  #tagline {
-    position: absolute;
-    bottom: 24px; left: 28px;
-    font-family: 'Inter', sans-serif;
-    font-size: 0.65rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: rgba(255,255,255,0.35);
-    pointer-events: none;
-  }
-
-  /* Fade overlay */
-  #fade {
-    position: fixed;
-    inset: 0;
-    background: #000;
-    opacity: 0;
-    pointer-events: none;
-    z-index: 100;
-    transition: opacity 0.5s ease;
-  }
-  #fade.on { opacity: 1; pointer-events: all; }
-</style>
-
-<script is:inline>
-(function () {
-  /* ── Load Three.js then boot ── */
-  var s = document.createElement('script');
-  s.src = 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js';
-  s.onload = boot;
-  document.head.appendChild(s);
-
-  /* ── Mouse tracking ── */
-  var mx = 0, my = 0;   // normalised -1..1
-  window.addEventListener('mousemove', function(e) {
-    mx = (e.clientX / window.innerWidth  - 0.5) * 2;
-    my = (e.clientY / window.innerHeight - 0.5) * 2;
-  });
-
-  /* ── Nav: zoom-to-TV on click ── */
-  document.querySelectorAll('.pill').forEach(function(pill) {
-    pill.addEventListener('click', function(e) {
-      e.preventDefault();
-      var href = pill.getAttribute('href');
-      var fade = document.getElementById('fade');
-      fade.classList.add('on');
-      setTimeout(function() { window.location.href = href; }, 550);
-    });
-  });
-
-  /* ── Mind Grapes pulse on hover ── */
-  var mg = document.getElementById('pill-mg');
-  mg.addEventListener('mouseenter', function() { mg.classList.add('pulsing'); });
-  mg.addEventListener('mouseleave', function() { mg.classList.remove('pulsing'); });
-
-  function boot() {
-    var T   = window.THREE;
-    var cnv = document.getElementById('c');
-    var W   = window.innerWidth, H = window.innerHeight;
-
-    /* ── Renderer ── */
-    var renderer = new T.WebGLRenderer({ canvas: cnv, antialias: true });
+    // ── Scene ────────────────────────────────────────────────────
+    var renderer = new T.WebGLRenderer({ canvas: document.getElementById('c'), antialias: true });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    renderer.setSize(W, H);
-    renderer.shadowMap.enabled = false;
-    renderer.setClearColor(0x030608, 1);
+    renderer.setSize(window.innerWidth, window.innerHeight);
 
-    /* ── Scene & Camera ── */
-    var scene  = new T.Scene();
-    var camera = new T.PerspectiveCamera(60, W / H, 0.1, 500);
-    camera.position.set(0, 2, 28);
-    camera.lookAt(0, 4, 0);
+    var scene = new T.Scene();
+    var camera = new T.PerspectiveCamera(55, window.innerWidth/window.innerHeight, 0.1, 100);
+    camera.position.set(0, 2, 10);
+    camera.lookAt(0, 1, 0);
 
-    /* ══════════════════════════════════════════════
-       1. BACKGROUND — hero photo with twilight grade
-       ══════════════════════════════════════════════ */
-    var bgLoader  = new T.TextureLoader();
-    var bgTex     = bgLoader.load('/images/hero.png');
-    bgTex.minFilter = T.LinearFilter;
-
-    // Fullscreen background quad
-    var bgGeo  = new T.PlaneGeometry(2, 2);
-    var bgMat  = new T.ShaderMaterial({
-      uniforms: {
-        uTex:    { value: bgTex },
-        uTime:   { value: 0 },
-      },
-      vertexShader: `
-        varying vec2 vUv;
-        void main() {
-          vUv = uv;
-          gl_Position = vec4(position.xy, 0.999, 1.0);
-        }
-      `,
-      fragmentShader: `
-        uniform sampler2D uTex;
-        uniform float uTime;
-        varying vec2 vUv;
-
-        vec3 twilightGrade(vec3 c) {
-          // Desaturate slightly
-          float lum = dot(c, vec3(0.299, 0.587, 0.114));
-          c = mix(vec3(lum), c, 0.75);
-          // Deep blue sky tint in upper half
-          float skyMask = smoothstep(0.35, 0.85, vUv.y);
-          vec3 skyColor = vec3(0.04, 0.06, 0.18);
-          c = mix(c, skyColor, skyMask * 0.72);
-          // Warm amber at horizon
-          float horizMask = (1.0 - abs(vUv.y - 0.42) / 0.22);
-          horizMask = clamp(horizMask, 0.0, 1.0);
-          vec3 amber = vec3(0.55, 0.28, 0.04);
-          c = mix(c, c + amber * 0.18, horizMask * 0.6);
-          // Overall darken
-          c *= 0.52;
-          // Subtle vignette
-          vec2 uv2 = vUv * 2.0 - 1.0;
-          float vig = 1.0 - dot(uv2 * vec2(0.5, 0.7), uv2 * vec2(0.5, 0.7));
-          c *= clamp(vig, 0.3, 1.0);
-          return c;
-        }
-
-        void main() {
-          // Correct aspect for cover behaviour
-          vec2 uv = vUv;
-          gl_FragColor = vec4(twilightGrade(texture2D(uTex, uv).rgb), 1.0);
-        }
-      `,
-      depthTest: false,
-      depthWrite: false,
-    });
-    var bgMesh = new T.Mesh(bgGeo, bgMat);
-    bgMesh.renderOrder = -1;
-    scene.add(bgMesh);
-
-    /* ══════════════════════════════════════════════
-       2. EYEBALL GLOW — top-right of scene
-          The real eyeballs live at ~80% x, 25% y in photo.
-          We add a pulsing sphere glow at that approximate world pos.
-       ══════════════════════════════════════════════ */
-    function makeEyeGlow(x, y, z) {
-      var g = new T.Group();
-
-      // Core white sphere
-      var cGeo = new T.SphereGeometry(0.35, 16, 16);
-      var cMat = new T.MeshBasicMaterial({ color: 0xffffff });
-      g.add(new T.Mesh(cGeo, cMat));
-
-      // Iris — blue
-      var iGeo = new T.SphereGeometry(0.18, 16, 16);
-      var iMat = new T.MeshBasicMaterial({ color: 0x1090ff });
-      var iris = new T.Mesh(iGeo, iMat);
-      iris.position.z = 0.22;
-      g.add(iris);
-
-      // Glow halo (additive sprite-like ring)
-      var hGeo = new T.RingGeometry(0.45, 1.1, 32);
-      var hMat = new T.MeshBasicMaterial({ color: 0x0066ff, transparent: true, opacity: 0.25, side: T.DoubleSide });
-      var halo = new T.Mesh(hGeo, hMat);
-      halo.position.z = -0.1;
-      g.add(halo);
-      g.userData.halo = halo;
-      g.userData.iris = iris;
-
-      g.position.set(x, y, z);
-      g.lookAt(camera.position);
-      scene.add(g);
-      return g;
-    }
-
-    var eye1 = makeEyeGlow( 9.5, 5.2, -4);
-    var eye2 = makeEyeGlow(11.2, 4.4, -4);
-
-    /* ══════════════════════════════════════════════
-       3. TV LIGHT BEAM — projects upward from TV position
-       ══════════════════════════════════════════════ */
-    (function() {
-      var bGeo = new T.CylinderGeometry(0.05, 1.8, 14, 16, 1, true);
-      var bMat = new T.MeshBasicMaterial({
-        color: 0x40ffee,
-        transparent: true,
-        opacity: 0.06,
-        side: T.DoubleSide,
-        depthWrite: false,
+    // ── Background hero photo with GLSL twilight shader ──────────
+    var loader = new T.TextureLoader();
+    loader.load('/images/hero.png', function(tex) {
+      tex.minFilter = T.LinearFilter;
+      var bgGeo = new T.PlaneGeometry(2, 2);
+      var bgMat = new T.ShaderMaterial({
+        uniforms: { uTex: { value: tex } },
+        vertexShader: [
+          'varying vec2 vUv;',
+          'void main(){ vUv=uv; gl_Position=vec4(position,1.0); }'
+        ].join('\n'),
+        fragmentShader: [
+          'uniform sampler2D uTex;',
+          'varying vec2 vUv;',
+          'void main(){',
+          '  vec3 c = texture2D(uTex, vUv).rgb;',
+          '  float lum = dot(c, vec3(0.299,0.587,0.114));',
+          '  c = mix(vec3(lum), c, 0.68);',
+          '  float sky = smoothstep(0.28, 0.92, vUv.y);',
+          '  c = mix(c, vec3(0.03,0.05,0.17), sky * 0.82);',
+          '  float hor = 1.0 - clamp(abs(vUv.y-0.36)/0.16, 0.0, 1.0);',
+          '  c += vec3(0.42,0.18,0.02) * hor * 0.38;',
+          '  c *= 0.46;',
+          '  vec2 uv2 = vUv*2.0-1.0;',
+          '  float vig = 1.0 - dot(uv2*vec2(0.5,0.62), uv2*vec2(0.5,0.62));',
+          '  c *= clamp(vig, 0.22, 1.0);',
+          '  gl_FragColor = vec4(c, 1.0);',
+          '}'
+        ].join('\n'),
+        depthTest: false, depthWrite: false
       });
-      var beam = new T.Mesh(bGeo, bMat);
-      beam.position.set(0.3, 8, -2);
-      scene.add(beam);
-    })();
+      var bgMesh = new T.Mesh(bgGeo, bgMat);
+      bgMesh.renderOrder = -1;
+      scene.add(bgMesh);
+    });
 
-    /* ══════════════════════════════════════════════
-       4. CONSTELLATION MESH — geodesic dome above scene
-       ══════════════════════════════════════════════ */
-    var constellationGroup = new T.Group();
-    scene.add(constellationGroup);
+    // ── Constellation (geodesic, upper hemisphere) ────────────────
+    var cGroup = new T.Group();
+    scene.add(cGroup);
 
-    // Build a sphere geometry then keep only upper hemisphere edges
-    var icoGeo  = new T.IcosahedronGeometry(8, 2);
-    var icoPos  = icoGeo.attributes.position;
+    var icoGeo = new T.IcosahedronGeometry(7.5, 2);
+    var pos = icoGeo.attributes.position;
+    var edgeSet = new Set();
     var edgePts = [];
-    var idxArr  = icoGeo.index ? icoGeo.index.array : null;
-    var triCount = idxArr ? idxArr.length / 3 : icoPos.count / 3;
+    var nodePts = [];
 
-    for (var t = 0; t < triCount; t++) {
-      var ai = idxArr ? idxArr[t*3]   : t*3;
-      var bi = idxArr ? idxArr[t*3+1] : t*3+1;
-      var ci = idxArr ? idxArr[t*3+2] : t*3+2;
-      var pts = [ai, bi, ci, ai].map(function(i) {
-        return new T.Vector3(icoPos.getX(i), icoPos.getY(i), icoPos.getZ(i));
-      });
-      // Only keep if at least one vertex is above y=0
-      if (pts.some(function(p){ return p.y > -1; })) {
-        for (var e = 0; e < 3; e++) {
-          edgePts.push(pts[e].x, pts[e].y, pts[e].z);
-          edgePts.push(pts[e+1].x, pts[e+1].y, pts[e+1].z);
+    for (var i = 0; i < pos.count; i += 3) {
+      var tri = [i, i+1, i+2];
+      for (var e = 0; e < 3; e++) {
+        var a = tri[e], b = tri[(e+1)%3];
+        var ay = pos.getY(a), by = pos.getY(b);
+        if (ay < 0 && by < 0) continue;
+        var key = [Math.min(a,b), Math.max(a,b)].join('_');
+        if (!edgeSet.has(key)) {
+          edgeSet.add(key);
+          edgePts.push(new T.Vector3(pos.getX(a),pos.getY(a),pos.getZ(a)));
+          edgePts.push(new T.Vector3(pos.getX(b),pos.getY(b),pos.getZ(b)));
+        }
+      }
+      for (var v = 0; v < 3; v++) {
+        if (pos.getY(tri[v]) >= 0) {
+          nodePts.push(new T.Vector3(pos.getX(tri[v]),pos.getY(tri[v]),pos.getZ(tri[v])));
         }
       }
     }
 
-    var netGeo = new T.BufferGeometry();
-    netGeo.setAttribute('position', new T.Float32BufferAttribute(edgePts, 3));
-    var netMat = new T.LineBasicMaterial({ color: 0x00ddc0, transparent: true, opacity: 0.35 });
-    var netMesh = new T.LineSegments(netGeo, netMat);
-    netMesh.position.set(0, 3, -1);
-    constellationGroup.add(netMesh);
+    var edgeGeo = new T.BufferGeometry().setFromPoints(edgePts);
+    cGroup.add(new T.LineSegments(edgeGeo, new T.LineBasicMaterial({
+      color: 0x1a4060, transparent: true, opacity: 0.45
+    })));
 
-    // Node dots at icosahedron vertices
-    var uniqueVerts = [];
-    var seen = {};
-    for (var vi = 0; vi < icoPos.count; vi++) {
-      var vx = icoPos.getX(vi), vy = icoPos.getY(vi), vz = icoPos.getZ(vi);
-      var key = Math.round(vx*10)+','+Math.round(vy*10)+','+Math.round(vz*10);
-      if (!seen[key] && vy > -2) { seen[key]=1; uniqueVerts.push(vx,vy,vz); }
-    }
-    var nodeGeo = new T.BufferGeometry();
-    nodeGeo.setAttribute('position', new T.Float32BufferAttribute(uniqueVerts, 3));
-    var nodeMat = new T.PointsMaterial({ color: 0x00ffee, size: 0.18, transparent: true, opacity: 0.9 });
-    var nodes   = new T.Points(nodeGeo, nodeMat);
-    nodes.position.copy(netMesh.position);
-    constellationGroup.add(nodes);
+    var nodeGeo = new T.BufferGeometry().setFromPoints(nodePts);
+    cGroup.add(new T.Points(nodeGeo, new T.PointsMaterial({
+      color: 0x4488cc, size: 0.12, sizeAttenuation: true
+    })));
 
-    /* ══════════════════════════════════════════════
-       5. "ANT>CAT" — large outlined glowing text
-          Built from THREE.js line segments (custom pixel font)
-       ══════════════════════════════════════════════ */
-    var textGroup = new T.Group();
-    constellationGroup.add(textGroup);
+    cGroup.position.set(0, -2, 0);
 
-    // Each glyph: list of polylines (arrays of [x,y] normalised 0..1 coords)
-    // Grid is 4 wide x 6 tall per cell
-    var FONT = {
-      'A': [[[1,0],[0,3],[0,5],[4,5],[4,3],[3,0]],[[0,3],[4,3]]],
-      'N': [[[0,0],[0,5],[3,5],[4,4],[4,0]],[[0,0],[4,0]]],
-      'T': [[[0,5],[4,5]],[[2,5],[2,0]]],
-      '>': [[[0,5],[4,3],[0,1]]],
-      'C': [[[4,5],[0,5],[0,0],[4,0]]],
-      'A2':[[[1,0],[0,3],[0,5],[4,5],[4,3],[3,0]],[[0,3],[4,3]]],
-      'T2':[[[0,5],[4,5]],[[2,5],[2,0]]],
-    };
-
-    // Simpler: use stroke font paths via line segments
-    // Each letter defined as list of [x0,y0,x1,y1] segments in a 0-1 unit square
+    // ── Stroke font glyphs ────────────────────────────────────────
+    // Each glyph = array of [x0,y0, x1,y1] in 0..1 unit grid
     var STROKES = {
-      'A': [[0,0, 0.5,1],[0.5,1, 1,0],[0.25,0.5, 0.75,0.5]],
-      'N': [[0,0, 0,1],[0,1, 1,0],[1,0, 1,1]],
-      'T': [[0,1, 1,1],[0.5,1, 0.5,0]],
-      '>': [[0,1, 1,0.5],[1,0.5, 0,0]],
-      'C': [[1,0.85, 0.5,1],[0.5,1, 0,0.75],[0,0.75, 0,0.25],[0,0.25, 0.5,0],[0.5,0, 1,0.15]],
+      "A": [[0,0, 0.5,1],[0.5,1, 1,0],[0.2,0.48, 0.8,0.48]],
+      "N": [[0,0, 0,1],[0,1, 1,0],[1,0, 1,1]],
+      "T": [[0,1, 1,1],[0.5,1, 0.5,0]],
+      ">": [[0,1, 1,0.5],[1,0.5, 0,0]],
+      "<": [[1,1, 0,0.5],[0,0.5, 1,0]],
+      "C": [[1,0.82, 0.55,1],[0.55,1, 0,0.75],[0,0.75, 0,0.25],[0,0.25, 0.55,0],[0.55,0, 1,0.18]]
     };
 
-    var TEXT = 'ANT>CAT';
-    var GW   = 2.8;   // glyph width in world units
-    var GH   = 4.2;   // glyph height
-    var GAP  = 0.5;
-    var totalW = TEXT.length * (GW + GAP) - GAP;
+    // ── Multi-layer glow materials ────────────────────────────────
+    var glowLayers = [
+      { color:0x00ffdd, opacity:1.0,  dz: 0    },
+      { color:0x00ffcc, opacity:0.55, dz: 0.07 },
+      { color:0x00ccaa, opacity:0.28, dz: 0.18 },
+      { color:0x009988, opacity:0.12, dz: 0.38 },
+    ];
 
-    var glowMat  = new T.LineBasicMaterial({ color: 0x00ffcc, linewidth: 1 });
-    var glowMat2 = new T.LineBasicMaterial({ color: 0x80ffee, transparent: true, opacity: 0.4 });
+    // ── Build title group ─────────────────────────────────────────
+    var CHARS = ["A","N","T",">","<","C","A","T"];
+    var GW = 0.9, GH = 1.3, GAP = 0.18;
+    var totalW = CHARS.length * GW + (CHARS.length - 1) * GAP;
 
-    TEXT.split('').forEach(function(ch, ci) {
-      var strokes = STROKES[ch === 'C' && ci > 2 ? 'C' : ch] || STROKES['A'];
-      var ox = -totalW / 2 + ci * (GW + GAP);
-      strokes.forEach(function(seg) {
-        var pts = [
-          new T.Vector3(ox + seg[0]*GW, seg[1]*GH, 0),
-          new T.Vector3(ox + seg[2]*GW, seg[3]*GH, 0),
-        ];
+    var tGroup = new T.Group();
+    tGroup.position.set(0, 3.2, 0);
+    scene.add(tGroup);
+
+    CHARS.forEach(function(ch, ci) {
+      var segs = STROKES[ch];
+      if (!segs) return;
+      var ox = (-totalW/2 + ci*(GW+GAP));
+
+      glowLayers.forEach(function(gl) {
+        var pts = [];
+        segs.forEach(function(s) {
+          pts.push(new T.Vector3(ox + s[0]*GW, s[1]*GH, 0));
+          pts.push(new T.Vector3(ox + s[2]*GW, s[3]*GH, 0));
+        });
         var geo = new T.BufferGeometry().setFromPoints(pts);
-        textGroup.add(new T.Line(geo, glowMat));
-        // Duplicate with slight offset for glow thickness
-        var pts2 = [
-          new T.Vector3(ox + seg[0]*GW, seg[1]*GH, 0.05),
-          new T.Vector3(ox + seg[2]*GW, seg[3]*GH, 0.05),
-        ];
-        var geo2 = new T.BufferGeometry().setFromPoints(pts2);
-        textGroup.add(new T.Line(geo2, glowMat2));
+        // Forward layer
+        var matF = new T.LineBasicMaterial({
+          color: gl.color,
+          transparent: gl.opacity < 1,
+          opacity: gl.opacity
+        });
+        var meshF = new T.LineSegments(geo, matF);
+        meshF.position.z = gl.dz;
+        tGroup.add(meshF);
+        // Mirror layer
+        if (gl.dz > 0) {
+          var matB = new T.LineBasicMaterial({
+            color: gl.color, transparent: true, opacity: gl.opacity * 0.7
+          });
+          var meshB = new T.LineSegments(geo, matB);
+          meshB.position.z = -gl.dz;
+          tGroup.add(meshB);
+        }
       });
     });
 
-    // Position text in upper-center of scene, above constellation
-    textGroup.position.set(-0.3, 7.5, 1);
-    textGroup.scale.setScalar(1.0);
+    // ── Laser beams from TV position to each letter ───────────────
+    var TV = new T.Vector3(0.3, 1.0, -2);
+    var laserMats = [];
 
-    /* ══════════════════════════════════════════════
-       6. STARS — sparse, in upper half
-       ══════════════════════════════════════════════ */
-    (function() {
-      var sGeo = new T.BufferGeometry();
-      var sPos = [];
-      for (var i = 0; i < 600; i++) {
-        sPos.push(
-          (Math.random()-0.5)*120,
-          Math.random()*30 + 2,
-          (Math.random()-0.5)*60 - 20
-        );
-      }
-      sGeo.setAttribute('position', new T.Float32BufferAttribute(sPos, 3));
-      scene.add(new T.Points(sGeo, new T.PointsMaterial({ color: 0xaaccff, size: 0.08, transparent: true, opacity: 0.7 })));
-    })();
+    CHARS.forEach(function(ch, ci) {
+      var ox = (-totalW/2 + ci*(GW+GAP) + GW/2);
+      var target = new T.Vector3(
+        tGroup.position.x + ox,
+        tGroup.position.y + (GH/2),
+        tGroup.position.z
+      );
+      var geo = new T.BufferGeometry().setFromPoints([TV.clone(), target]);
+      var mat = new T.LineBasicMaterial({ color:0x00ffcc, transparent:true, opacity:0 });
+      var line = new T.Line(geo, mat);
+      scene.add(line);
+      laserMats.push(mat);
+    });
 
-    /* ══════════════════════════════════════════════
-       7. AMBIENT LIGHT PARTICLES — floating cyan motes
-       ══════════════════════════════════════════════ */
-    var moteGeo = new T.BufferGeometry();
-    var moteN   = 80;
-    var motePos = new Float32Array(moteN * 3);
-    var moteVel = new Float32Array(moteN * 3);
-    for (var m = 0; m < moteN; m++) {
-      motePos[m*3]   = (Math.random()-0.5)*30;
-      motePos[m*3+1] = Math.random()*14 + 1;
-      motePos[m*3+2] = (Math.random()-0.5)*15;
-      moteVel[m*3]   = (Math.random()-0.5)*0.012;
-      moteVel[m*3+1] = Math.random()*0.006 + 0.002;
-      moteVel[m*3+2] = (Math.random()-0.5)*0.006;
-    }
-    moteGeo.setAttribute('position', new T.BufferAttribute(motePos, 3));
-    scene.add(new T.Points(moteGeo, new T.PointsMaterial({ color: 0x00ddcc, size: 0.07, transparent: true, opacity: 0.55 })));
+    // ── Mouse parallax ───────────────────────────────────────────
+    var mx = 0, my = 0, smx = 0, smy = 0;
+    document.addEventListener('mousemove', function(e) {
+      mx = (e.clientX / window.innerWidth  - 0.5) * 2;
+      my = (e.clientY / window.innerHeight - 0.5) * 2;
+    });
 
-    /* ══════════════════════════════════════════════
-       8. RESIZE
-       ══════════════════════════════════════════════ */
+    // ── Zoom-to-TV click handler ──────────────────────────────────
+    document.querySelectorAll('.pill').forEach(function(pill) {
+      pill.addEventListener('click', function(e) {
+        e.preventDefault();
+        var href = pill.getAttribute('href');
+        var layer = document.getElementById('zoom-layer');
+        layer.style.opacity = '1';
+        layer.classList.add('active');
+        setTimeout(function(){ window.location.href = href; }, 1200);
+      });
+    });
+
+    // ── Resize ───────────────────────────────────────────────────
     window.addEventListener('resize', function() {
-      W = window.innerWidth; H = window.innerHeight;
-      renderer.setSize(W, H);
-      camera.aspect = W / H;
+      camera.aspect = window.innerWidth / window.innerHeight;
       camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
     });
 
-    /* ══════════════════════════════════════════════
-       9. ANIMATION LOOP
-       ══════════════════════════════════════════════ */
-    var smx = 0, smy = 0; // smoothed mouse
-    var t = 0;
+    // ── Animate ──────────────────────────────────────────────────
+    var clock = new T.Clock();
+    function animate() {
+      requestAnimationFrame(animate);
+      var t = clock.getElapsedTime();
 
-    (function loop() {
-      requestAnimationFrame(loop);
-      t += 0.016;
+      // Smooth parallax
+      smx += (mx - smx) * 0.06;
+      smy += (my - smy) * 0.06;
 
-      // Smooth mouse
-      smx += (mx - smx) * 0.05;
-      smy += (my - smy) * 0.05;
+      // Pronounced parallax
+      cGroup.rotation.y = smx * 0.32;
+      cGroup.rotation.x = -smy * 0.20;
+      camera.position.x = smx * 3.0;
+      camera.position.y = 2 - smy * 1.5;
+      camera.lookAt(0, 1, 0);
 
-      // Parallax — constellation tilts opposite to mouse
-      constellationGroup.rotation.y = smx * 0.12;
-      constellationGroup.rotation.x = -smy * 0.07;
-
-      // Camera very slight drift following mouse
-      camera.position.x = smx * 0.8;
-      camera.position.y = 2 - smy * 0.4;
-      camera.lookAt(0, 6, 0);
-
-      // Net glow pulse
-      netMat.opacity = 0.28 + 0.12 * Math.sin(t * 0.8);
-      nodeMat.opacity = 0.7 + 0.3 * Math.sin(t * 1.2);
-
-      // Text glow pulse
-      glowMat.color.setHSL(0.47 + 0.02*Math.sin(t*0.5), 1, 0.6 + 0.1*Math.sin(t*1.1));
-
-      // Eyeball pulse
-      [eye1, eye2].forEach(function(eye, ei) {
-        var ph = t * 1.4 + ei * 1.2;
-        eye.userData.halo.material.opacity = 0.15 + 0.18 * Math.abs(Math.sin(ph));
-        var sc = 1 + 0.08 * Math.sin(ph);
-        eye.userData.iris.scale.setScalar(sc);
-        eye.userData.iris.material.color.setHSL(0.58, 1, 0.45 + 0.12 * Math.sin(ph));
+      // Laser cascade: sequential left-to-right pulses
+      var period = CHARS.length * 0.5;
+      var phase  = (t * 0.55) % period;
+      laserMats.forEach(function(mat, li) {
+        var local = phase - li * 0.5;
+        var op = 0;
+        if (local >= 0 && local < 0.6) {
+          op = Math.sin((local / 0.6) * Math.PI) * 0.7;
+        }
+        mat.opacity = op;
       });
 
-      // Mote drift
-      for (var mi = 0; mi < moteN; mi++) {
-        motePos[mi*3]   += moteVel[mi*3];
-        motePos[mi*3+1] += moteVel[mi*3+1];
-        motePos[mi*3+2] += moteVel[mi*3+2];
-        if (motePos[mi*3+1] > 16) motePos[mi*3+1] = 1;
-      }
-      moteGeo.attributes.position.needsUpdate = true;
-
-      // Update bg shader time
-      bgMat.uniforms.uTime.value = t;
+      // Gentle title float
+      tGroup.position.y = 3.2 + Math.sin(t * 0.4) * 0.06;
 
       renderer.render(scene, camera);
-    })();
-  }
-
-})();
-</script>
-
+    }
+    animate();
+  })();
+  </script>
+</body>
+</html>
