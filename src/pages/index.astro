@@ -15,7 +15,7 @@
       position: fixed; inset: 0; z-index: 10;
       display: flex; flex-direction: column;
       align-items: center; justify-content: flex-end;
-      padding-bottom: 8vh; pointer-events: none;
+      padding-bottom: max(5vh, env(safe-area-inset-bottom, 16px)); pointer-events: none;
     }
     #brand {
       font-family: 'Courier New', monospace;
@@ -25,7 +25,7 @@
     }
     #brand em { font-style: normal; color: rgba(0,255,200,0.6); }
     #pills {
-      display: flex; gap: 1rem; flex-wrap: wrap;
+      display: flex; gap: clamp(0.5rem,2vw,1rem); flex-wrap: wrap;
       justify-content: center; margin-bottom: 1.5rem;
       pointer-events: all;
     }
@@ -35,7 +35,7 @@
       letter-spacing: 0.18em; text-transform: uppercase;
       color: rgba(0,255,200,0.85);
       border: 1px solid rgba(0,255,200,0.35);
-      padding: 0.45em 1.1em; border-radius: 2em;
+      padding: clamp(0.35em,1.5vw,0.45em) clamp(0.7em,3vw,1.1em); border-radius: 2em;
       text-decoration: none; background: rgba(0,20,30,0.45);
       backdrop-filter: blur(6px); cursor: pointer;
       transition: background .2s, color .2s, border-color .2s, box-shadow .2s;
@@ -107,8 +107,11 @@
     renderer.setClearColor(0x000000, 0);
 
     var scene = new T.Scene();
-    var camera = new T.PerspectiveCamera(55, window.innerWidth/window.innerHeight, 0.1, 100);
-    camera.position.set(0,2,10);
+    var isPortrait = window.innerHeight > window.innerWidth;
+    var baseFov = isPortrait ? 72 : 55;
+    var camera = new T.PerspectiveCamera(baseFov, window.innerWidth/window.innerHeight, 0.1, 100);
+    var camZ = isPortrait ? 12 : 10;
+    camera.position.set(0,2,camZ);
     camera.lookAt(0,1,0);
 
     // ── Background ───────────────────────────────────────────────
@@ -356,8 +359,12 @@
     });
 
     window.addEventListener('resize',function(){
+      var port = window.innerHeight > window.innerWidth;
+      camera.fov = port ? 72 : 55;
       camera.aspect=window.innerWidth/window.innerHeight;
       camera.updateProjectionMatrix();
+      camZ = port ? 12 : 10;
+      camera.position.z = camZ;
       renderer.setSize(window.innerWidth,window.innerHeight);
       resizeBeamCanvas();
     });
