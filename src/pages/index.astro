@@ -222,26 +222,32 @@
         // Show layer
         layer.classList.add('active');
 
-        // CRT iris-suck animation
-        // Draws static/noise contracting from edges toward TV point
+        // Conversion wave: expands outward from TV, illustrated reveals behind it
         var irisStart=performance.now();
-        var irisDuration=2600; // ms of iris animation
+        var irisDuration=2200;
         var tvx=tv.x, tvy=tv.y;
-        var maxR=Math.sqrt(Math.max(tvx,window.innerWidth-tvx)*Math.max(tvx,window.innerWidth-tvx)+Math.max(tvy,window.innerHeight-tvy)*Math.max(tvy,window.innerHeight-tvy));
+        var maxR=Math.sqrt(Math.max(tvx,window.innerWidth-tvx)*Math.max(tvx,window.innerWidth-tvx)+Math.max(tvy,window.innerHeight-tvy)*Math.max(tvy,window.innerHeight-tvy))*1.05;
+
+        // Clip the illustrated image to only show inside the expanding wave
+        illus.style.clipPath='circle(0px at '+tvx+'px '+tvy+'px)';
+        illus.style.transition='none';
+        illus.style.opacity='1';
 
         function drawIris(now){
           var elapsed=now-irisStart;
           var p=Math.min(1,elapsed/irisDuration);
-          // ease-in: slow start, fast finish
-          var ep=p*p*p;
+          // ease-out: fast burst from TV, slows as it fills screen
+          var ep=1-Math.pow(1-p,2.5);
+          var waveR=maxR*ep;
+
           ictx.clearRect(0,0,irisCanvas.width,irisCanvas.height);
 
-          // Outer static ring — contracts inward
-          var outerR=maxR*(1-ep*0.92);
-          var innerR=Math.max(0, outerR-80*(1+ep*3));
+          // Static noise ring at the wave front — the conversion boundary
+          var ringW=Math.max(30, 90*(1-ep*0.7)); // ring narrows as it expands
+          var innerR=Math.max(0, waveR-ringW);
+          var outerR=waveR+ringW*0.3;
 
-          // Draw noisy static in the ring between innerR and outerR
-          if(outerR>1){
+          if(waveR>0 && innerR<maxR){
             var imgData=ictx.createImageData(irisCanvas.width,irisCanvas.height);
             var d=imgData.data;
             for(var i=0;i<d.length;i+=4){
@@ -249,40 +255,43 @@
               var py=Math.floor((i/4)/irisCanvas.width);
               var dx=px-tvx, dy=py-tvy;
               var dist=Math.sqrt(dx*dx+dy*dy);
-              if(dist>innerR && dist<outerR){
-                // static noise — greyscale with faint green tint
-                var noise=Math.random()*180+40;
-                var edgeFade=Math.min(1,(dist-innerR)/30)*Math.min(1,(outerR-dist)/30);
-                var a=edgeFade*255*(0.6+0.4*Math.random());
-                d[i]=noise*0.7; d[i+1]=noise; d[i+2]=noise*0.85; d[i+3]=a;
+              if(dist>=innerR && dist<=outerR){
+                var noise=Math.random()*200+55;
+                var edgeFade=Math.min(1,(dist-innerR)/20)*Math.min(1,(outerR-dist)/15);
+                var a=edgeFade*255*(0.55+0.45*Math.random());
+                d[i]=noise*0.65; d[i+1]=noise; d[i+2]=noise*0.82; d[i+3]=a;
               }
             }
             ictx.putImageData(imgData,0,0);
 
-            // Bright ring at the inner edge — the "pull" highlight
-            var ringGrd=ictx.createRadialGradient(tvx,tvy,Math.max(0,innerR-4),tvx,tvy,innerR+12);
-            ringGrd.addColorStop(0,'rgba(255,255,255,0)');
-            ringGrd.addColorStop(0.4,'rgba(180,255,230,'+(0.7*edgeFade||0.5)+')');
-            ringGrd.addColorStop(1,'rgba(0,255,180,0)');
-            ictx.beginPath();
-            ictx.arc(tvx,tvy,innerR+6,0,Math.PI*2);
-            ictx.fillStyle=ringGrd;
-            ictx.fill();
+            // Bright leading edge glow
+            var grd=ictx.createRadialGradient(tvx,tvy,Math.max(0,waveR-8),tvx,tvy,waveR+20);
+            grd.addColorStop(0,'rgba(0,255,180,0)');
+            grd.addColorStop(0.5,'rgba(120,255,210,0.6)');
+            grd.addColorStop(1,'rgba(0,255,180,0)');
+            ictx.beginPath(); ictx.arc(tvx,tvy,waveR+20,0,Math.PI*2);
+            ictx.fillStyle=grd; ictx.fill();
           }
 
+          // Expand clip on illustrated — reveals illustration inside the wave
+          illus.style.clipPath='circle('+waveR+'px at '+tvx+'px '+tvy+'px)';
+
           if(p<1) requestAnimationFrame(drawIris);
-          else { ictx.clearRect(0,0,irisCanvas.width,irisCanvas.height); }
+          else {
+            ictx.clearRect(0,0,irisCanvas.width,irisCanvas.height);
+            illus.style.clipPath='none';
+          }
         }
         requestAnimationFrame(drawIris);
 
-        // Phase 2: start cartoon crossfade at 400ms (iris is contracting)
-        setTimeout(function(){ layer.classList.add('cartoonize'); illus.style.opacity='1'; }, 400);
+        // Desaturate photo as wave passes (starts immediately)
+        setTimeout(function(){ layer.classList.add('cartoonize'); }, 100);
 
-        // Phase 3: zoom into TV once iris mostly closed (2600ms)
-        setTimeout(function(){ layer.classList.add('zooming'); }, 2600);
+        // Zoom into TV once wave has filled screen
+        setTimeout(function(){ layer.classList.add('zooming'); }, 2400);
 
-        // Phase 4: navigate
-        setTimeout(function(){ window.location.href=dest; }, 4800);
+        // Navigate
+        setTimeout(function(){ window.location.href=dest; }, 4600);
       });
       holoNav.appendChild(el); return el;
     });
