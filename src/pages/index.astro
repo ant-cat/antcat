@@ -56,25 +56,25 @@
     }
     #zoom-photo {
       transform: scale(1);
-      transition: transform 2.2s cubic-bezier(0.18,0.89,0.32,1.1), filter 1.6s ease 0.4s;
+      transition: transform 2.0s cubic-bezier(0.4,0,0.2,1), filter 1.8s ease 0.6s;
     }
     #zoom-illustrated {
       opacity: 0; transform: scale(1);
-      transition: opacity 0s, transform 2.2s cubic-bezier(0.18,0.89,0.32,1.1);
+      transition: opacity 0s, transform 2.0s cubic-bezier(0.4,0,0.2,1);
     }
     #zoom-layer.cartoonize #zoom-illustrated {
-      transition: opacity 1.8s ease 0.2s, transform 2.2s cubic-bezier(0.18,0.89,0.32,1.1);
+      transition: opacity 2.0s ease 0.5s, transform 2.0s cubic-bezier(0.4,0,0.2,1);
     }
-    #zoom-layer.cartoonize #zoom-photo { filter: saturate(0) brightness(1.4); }
-    #zoom-layer.zooming #zoom-photo, #zoom-layer.zooming #zoom-illustrated { transform: scale(18); }
-    #zoom-glitch { position: absolute; inset: 0; background: #000; opacity: 0; pointer-events: none; mix-blend-mode: multiply; }
+    #zoom-layer.cartoonize #zoom-photo { filter: saturate(0.1) brightness(1.1); }
+    #zoom-layer.zooming #zoom-photo, #zoom-layer.zooming #zoom-illustrated { transform: scale(20); }
+    #zoom-iris { position: absolute; inset: 0; pointer-events: none; }
     #zoom-scanlines {
       position: absolute; inset: 0; pointer-events: none; opacity: 0;
-      background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,255,180,0.06) 3px, rgba(0,255,180,0.06) 4px);
-      transition: opacity 0.3s;
+      background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,255,180,0.05) 2px, rgba(0,255,180,0.05) 3px);
+      transition: opacity 0.6s;
     }
     #zoom-layer.cartoonize #zoom-scanlines { opacity: 1; }
-    #zoom-fade { position: absolute; inset: 0; background: #000; opacity: 0; transition: opacity 0.5s ease 1.8s; }
+    #zoom-fade { position: absolute; inset: 0; background: #000; opacity: 0; transition: opacity 0.6s ease 1.6s; }
     #zoom-layer.zooming #zoom-fade { opacity: 1; }
     #beam-canvas { position: fixed; inset: 0; z-index: 5; pointer-events: none; }
   </style>
@@ -91,7 +91,7 @@
     <img id="zoom-photo" src="/images/hero.png" alt="" />
     <img id="zoom-illustrated" src="/images/here_couch_transition.png" alt="" />
     <div id="zoom-scanlines"></div>
-    <div id="zoom-glitch"></div>
+    <canvas id="zoom-iris"></canvas>
     <div id="zoom-fade"></div>
   </div>
   <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -207,25 +207,82 @@
         var yPct=(tv.y/window.innerHeight*100).toFixed(2)+'%';
         var photo=document.getElementById('zoom-photo');
         var illus=document.getElementById('zoom-illustrated');
-        var glitch=document.getElementById('zoom-glitch');
+        var irisCanvas=document.getElementById('zoom-iris');
         var layer=document.getElementById('zoom-layer');
+
+        // Size iris canvas
+        irisCanvas.width=window.innerWidth;
+        irisCanvas.height=window.innerHeight;
+        var ictx=irisCanvas.getContext('2d');
+
         // Set TV-origin zoom point on both images
         photo.style.transformOrigin=xPct+' '+yPct;
         illus.style.transformOrigin=xPct+' '+yPct;
+
         // Show layer
         layer.classList.add('active');
-        // Phase 1: 2 gentle dark dips (0-600ms) — seizure-safe
-        glitch.style.transition='opacity 0.18s ease';
-        setTimeout(function(){ glitch.style.opacity='0.7'; }, 0);
-        setTimeout(function(){ glitch.style.opacity='0'; }, 200);
-        setTimeout(function(){ glitch.style.opacity='0.6'; }, 420);
-        setTimeout(function(){ glitch.style.opacity='0'; }, 620);
-        // Phase 2: cartoonize — desaturate photo, fade in illustrated over 2s (800ms)
-        setTimeout(function(){ layer.classList.add('cartoonize'); illus.style.opacity='1'; }, 800);
-        // Phase 3: zoom into TV (2800ms — after 2s conversion)
-        setTimeout(function(){ layer.classList.add('zooming'); }, 2800);
-        // Phase 4: navigate (5200ms)
-        setTimeout(function(){ window.location.href=dest; }, 5200);
+
+        // CRT iris-suck animation
+        // Draws static/noise contracting from edges toward TV point
+        var irisStart=performance.now();
+        var irisDuration=2600; // ms of iris animation
+        var tvx=tv.x, tvy=tv.y;
+        var maxR=Math.sqrt(Math.max(tvx,window.innerWidth-tvx)*Math.max(tvx,window.innerWidth-tvx)+Math.max(tvy,window.innerHeight-tvy)*Math.max(tvy,window.innerHeight-tvy));
+
+        function drawIris(now){
+          var elapsed=now-irisStart;
+          var p=Math.min(1,elapsed/irisDuration);
+          // ease-in: slow start, fast finish
+          var ep=p*p*p;
+          ictx.clearRect(0,0,irisCanvas.width,irisCanvas.height);
+
+          // Outer static ring — contracts inward
+          var outerR=maxR*(1-ep*0.92);
+          var innerR=Math.max(0, outerR-80*(1+ep*3));
+
+          // Draw noisy static in the ring between innerR and outerR
+          if(outerR>1){
+            var imgData=ictx.createImageData(irisCanvas.width,irisCanvas.height);
+            var d=imgData.data;
+            for(var i=0;i<d.length;i+=4){
+              var px=(i/4)%irisCanvas.width;
+              var py=Math.floor((i/4)/irisCanvas.width);
+              var dx=px-tvx, dy=py-tvy;
+              var dist=Math.sqrt(dx*dx+dy*dy);
+              if(dist>innerR && dist<outerR){
+                // static noise — greyscale with faint green tint
+                var noise=Math.random()*180+40;
+                var edgeFade=Math.min(1,(dist-innerR)/30)*Math.min(1,(outerR-dist)/30);
+                var a=edgeFade*255*(0.6+0.4*Math.random());
+                d[i]=noise*0.7; d[i+1]=noise; d[i+2]=noise*0.85; d[i+3]=a;
+              }
+            }
+            ictx.putImageData(imgData,0,0);
+
+            // Bright ring at the inner edge — the "pull" highlight
+            var ringGrd=ictx.createRadialGradient(tvx,tvy,Math.max(0,innerR-4),tvx,tvy,innerR+12);
+            ringGrd.addColorStop(0,'rgba(255,255,255,0)');
+            ringGrd.addColorStop(0.4,'rgba(180,255,230,'+(0.7*edgeFade||0.5)+')');
+            ringGrd.addColorStop(1,'rgba(0,255,180,0)');
+            ictx.beginPath();
+            ictx.arc(tvx,tvy,innerR+6,0,Math.PI*2);
+            ictx.fillStyle=ringGrd;
+            ictx.fill();
+          }
+
+          if(p<1) requestAnimationFrame(drawIris);
+          else { ictx.clearRect(0,0,irisCanvas.width,irisCanvas.height); }
+        }
+        requestAnimationFrame(drawIris);
+
+        // Phase 2: start cartoon crossfade at 400ms (iris is contracting)
+        setTimeout(function(){ layer.classList.add('cartoonize'); illus.style.opacity='1'; }, 400);
+
+        // Phase 3: zoom into TV once iris mostly closed (2600ms)
+        setTimeout(function(){ layer.classList.add('zooming'); }, 2600);
+
+        // Phase 4: navigate
+        setTimeout(function(){ window.location.href=dest; }, 4800);
       });
       holoNav.appendChild(el); return el;
     });
