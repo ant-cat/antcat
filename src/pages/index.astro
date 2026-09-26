@@ -186,16 +186,82 @@
       "<":[[1,1,0,0.5],[0,0.5,1,0]],
       "C":[[1,0.82,0.55,1],[0.55,1,0,0.75],[0,0.75,0,0.25],[0,0.25,0.55,0],[0.55,0,1,0.18]]
     };
-    var CHARS=["A","N","T",">","<","C","A","T"];
-    var GW=0.9, GH=1.3, GAP=0.18;
-    var totalW=CHARS.length*GW+(CHARS.length-1)*GAP;
+    // Layout: portrait = two rows (ANT / CAT), landscape = ANT><CAT
+    var portrait0 = window.innerHeight > window.innerWidth;
+
+    var CHARS_LAND = ["A","N","T",">","<","C","A","T"];
+    var CHARS_PORT_ROW1 = ["A","N","T"];
+    var CHARS_PORT_ROW2 = ["C","A","T"];
+
+    var GW=0.9, GH=1.3, GAP=0.22;
 
     var tGroup=new T.Group();
-    var portrait0 = window.innerHeight > window.innerWidth;
     tGroup.position.set(0, portrait0 ? 2.8 : 3.4, 0);
     scene.add(tGroup);
 
-    // Build glyph meshes — all start at opacity 0, animate together
+    // Build glyph meshes — layout depends on portrait/landscape
+    function buildGlyphs(portrait) {
+      // clear old meshes
+      while(tGroup.children.length) tGroup.remove(tGroup.children[0]);
+      glyphMats.length = 0;
+      charStrokeWorld.length = 0;
+
+      var rows, rowOffsetY;
+      if(portrait) {
+        // Two rows stacked, vertically centered around tGroup origin
+        var rowH = GH + 0.5; // row height + gap
+        rows = [
+          { chars: CHARS_PORT_ROW1, yOff:  rowH * 0.5 },
+          { chars: CHARS_PORT_ROW2, yOff: -rowH * 0.5 },
+        ];
+      } else {
+        rows = [{ chars: CHARS_LAND, yOff: 0 }];
+      }
+
+      rows.forEach(function(row) {
+        var rowW = row.chars.length * GW + (row.chars.length - 1) * GAP;
+        row.chars.forEach(function(ch, ci) {
+          var segs = STROKES[ch];
+          if(!segs) { charStrokeWorld.push([]); return; }
+          var ox = -rowW/2 + ci*(GW+GAP);
+          var worldSegs = [];
+
+          glowDefs.forEach(function(gl) {
+            var pts = [];
+            segs.forEach(function(s) {
+              pts.push(new T.Vector3(ox+s[0]*GW, row.yOff+s[1]*GH, 0));
+              pts.push(new T.Vector3(ox+s[2]*GW, row.yOff+s[3]*GH, 0));
+            });
+            var geo = new T.BufferGeometry().setFromPoints(pts);
+            [1,-1].forEach(function(side) {
+              if(gl.dz===0&&side===-1) return;
+              var mat = new T.LineBasicMaterial({
+                color:gl.color, transparent:true, opacity:0,
+                blending:T.AdditiveBlending, depthWrite:false
+              });
+              var m = new T.LineSegments(geo, mat);
+              m.position.z = gl.dz*side;
+              tGroup.add(m);
+              glyphMats.push({mat:mat, base:gl.op*(side===1?1:0.55)});
+            });
+
+            if(gl.dz===0) {
+              segs.forEach(function(s) {
+                worldSegs.push({
+                  x1: tGroup.position.x + ox + s[0]*GW,
+                  y1: tGroup.position.y + row.yOff + s[1]*GH,
+                  x2: tGroup.position.x + ox + s[2]*GW,
+                  y2: tGroup.position.y + row.yOff + s[3]*GH,
+                  z:  tGroup.position.z
+                });
+              });
+            }
+          });
+          charStrokeWorld.push(worldSegs);
+        });
+      });
+    }
+
     var glyphMats=[];  // flat list of {mat, base}
 
     var glowDefs=[
@@ -361,6 +427,7 @@
       });
     });
 
+    var lastPortrait = portrait0;
     window.addEventListener('resize',function(){
       var port = window.innerHeight > window.innerWidth;
       camera.fov = port ? 82 : 55;
@@ -371,6 +438,11 @@
       tGroup.position.y = port ? 2.8 : 3.4;
       renderer.setSize(window.innerWidth,window.innerHeight);
       resizeBeamCanvas();
+      // Rebuild glyphs if orientation flipped
+      if(port !== lastPortrait) {
+        buildGlyphs(port);
+        lastPortrait = port;
+      }
     });
 
     // ── Animate ──────────────────────────────────────────────────
