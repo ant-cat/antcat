@@ -56,25 +56,30 @@
     }
     #zoom-photo {
       transform: scale(1);
-      transition: transform 2.0s cubic-bezier(0.4,0,0.2,1), filter 1.8s ease 0.6s;
+      /* drain to grey as wave passes: triggered by .cartoonize at 400ms */
+      transition: transform 2.2s cubic-bezier(0.4,0,0.2,1), filter 1.6s ease 0s;
     }
     #zoom-illustrated {
-      opacity: 0; transform: scale(1);
-      transition: opacity 0s, transform 2.0s cubic-bezier(0.4,0,0.2,1);
+      /* always visible — clipPath controls what's seen, not opacity */
+      opacity: 1; transform: scale(1);
+      transition: transform 2.2s cubic-bezier(0.4,0,0.2,1);
+      clip-path: circle(0px at 51.5% 40%);
     }
-    #zoom-layer.cartoonize #zoom-illustrated {
-      transition: opacity 2.0s ease 0.5s, transform 2.0s cubic-bezier(0.4,0,0.2,1);
-    }
-    #zoom-layer.cartoonize #zoom-photo { filter: saturate(0.1) brightness(1.1); }
-    #zoom-layer.zooming #zoom-photo, #zoom-layer.zooming #zoom-illustrated { transform: scale(20); }
+    /* photo drains to near-grey as wave expands */
+    #zoom-layer.cartoonize #zoom-photo { filter: saturate(0.05) brightness(1.15); }
+    /* both images zoom together */
+    #zoom-layer.zooming #zoom-photo,
+    #zoom-layer.zooming #zoom-illustrated { transform: scale(20); }
     #zoom-iris { position: absolute; inset: 0; pointer-events: none; }
+    /* scanlines fade in once cartoonize starts */
     #zoom-scanlines {
       position: absolute; inset: 0; pointer-events: none; opacity: 0;
-      background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,255,180,0.05) 2px, rgba(0,255,180,0.05) 3px);
-      transition: opacity 0.6s;
+      background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,255,180,0.06) 2px, rgba(0,255,180,0.06) 3px);
+      transition: opacity 0.8s ease 0.3s;
     }
     #zoom-layer.cartoonize #zoom-scanlines { opacity: 1; }
-    #zoom-fade { position: absolute; inset: 0; background: #000; opacity: 0; transition: opacity 0.6s ease 1.6s; }
+    /* black fade once zoom fires */
+    #zoom-fade { position: absolute; inset: 0; background: #000; opacity: 0; transition: opacity 0.6s ease 1.8s; }
     #zoom-layer.zooming #zoom-fade { opacity: 1; }
     #beam-canvas { position: fixed; inset: 0; z-index: 5; pointer-events: none; }
   </style>
@@ -228,10 +233,9 @@
         var tvx=tv.x, tvy=tv.y;
         var maxR=Math.sqrt(Math.max(tvx,window.innerWidth-tvx)*Math.max(tvx,window.innerWidth-tvx)+Math.max(tvy,window.innerHeight-tvy)*Math.max(tvy,window.innerHeight-tvy))*1.05;
 
-        // Clip the illustrated image to only show inside the expanding wave
-        illus.style.clipPath='circle(0px at '+tvx+'px '+tvy+'px)';
+        // Start illustrated fully clipped at TV point — wave expands this outward
         illus.style.transition='none';
-        illus.style.opacity='1';
+        illus.style.clipPath='circle(0px at '+tvx+'px '+tvy+'px)';
 
         function drawIris(now){
           var elapsed=now-irisStart;
@@ -279,19 +283,21 @@
           if(p<1) requestAnimationFrame(drawIris);
           else {
             ictx.clearRect(0,0,irisCanvas.width,irisCanvas.height);
+            // Wave done — restore transition so zoom scale works
             illus.style.clipPath='none';
+            illus.style.transition='transform 2.2s cubic-bezier(0.4,0,0.2,1)';
           }
         }
         requestAnimationFrame(drawIris);
 
-        // Desaturate photo as wave passes (starts immediately)
-        setTimeout(function(){ layer.classList.add('cartoonize'); }, 100);
+        // 400ms: cartoonize — photo drains to grey, scanlines fade in
+        setTimeout(function(){ layer.classList.add('cartoonize'); }, 400);
 
-        // Zoom into TV once wave has filled screen
-        setTimeout(function(){ layer.classList.add('zooming'); }, 2400);
+        // 2600ms: wave has filled screen — zoom punch into TV origin
+        setTimeout(function(){ layer.classList.add('zooming'); }, 2600);
 
-        // Navigate
-        setTimeout(function(){ window.location.href=dest; }, 4600);
+        // 4800ms: navigate after zoom + fade
+        setTimeout(function(){ window.location.href=dest; }, 4800);
       });
       holoNav.appendChild(el); return el;
     });
