@@ -56,14 +56,14 @@
     }
     #zoom-photo {
       transform: scale(1);
-      transition: transform 2.2s cubic-bezier(0.18,0.89,0.32,1.1), filter 0.5s ease 0.3s;
+      transition: transform 2.2s cubic-bezier(0.18,0.89,0.32,1.1), filter 1.6s ease 0.4s;
     }
     #zoom-illustrated {
       opacity: 0; transform: scale(1);
       transition: opacity 0s, transform 2.2s cubic-bezier(0.18,0.89,0.32,1.1);
     }
     #zoom-layer.cartoonize #zoom-illustrated {
-      transition: opacity 0.55s ease 0.35s, transform 2.2s cubic-bezier(0.18,0.89,0.32,1.1);
+      transition: opacity 1.8s ease 0.2s, transform 2.2s cubic-bezier(0.18,0.89,0.32,1.1);
     }
     #zoom-layer.cartoonize #zoom-photo { filter: saturate(0) brightness(1.4); }
     #zoom-layer.zooming #zoom-photo, #zoom-layer.zooming #zoom-illustrated { transform: scale(18); }
@@ -214,21 +214,21 @@
         illus.style.transformOrigin=xPct+' '+yPct;
         // Show layer
         layer.classList.add('active');
-        // Phase 1: glitch flashes (0-350ms) — TV converting signal
-        var flashCount=0,maxFlash=5;
+        // Phase 1: glitch flashes (0-800ms) — slow TV interference
+        var flashCount=0,maxFlash=7;
         function flash(){
-          glitch.style.opacity=(flashCount%2===0)?'0.85':'0';
+          glitch.style.opacity=(flashCount%2===0)?'0.75':'0';
           flashCount++;
-          if(flashCount<maxFlash*2) setTimeout(flash, 28+flashCount*8);
+          if(flashCount<maxFlash*2) setTimeout(flash, 55+flashCount*12);
           else glitch.style.opacity='0';
         }
         flash();
-        // Phase 2: cartoonize — desaturate photo, fade in illustrated (350ms)
-        setTimeout(function(){ layer.classList.add('cartoonize'); illus.style.opacity='1'; }, 350);
-        // Phase 3: zoom into TV (700ms)
-        setTimeout(function(){ layer.classList.add('zooming'); }, 700);
-        // Phase 4: navigate (2400ms)
-        setTimeout(function(){ window.location.href=dest; }, 2400);
+        // Phase 2: cartoonize — desaturate photo, fade in illustrated over 2s (800ms)
+        setTimeout(function(){ layer.classList.add('cartoonize'); illus.style.opacity='1'; }, 800);
+        // Phase 3: zoom into TV (2800ms — after 2s conversion)
+        setTimeout(function(){ layer.classList.add('zooming'); }, 2800);
+        // Phase 4: navigate (5200ms)
+        setTimeout(function(){ window.location.href=dest; }, 5200);
       });
       holoNav.appendChild(el); return el;
     });
