@@ -1,5 +1,5 @@
 ---
-// ant.cat — hero v8: 3D extruded gem blocks + fixed label positioning
+// ant.cat — hero v9: spread gems, labels truly hidden until positioned
 ---
 <!doctype html>
 <html lang="en">
@@ -24,23 +24,18 @@
       text-transform: uppercase; margin-bottom: 2.5rem;
     }
     #brand em { font-style: normal; color: rgba(0,255,200,0.6); }
-    #holo-nav {
-      position: fixed; inset: 0; z-index: 8;
-      pointer-events: none;
-    }
+    #holo-nav { position: fixed; inset: 0; z-index: 8; pointer-events: none; overflow: hidden; }
     .holo-label {
       position: absolute;
       font-family: 'Courier New', monospace;
-      font-size: clamp(0.58rem, 1.15vw, 0.72rem);
+      font-size: clamp(0.58rem, 1.1vw, 0.70rem);
       letter-spacing: 0.2em; text-transform: uppercase;
       color: rgba(0,255,200,0.95);
       text-shadow: 0 0 6px rgba(0,255,200,0.9), 0 0 18px rgba(0,255,200,0.45);
       transform: translate(-50%, -50%);
-      pointer-events: all;
-      cursor: pointer;
-      white-space: nowrap;
-      text-decoration: none;
-      opacity: 0;
+      pointer-events: all; cursor: pointer; white-space: nowrap;
+      text-decoration: none; left: -9999px; top: -9999px; opacity: 0;
+      transition: color .2s, text-shadow .2s;
     }
     .holo-label:hover {
       color: #fff;
@@ -50,13 +45,9 @@
       font-family: 'Courier New', monospace;
       font-size: clamp(0.6rem,1.1vw,0.75rem);
       letter-spacing: 0.15em; color: rgba(180,220,255,0.3);
-      text-transform: uppercase;
-      margin-top: 1rem;
+      text-transform: uppercase; margin-top: 1rem;
     }
-    #zoom-layer {
-      position: fixed; inset: 0; z-index: 50;
-      pointer-events: none; overflow: hidden; opacity: 0;
-    }
+    #zoom-layer { position: fixed; inset: 0; z-index: 50; pointer-events: none; overflow: hidden; opacity: 0; }
     #zoom-layer.active { pointer-events: all; }
     #zoom-img {
       position: absolute; inset: 0; width: 100%; height: 100%;
@@ -65,15 +56,9 @@
       transition: transform 1.05s cubic-bezier(0.25,0.46,0.45,0.94);
     }
     #zoom-layer.active #zoom-img { transform: scale(14); }
-    #zoom-fade {
-      position: absolute; inset: 0; background: #000;
-      opacity: 0; transition: opacity 0.4s ease 0.6s;
-    }
+    #zoom-fade { position: absolute; inset: 0; background: #000; opacity: 0; transition: opacity 0.4s ease 0.6s; }
     #zoom-layer.active #zoom-fade { opacity: 1; }
-    #beam-canvas {
-      position: fixed; inset: 0; z-index: 5;
-      pointer-events: none;
-    }
+    #beam-canvas { position: fixed; inset: 0; z-index: 5; pointer-events: none; }
   </style>
 </head>
 <body>
@@ -88,464 +73,158 @@
     <img id="zoom-img" src="/images/hero.png" alt="" />
     <div id="zoom-fade"></div>
   </div>
-
   <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script is:inline>
   (function(){
     var T = THREE;
-
     var renderer = new T.WebGLRenderer({ canvas: document.getElementById('c'), antialias: true, alpha: true });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setClearColor(0x000000, 0);
-
+    renderer.setSize(window.innerWidth,window.innerHeight);
+    renderer.setClearColor(0x000000,0);
     var scene = new T.Scene();
     var isPortrait = window.innerHeight > window.innerWidth;
-    var camera = new T.PerspectiveCamera(isPortrait ? 82 : 55, window.innerWidth/window.innerHeight, 0.1, 100);
-    var camZ = isPortrait ? 14.5 : 10;
-    camera.position.set(0, 2, camZ);
-    camera.lookAt(0, 1, 0);
-
-    // Background
-    new T.TextureLoader().load('/images/hero.png', function(tex){
-      tex.minFilter = T.LinearFilter;
-      var m = new T.ShaderMaterial({
-        uniforms:{ uTex:{ value:tex } },
+    var camera = new T.PerspectiveCamera(isPortrait?82:55, window.innerWidth/window.innerHeight, 0.1, 100);
+    var camZ = isPortrait?14.5:10;
+    camera.position.set(0,2,camZ);
+    camera.lookAt(0,1,0);
+    new T.TextureLoader().load('/images/hero.png',function(tex){
+      tex.minFilter=T.LinearFilter;
+      var m=new T.ShaderMaterial({
+        uniforms:{uTex:{value:tex}},
         vertexShader:'varying vec2 vUv; void main(){ vUv=uv; gl_Position=vec4(position,1.0); }',
-        fragmentShader:[
-          'uniform sampler2D uTex; varying vec2 vUv;',
-          'void main(){',
-          '  vec3 c=texture2D(uTex,vUv).rgb;',
-          '  float lum=dot(c,vec3(0.299,0.587,0.114));',
-          '  c=mix(vec3(lum),c,0.68);',
-          '  float sky=smoothstep(0.28,0.92,vUv.y);',
-          '  c=mix(c,vec3(0.03,0.05,0.17),sky*0.82);',
-          '  float hor=1.0-clamp(abs(vUv.y-0.36)/0.16,0.0,1.0);',
-          '  c+=vec3(0.42,0.18,0.02)*hor*0.38;',
-          '  c*=0.46;',
-          '  vec2 uv2=vUv*2.0-1.0;',
-          '  float vig=1.0-dot(uv2*vec2(0.5,0.62),uv2*vec2(0.5,0.62));',
-          '  c*=clamp(vig,0.22,1.0);',
-          '  gl_FragColor=vec4(c,1.0);',
-          '}'
-        ].join('\n'),
-        depthTest:false, depthWrite:false
+        fragmentShader:['uniform sampler2D uTex; varying vec2 vUv;','void main(){','  vec3 c=texture2D(uTex,vUv).rgb;','  float lum=dot(c,vec3(0.299,0.587,0.114));','  c=mix(vec3(lum),c,0.68);','  float sky=smoothstep(0.28,0.92,vUv.y);','  c=mix(c,vec3(0.03,0.05,0.17),sky*0.82);','  float hor=1.0-clamp(abs(vUv.y-0.36)/0.16,0.0,1.0);','  c+=vec3(0.42,0.18,0.02)*hor*0.38;','  c*=0.46;','  vec2 uv2=vUv*2.0-1.0;','  float vig=1.0-dot(uv2*vec2(0.5,0.62),uv2*vec2(0.5,0.62));','  c*=clamp(vig,0.22,1.0);','  gl_FragColor=vec4(c,1.0);}'].join('\n'),
+        depthTest:false,depthWrite:false
       });
-      var bg = new T.Mesh(new T.PlaneGeometry(2,2), m);
-      bg.renderOrder = -1;
-      scene.add(bg);
+      var bg=new T.Mesh(new T.PlaneGeometry(2,2),m);
+      bg.renderOrder=-1; scene.add(bg);
     });
-
-    // Constellation
-    var cGroup = new T.Group();
-    scene.add(cGroup);
-    var icoGeo = new T.IcosahedronGeometry(7.5,2);
-    var ipos = icoGeo.attributes.position;
-    var edgeSet=new Set(), edgePts=[], nodePts=[];
+    var cGroup=new T.Group(); scene.add(cGroup);
+    var icoGeo=new T.IcosahedronGeometry(7.5,2);
+    var ipos=icoGeo.attributes.position;
+    var edgeSet=new Set(),edgePts=[],nodePts=[];
     for(var i=0;i<ipos.count;i+=3){
       var tri=[i,i+1,i+2];
       for(var e=0;e<3;e++){
         var a=tri[e],b=tri[(e+1)%3];
         if(ipos.getY(a)<0&&ipos.getY(b)<0) continue;
         var key=[Math.min(a,b),Math.max(a,b)].join('_');
-        if(!edgeSet.has(key)){
-          edgeSet.add(key);
-          edgePts.push(new T.Vector3(ipos.getX(a),ipos.getY(a),ipos.getZ(a)));
-          edgePts.push(new T.Vector3(ipos.getX(b),ipos.getY(b),ipos.getZ(b)));
-        }
+        if(!edgeSet.has(key)){edgeSet.add(key);edgePts.push(new T.Vector3(ipos.getX(a),ipos.getY(a),ipos.getZ(a)));edgePts.push(new T.Vector3(ipos.getX(b),ipos.getY(b),ipos.getZ(b)));}
       }
-      for(var v=0;v<3;v++){
-        if(ipos.getY(tri[v])>=0)
-          nodePts.push(new T.Vector3(ipos.getX(tri[v]),ipos.getY(tri[v]),ipos.getZ(tri[v])));
-      }
+      for(var v=0;v<3;v++){if(ipos.getY(tri[v])>=0) nodePts.push(new T.Vector3(ipos.getX(tri[v]),ipos.getY(tri[v]),ipos.getZ(tri[v])));}
     }
-    cGroup.add(new T.LineSegments(
-      new T.BufferGeometry().setFromPoints(edgePts),
-      new T.LineBasicMaterial({color:0x1a4060,transparent:true,opacity:0.45})
-    ));
-    cGroup.add(new T.Points(
-      new T.BufferGeometry().setFromPoints(nodePts),
-      new T.PointsMaterial({color:0x4488cc,size:0.12,sizeAttenuation:true})
-    ));
+    cGroup.add(new T.LineSegments(new T.BufferGeometry().setFromPoints(edgePts),new T.LineBasicMaterial({color:0x1a4060,transparent:true,opacity:0.45})));
+    cGroup.add(new T.Points(new T.BufferGeometry().setFromPoints(nodePts),new T.PointsMaterial({color:0x4488cc,size:0.12,sizeAttenuation:true})));
     cGroup.position.set(0,-2,0);
-
-    // Stroke font / title
-    var STROKES = {
-      "A":[[0,0,0.5,1],[0.5,1,1,0],[0.18,0.45,0.82,0.45]],
-      "N":[[0,0,0,1],[0,1,1,0],[1,0,1,1]],
-      "T":[[0,1,1,1],[0.5,1,0.5,0]],
-      ">":[[0,1,1,0.5],[1,0.5,0,0]],
-      "<":[[1,1,0,0.5],[0,0.5,1,0]],
-      "C":[[1,0.82,0.55,1],[0.55,1,0,0.75],[0,0.75,0,0.25],[0,0.25,0.55,0],[0.55,0,1,0.18]]
-    };
+    var STROKES={"A":[[0,0,0.5,1],[0.5,1,1,0],[0.18,0.45,0.82,0.45]],"N":[[0,0,0,1],[0,1,1,0],[1,0,1,1]],"T":[[0,1,1,1],[0.5,1,0.5,0]],">":[[0,1,1,0.5],[1,0.5,0,0]],"<":[[1,1,0,0.5],[0,0.5,1,0]],"C":[[1,0.82,0.55,1],[0.55,1,0,0.75],[0,0.75,0,0.25],[0,0.25,0.55,0],[0.55,0,1,0.18]]};
     var CHARS=["A","N","T",">","<","C","A","T"];
-    var GW=0.9, GH=1.3, GAP=0.18;
-    var totalW=CHARS.length*GW+(CHARS.length-1)*GAP;
-
-    var tGroup=new T.Group();
-    tGroup.position.set(0,3.4,0);
-    scene.add(tGroup);
-
+    var GW=0.9,GH=1.3,GAP=0.18,totalW=CHARS.length*GW+(CHARS.length-1)*GAP;
+    var tGroup=new T.Group(); tGroup.position.set(0,3.4,0); scene.add(tGroup);
     var glyphMats=[];
-    var glowDefs=[
-      {color:0xffffff, op:1.0,  dz:0   },
-      {color:0x55ffee, op:0.65, dz:0.05},
-      {color:0x00ffcc, op:0.38, dz:0.14},
-      {color:0x00ccaa, op:0.18, dz:0.32},
-      {color:0x006644, op:0.08, dz:0.65},
-    ];
+    var glowDefs=[{color:0xffffff,op:1.0,dz:0},{color:0x55ffee,op:0.65,dz:0.05},{color:0x00ffcc,op:0.38,dz:0.14},{color:0x00ccaa,op:0.18,dz:0.32},{color:0x006644,op:0.08,dz:0.65}];
     var charStrokeWorld=[];
-
     CHARS.forEach(function(ch,ci){
-      var segs=STROKES[ch];
-      if(!segs){ charStrokeWorld.push([]); return; }
-      var ox=-totalW/2+ci*(GW+GAP);
-      var worldSegs=[];
+      var segs=STROKES[ch]; if(!segs){charStrokeWorld.push([]);return;}
+      var ox=-totalW/2+ci*(GW+GAP),worldSegs=[];
       glowDefs.forEach(function(gl){
-        var pts=[];
-        segs.forEach(function(s){
-          pts.push(new T.Vector3(ox+s[0]*GW, s[1]*GH, 0));
-          pts.push(new T.Vector3(ox+s[2]*GW, s[3]*GH, 0));
-        });
+        var pts=[]; segs.forEach(function(s){pts.push(new T.Vector3(ox+s[0]*GW,s[1]*GH,0));pts.push(new T.Vector3(ox+s[2]*GW,s[3]*GH,0));});
         var geo=new T.BufferGeometry().setFromPoints(pts);
         [1,-1].forEach(function(side){
           if(gl.dz===0&&side===-1) return;
-          var mat=new T.LineBasicMaterial({
-            color:gl.color, transparent:true, opacity:0,
-            blending:T.AdditiveBlending, depthWrite:false
-          });
-          var m=new T.LineSegments(geo,mat);
-          m.position.z=gl.dz*side;
-          tGroup.add(m);
-          glyphMats.push({mat:mat, base:gl.op*(side===1?1:0.55), elemIdx:ci});
+          var mat=new T.LineBasicMaterial({color:gl.color,transparent:true,opacity:0,blending:T.AdditiveBlending,depthWrite:false});
+          var m=new T.LineSegments(geo,mat); m.position.z=gl.dz*side; tGroup.add(m);
+          glyphMats.push({mat:mat,base:gl.op*(side===1?1:0.55),elemIdx:ci});
         });
-        if(gl.dz===0){
-          segs.forEach(function(s){
-            worldSegs.push({
-              x1: tGroup.position.x + ox + s[0]*GW,
-              y1: tGroup.position.y + s[1]*GH,
-              x2: tGroup.position.x + ox + s[2]*GW,
-              y2: tGroup.position.y + s[3]*GH,
-              z:  tGroup.position.z
-            });
-          });
-        }
+        if(gl.dz===0) segs.forEach(function(s){worldSegs.push({x1:tGroup.position.x+ox+s[0]*GW,y1:tGroup.position.y+s[1]*GH,x2:tGroup.position.x+ox+s[2]*GW,y2:tGroup.position.y+s[3]*GH,z:tGroup.position.z});});
       });
       charStrokeWorld.push(worldSegs);
     });
-
-    // ── 3D Extruded gem blocks for nav buttons ───────────────────
-    // Each block is a rounded-rect prism wireframe: front face + back face + connecting edges
-    // Front face is a hexagonal gem shape; back face is offset in Z (extruded depth)
-    var NAV_ITEMS = [
-      { label: 'Mind Grapes', href: '/writing'     },
-      { label: 'About',       href: '/about'       },
-      { label: 'Now',         href: '/now'         },
-      { label: 'Experiments', href: '/experiments' }
-    ];
-
-    // Gem front face vertices (normalized 0..1, will scale to BW x BH)
-    // Pentagon-ish gem: flat top, pointed bottom, beveled corners
-    // v0=top-left-bevel, v1=top-right-bevel, v2=right, v3=bottom-right-bevel, v4=bottom-tip, v5=bottom-left-bevel, v6=left
-    var GEM_VERTS = [
-      [0.18, 1.0],   // 0 top-left
-      [0.82, 1.0],   // 1 top-right
-      [1.0,  0.72],  // 2 right-top
-      [1.0,  0.28],  // 3 right-bottom
-      [0.5,  0.0],   // 4 bottom tip
-      [0.0,  0.28],  // 5 left-bottom
-      [0.0,  0.72],  // 6 left-top
-    ];
-
-    // Outer edge loop
-    var GEM_OUTER = [[0,1],[1,2],[2,3],[3,4],[4,5],[5,6],[6,0]];
-    // Inner facet lines (from top center and midpoint)
-    var GEM_INNER = [
-      [0,3],[1,5],   // cross diagonals
-      [0,4],[1,4],   // to tip
-      [6,3],[2,5],   // side to opposite
-    ];
-    var GEM_ALL_EDGES = GEM_OUTER.concat(GEM_INNER);
-
-    // Build line segments from gem definition
-    // front at z=+depth/2, back at z=-depth/2, pillars connecting them
-    function buildGemSegs(bx, by, bw, bh, depth){
-      var segs = [];
-      var fz = depth * 0.5;
-      var bz = -depth * 0.5;
-
-      // front face edges
-      GEM_ALL_EDGES.forEach(function(e){
-        var va = GEM_VERTS[e[0]], vb = GEM_VERTS[e[1]];
-        segs.push({x1: bx+va[0]*bw, y1: by+va[1]*bh, z1: fz,
-                   x2: bx+vb[0]*bw, y2: by+vb[1]*bh, z2: fz});
-      });
-      // back face edges (outer loop only for cleanliness)
-      GEM_OUTER.forEach(function(e){
-        var va = GEM_VERTS[e[0]], vb = GEM_VERTS[e[1]];
-        segs.push({x1: bx+va[0]*bw, y1: by+va[1]*bh, z1: bz,
-                   x2: bx+vb[0]*bw, y2: by+vb[1]*bh, z2: bz});
-      });
-      // pillar edges connecting front to back (corners only)
-      [0,1,2,3,4,5,6].forEach(function(vi){
-        var v = GEM_VERTS[vi];
-        segs.push({x1: bx+v[0]*bw, y1: by+v[1]*bh, z1: fz,
-                   x2: bx+v[0]*bw, y2: by+v[1]*bh, z2: bz});
-      });
+    var NAV_ITEMS=[{label:'Mind Grapes',href:'/writing'},{label:'About',href:'/about'},{label:'Now',href:'/now'},{label:'Experiments',href:'/experiments'}];
+    var GEM_V=[[0.18,1.0],[0.82,1.0],[1.0,0.70],[1.0,0.28],[0.5,0.0],[0.0,0.28],[0.0,0.70]];
+    var GEM_OUTER=[[0,1],[1,2],[2,3],[3,4],[4,5],[5,6],[6,0]];
+    var GEM_INNER=[[0,3],[1,5],[0,4],[1,4],[6,3],[2,5]];
+    var GEM_FACE=GEM_OUTER.concat(GEM_INNER);
+    function buildGem3D(ox,oy,bw,bh,depth){
+      var segs=[],fz=depth*0.5,bkz=-depth*0.5;
+      GEM_FACE.forEach(function(e){var va=GEM_V[e[0]],vb=GEM_V[e[1]];segs.push([ox+va[0]*bw,oy+va[1]*bh,fz,ox+vb[0]*bw,oy+vb[1]*bh,fz]);});
+      GEM_OUTER.forEach(function(e){var va=GEM_V[e[0]],vb=GEM_V[e[1]];segs.push([ox+va[0]*bw,oy+va[1]*bh,bkz,ox+vb[0]*bw,oy+vb[1]*bh,bkz]);});
+      GEM_V.forEach(function(v){segs.push([ox+v[0]*bw,oy+v[1]*bh,fz,ox+v[0]*bw,oy+v[1]*bh,bkz]);});
       return segs;
     }
-
-    var BW = 1.45, BH = 0.85;
-    var numBtns = NAV_ITEMS.length;
-    var btnGap = 0.28;
-    var totalBW = numBtns * BW + (numBtns-1) * btnGap;
-    var btnBaseY = 1.3;  // world Y for bottom of gem shapes
-    var GEM_DEPTH = 0.45; // extrusion depth
-
-    var btnGroup = new T.Group();
-    scene.add(btnGroup);
-
-    var btnMats = [];
-    var btnStrokeWorld = [];  // 3D line segments per button for beam projection
-    var btnWorldCenters = [];
-
-    var btnGlowDefs = [
-      {color:0xffffff, op:0.85, dz:0    },
-      {color:0x44ffdd, op:0.55, dz:0.03 },
-      {color:0x00ffcc, op:0.30, dz:0.09 },
-      {color:0x00aaaa, op:0.12, dz:0.20 },
-    ];
-
-    NAV_ITEMS.forEach(function(item, bi){
-      var ox = -totalBW/2 + bi*(BW+btnGap);
-      var oy = btnBaseY;  // bottom of gem
-
-      // 3D segments for this gem block
-      var geomSegs3D = buildGemSegs(ox, oy, BW, BH, GEM_DEPTH);
-
+    var BW=1.55,BH=0.80,DEPTH=0.50,BTN_GAP=0.55;
+    var totalBW=NAV_ITEMS.length*BW+(NAV_ITEMS.length-1)*BTN_GAP,btnBaseY=1.15;
+    var btnGroup=new T.Group(); scene.add(btnGroup);
+    var btnMats=[],btnBeamSegs=[],btnCenters=[];
+    var btnGlowDefs=[{color:0xffffff,op:0.85,dz:0},{color:0x44ffdd,op:0.55,dz:0.03},{color:0x00ffcc,op:0.28,dz:0.09},{color:0x00aaaa,op:0.11,dz:0.20}];
+    NAV_ITEMS.forEach(function(item,bi){
+      var ox=-totalBW/2+bi*(BW+BTN_GAP),oy=btnBaseY;
+      var segs3D=buildGem3D(ox,oy,BW,BH,DEPTH);
       btnGlowDefs.forEach(function(gl){
-        var pts = [];
-        geomSegs3D.forEach(function(s){
-          pts.push(new T.Vector3(s.x1, s.y1, s.z1 + gl.dz));
-          pts.push(new T.Vector3(s.x2, s.y2, s.z2 + gl.dz));
-        });
-        var geo = new T.BufferGeometry().setFromPoints(pts);
-        [1,-1].forEach(function(side){
-          if(gl.dz===0&&side===-1) return;
-          var mat = new T.LineBasicMaterial({
-            color: gl.color, transparent: true, opacity: 0,
-            blending: T.AdditiveBlending, depthWrite: false
-          });
-          var m = new T.LineSegments(geo, mat);
-          if(side===-1) m.scale.z = -1;
-          btnGroup.add(m);
-          btnMats.push({mat:mat, base:gl.op*(side===1?1:0.5), elemIdx: CHARS.length + bi});
-        });
+        var pts=[]; segs3D.forEach(function(s){pts.push(new T.Vector3(s[0],s[1],s[2]+gl.dz));pts.push(new T.Vector3(s[3],s[4],s[5]+gl.dz));});
+        var mat=new T.LineBasicMaterial({color:gl.color,transparent:true,opacity:0,blending:T.AdditiveBlending,depthWrite:false});
+        btnGroup.add(new T.LineSegments(new T.BufferGeometry().setFromPoints(pts),mat));
+        btnMats.push({mat:mat,base:gl.op,elemIdx:CHARS.length+bi});
+        if(gl.dz===0){
+          var ptsB=[]; segs3D.forEach(function(s){ptsB.push(new T.Vector3(s[0],s[1],s[2]-0.04));ptsB.push(new T.Vector3(s[3],s[4],s[5]-0.04));});
+          var matB=new T.LineBasicMaterial({color:gl.color,transparent:true,opacity:0,blending:T.AdditiveBlending,depthWrite:false});
+          btnGroup.add(new T.LineSegments(new T.BufferGeometry().setFromPoints(ptsB),matB));
+          btnMats.push({mat:matB,base:gl.op*0.45,elemIdx:CHARS.length+bi});
+        }
       });
-
-      // Store front-face segs projected to screen for beam drawing
-      // Use the outer + inner front face lines at z=+depth/2
-      var frontSegs = [];
-      GEM_ALL_EDGES.forEach(function(e){
-        var va = GEM_VERTS[e[0]], vb = GEM_VERTS[e[1]];
-        frontSegs.push({
-          x1: ox+va[0]*BW, y1: oy+va[1]*BH, z1: GEM_DEPTH*0.5,
-          x2: ox+vb[0]*BW, y2: oy+vb[1]*BH, z2: GEM_DEPTH*0.5
-        });
-      });
-      btnStrokeWorld.push(frontSegs);
-
-      // Center of gem face for label placement
-      btnWorldCenters.push({
-        x: ox + BW*0.5,
-        y: oy + BH*0.5,
-        z: GEM_DEPTH*0.5 + 0.05
-      });
+      var fz=DEPTH*0.5,frontSegs=[];
+      GEM_FACE.forEach(function(e){var va=GEM_V[e[0]],vb=GEM_V[e[1]];frontSegs.push({x1:ox+va[0]*BW,y1:oy+va[1]*BH,z:fz,x2:ox+vb[0]*BW,y2:oy+vb[1]*BH});});
+      btnBeamSegs.push(frontSegs);
+      btnCenters.push({x:ox+BW*0.5,y:oy+BH*0.5,z:fz+0.05});
     });
-
-    // HTML labels — start hidden, JS positions them each frame
-    var holoNav = document.getElementById('holo-nav');
-    var labelEls = NAV_ITEMS.map(function(item, bi){
-      var el = document.createElement('a');
-      el.className = 'holo-label';
-      el.textContent = item.label;
-      el.href = item.href;
-      // Critical: start offscreen so they don't appear at 0,0
-      el.style.left = '-9999px';
-      el.style.top  = '-9999px';
-      el.addEventListener('click', function(e){
-        e.preventDefault();
-        var layer = document.getElementById('zoom-layer');
-        layer.style.opacity = '1';
-        layer.classList.add('active');
-        setTimeout(function(){ window.location.href = item.href; }, 1200);
-      });
-      holoNav.appendChild(el);
-      return el;
+    var holoNav=document.getElementById('holo-nav');
+    var labelEls=NAV_ITEMS.map(function(item,bi){
+      var el=document.createElement('a'); el.className='holo-label'; el.textContent=item.label; el.href=item.href;
+      el.addEventListener('click',function(e){e.preventDefault();var layer=document.getElementById('zoom-layer');layer.style.opacity='1';layer.classList.add('active');setTimeout(function(){window.location.href=item.href;},1200);});
+      holoNav.appendChild(el); return el;
     });
-
-    // Per-element random pulse phases
-    var NUM_ELEMS = CHARS.length + NAV_ITEMS.length;
-    var elemPhases = [], elemSpeeds = [];
-    for(var i=0; i<NUM_ELEMS; i++){
-      elemPhases.push(Math.random() * Math.PI * 2);
-      elemSpeeds.push(1.4 + Math.random() * 1.4);
+    var NUM_ELEMS=CHARS.length+NAV_ITEMS.length,elemPhases=[],elemSpeeds=[];
+    for(var i=0;i<NUM_ELEMS;i++){elemPhases.push(Math.random()*Math.PI*2);elemSpeeds.push(1.3+Math.random()*1.5);}
+    function elemPulse(idx,t){return 0.52+0.48*Math.sin(t*elemSpeeds[idx]+elemPhases[idx]);}
+    var bc=document.getElementById('beam-canvas'),bctx=bc.getContext('2d');
+    function resizeBC(){bc.width=window.innerWidth;bc.height=window.innerHeight;} resizeBC();
+    function tvPos(){var p=window.innerHeight>window.innerWidth;return{x:window.innerWidth*0.515,y:window.innerHeight*(p?0.52:0.40)};}
+    var _v3=new T.Vector3();
+    function w2s(wx,wy,wz){_v3.set(wx,wy,wz);_v3.project(camera);return{x:(_v3.x*0.5+0.5)*window.innerWidth,y:(-_v3.y*0.5+0.5)*window.innerHeight};}
+    function beamSeg(tv,p1,p2,eff,r,g,b){
+      var mid={x:(p1.x+p2.x)*0.5,y:(p1.y+p2.y)*0.5};
+      var gr=bctx.createLinearGradient(tv.x,tv.y,mid.x,mid.y);
+      gr.addColorStop(0,'rgba('+r+','+g+','+b+','+(eff*0.20)+')');gr.addColorStop(1,'rgba('+r+','+g+','+b+','+(eff*0.03)+')');
+      bctx.save();bctx.beginPath();bctx.moveTo(tv.x,tv.y);bctx.lineTo(p1.x,p1.y);bctx.lineTo(p2.x,p2.y);bctx.closePath();bctx.fillStyle=gr;bctx.fill();bctx.restore();
+      var lg=bctx.createLinearGradient(tv.x,tv.y,mid.x,mid.y);
+      lg.addColorStop(0,'rgba('+(Math.min(r+80,255))+','+g+','+b+','+(eff*0.52)+')');lg.addColorStop(1,'rgba('+r+','+g+','+b+','+(eff*0.07)+')');
+      bctx.save();bctx.beginPath();bctx.moveTo(tv.x,tv.y);bctx.lineTo(mid.x,mid.y);bctx.strokeStyle=lg;bctx.lineWidth=1.1;bctx.stroke();bctx.restore();
     }
-    function elemPulse(idx, t){
-      return 0.55 + 0.45 * Math.sin(t * elemSpeeds[idx] + elemPhases[idx]);
-    }
-
-    // 2D beam canvas
-    var bc = document.getElementById('beam-canvas');
-    var bctx = bc.getContext('2d');
-    function resizeBeamCanvas(){
-      bc.width  = window.innerWidth;
-      bc.height = window.innerHeight;
-    }
-    resizeBeamCanvas();
-
-    function tvScreenPos(){
-      var portrait = window.innerHeight > window.innerWidth;
-      return {
-        x: window.innerWidth  * 0.515,
-        y: window.innerHeight * (portrait ? 0.52 : 0.40)
-      };
-    }
-
-    var _v3 = new T.Vector3();
-    function worldToScreen(wx, wy, wz){
-      _v3.set(wx, wy, wz);
-      _v3.project(camera);
-      return {
-        x: ( _v3.x * 0.5 + 0.5) * window.innerWidth,
-        y: (-_v3.y * 0.5 + 0.5) * window.innerHeight
-      };
-    }
-
-    function drawSegBeam(tv, p1, p2, eff, r, g, b){
-      var mid = {x:(p1.x+p2.x)*0.5, y:(p1.y+p2.y)*0.5};
-      var grad = bctx.createLinearGradient(tv.x, tv.y, mid.x, mid.y);
-      grad.addColorStop(0, 'rgba('+r+','+g+','+b+','+(eff*0.20)+')');
-      grad.addColorStop(1, 'rgba('+r+','+g+','+b+','+(eff*0.03)+')');
-      bctx.save();
-      bctx.beginPath();
-      bctx.moveTo(tv.x, tv.y);
-      bctx.lineTo(p1.x, p1.y);
-      bctx.lineTo(p2.x, p2.y);
-      bctx.closePath();
-      bctx.fillStyle = grad;
-      bctx.fill();
-      bctx.restore();
-      var lg = bctx.createLinearGradient(tv.x,tv.y,mid.x,mid.y);
-      lg.addColorStop(0, 'rgba('+(Math.min(r+80,255))+','+g+','+b+','+(eff*0.52)+')');
-      lg.addColorStop(1, 'rgba('+r+','+g+','+b+','+(eff*0.07)+')');
-      bctx.save();
-      bctx.beginPath();
-      bctx.moveTo(tv.x,tv.y);
-      bctx.lineTo(mid.x,mid.y);
-      bctx.strokeStyle=lg;
-      bctx.lineWidth=1.1;
-      bctx.stroke();
-      bctx.restore();
-    }
-
-    function drawBeams(introOp, t){
-      bctx.clearRect(0,0,bc.width,bc.height);
-      if(introOp<=0.001) return;
-      var tv = tvScreenPos();
-      var yOff = tGroup.position.y - 3.4;
-
-      // Title char beams (cyan-green)
-      CHARS.forEach(function(ch,ci){
-        var segs=charStrokeWorld[ci];
-        if(!segs||!segs.length) return;
-        var eff = introOp * elemPulse(ci, t);
-        segs.forEach(function(s){
-          var p1=worldToScreen(s.x1, s.y1+yOff, s.z);
-          var p2=worldToScreen(s.x2, s.y2+yOff, s.z);
-          drawSegBeam(tv, p1, p2, eff, 100, 255, 220);
-        });
-      });
-
-      // Button gem beams (blue-cyan)
-      NAV_ITEMS.forEach(function(item,bi){
-        var segs=btnStrokeWorld[bi];
-        if(!segs||!segs.length) return;
-        var eff = introOp * elemPulse(CHARS.length+bi, t);
-        segs.forEach(function(s){
-          var p1=worldToScreen(s.x1, s.y1+btnGroup.position.y, s.z1);
-          var p2=worldToScreen(s.x2, s.y2+btnGroup.position.y, s.z2);
-          drawSegBeam(tv, p1, p2, eff, 120, 210, 255);
-        });
-      });
-
-      // TV glow dot
+    function drawBeams(introOp,t){
+      bctx.clearRect(0,0,bc.width,bc.height); if(introOp<=0.001) return;
+      var tv=tvPos(),yOff=tGroup.position.y-3.4;
+      CHARS.forEach(function(ch,ci){var segs=charStrokeWorld[ci];if(!segs||!segs.length) return;var eff=introOp*elemPulse(ci,t);segs.forEach(function(s){beamSeg(tv,w2s(s.x1,s.y1+yOff,s.z),w2s(s.x2,s.y2+yOff,s.z),eff,100,255,220);});});
+      NAV_ITEMS.forEach(function(item,bi){var segs=btnBeamSegs[bi];if(!segs||!segs.length) return;var eff=introOp*elemPulse(CHARS.length+bi,t),by=btnGroup.position.y;segs.forEach(function(s){beamSeg(tv,w2s(s.x1,s.y1+by,s.z),w2s(s.x2,s.y2+by,s.z),eff,120,210,255);});});
       var grd=bctx.createRadialGradient(tv.x,tv.y,0,tv.x,tv.y,18);
-      grd.addColorStop(0,'rgba(200,255,245,'+(introOp*0.9)+')');
-      grd.addColorStop(0.4,'rgba(0,255,200,'+(introOp*0.4)+')');
-      grd.addColorStop(1,'rgba(0,255,200,0)');
-      bctx.beginPath();
-      bctx.arc(tv.x,tv.y,18,0,Math.PI*2);
-      bctx.fillStyle=grd;
-      bctx.fill();
+      grd.addColorStop(0,'rgba(200,255,245,'+(introOp*0.9)+')');grd.addColorStop(0.4,'rgba(0,255,200,'+(introOp*0.4)+')');grd.addColorStop(1,'rgba(0,255,200,0)');
+      bctx.beginPath();bctx.arc(tv.x,tv.y,18,0,Math.PI*2);bctx.fillStyle=grd;bctx.fill();
     }
-
     var mx=0,my=0,smx=0,smy=0;
-    document.addEventListener('mousemove',function(e){
-      mx=(e.clientX/window.innerWidth-0.5)*2;
-      my=(e.clientY/window.innerHeight-0.5)*2;
-    });
-
-    window.addEventListener('resize',function(){
-      var port=window.innerHeight>window.innerWidth;
-      camera.fov=port?82:55;
-      camera.aspect=window.innerWidth/window.innerHeight;
-      camera.updateProjectionMatrix();
-      camZ=port?14.5:10;
-      camera.position.z=camZ;
-      renderer.setSize(window.innerWidth,window.innerHeight);
-      resizeBeamCanvas();
-    });
-
+    document.addEventListener('mousemove',function(e){mx=(e.clientX/window.innerWidth-0.5)*2;my=(e.clientY/window.innerHeight-0.5)*2;});
+    window.addEventListener('resize',function(){var p=window.innerHeight>window.innerWidth;camera.fov=p?82:55;camera.aspect=window.innerWidth/window.innerHeight;camera.updateProjectionMatrix();camZ=p?14.5:10;camera.position.z=camZ;renderer.setSize(window.innerWidth,window.innerHeight);resizeBC();});
     var clock=new T.Clock();
     function animate(){
-      requestAnimationFrame(animate);
-      var t=clock.getElapsedTime();
-
-      smx+=(mx-smx)*0.06;
-      smy+=(my-smy)*0.06;
-      cGroup.rotation.y=smx*0.32;
-      cGroup.rotation.x=-smy*0.20;
-      camera.position.x=smx*3.0;
-      camera.position.y=2-smy*1.5;
-      camera.lookAt(0,1,0);
-
-      var floatY=3.4+Math.sin(t*0.4)*0.06;
-      tGroup.position.y=floatY;
+      requestAnimationFrame(animate); var t=clock.getElapsedTime();
+      smx+=(mx-smx)*0.06;smy+=(my-smy)*0.06;
+      cGroup.rotation.y=smx*0.32;cGroup.rotation.x=-smy*0.20;
+      camera.position.x=smx*3.0;camera.position.y=2-smy*1.5;camera.lookAt(0,1,0);
+      tGroup.position.y=3.4+Math.sin(t*0.4)*0.06;
       btnGroup.position.y=Math.sin(t*0.35+1.2)*0.04;
-      // Subtle rotation on btn group so the 3D depth is visible
-      btnGroup.rotation.x = -0.18 + Math.sin(t*0.28)*0.04;
-      btnGroup.rotation.y =  Math.sin(t*0.22+0.5)*0.06;
-
+      btnGroup.rotation.x=-0.16+Math.sin(t*0.27)*0.03;
+      btnGroup.rotation.y=Math.sin(t*0.21+0.5)*0.05;
       var introFade=Math.min(1.0,t/1.5);
-
-      glyphMats.forEach(function(obj){
-        obj.mat.opacity=obj.base*introFade*elemPulse(obj.elemIdx,t);
-      });
-      btnMats.forEach(function(obj){
-        obj.mat.opacity=obj.base*introFade*elemPulse(obj.elemIdx,t);
-      });
-
+      glyphMats.forEach(function(obj){obj.mat.opacity=obj.base*introFade*elemPulse(obj.elemIdx,t);});
+      btnMats.forEach(function(obj){obj.mat.opacity=obj.base*introFade*elemPulse(obj.elemIdx,t);});
       var introOp=Math.min(1.0,t/0.8);
-      NAV_ITEMS.forEach(function(item,bi){
-        var c=btnWorldCenters[bi];
-        var sc=worldToScreen(c.x, c.y+btnGroup.position.y, c.z);
-        var ep=elemPulse(CHARS.length+bi,t);
-        labelEls[bi].style.left=sc.x+'px';
-        labelEls[bi].style.top=sc.y+'px';
-        labelEls[bi].style.opacity=introOp*(0.65+0.35*ep);
-      });
-
+      NAV_ITEMS.forEach(function(item,bi){var c=btnCenters[bi];var sc=w2s(c.x,c.y+btnGroup.position.y,c.z);var ep=elemPulse(CHARS.length+bi,t);labelEls[bi].style.left=sc.x+'px';labelEls[bi].style.top=sc.y+'px';labelEls[bi].style.opacity=introOp*(0.65+0.35*ep);});
       drawBeams(introOp,t);
       renderer.render(scene,camera);
     }
