@@ -22,7 +22,7 @@
       text-shadow: 0 0 6px rgba(0,255,200,0.9), 0 0 16px rgba(0,255,200,0.5);
       transform: translate(-50%, -50%);
       pointer-events: all; cursor: pointer; white-space: nowrap;
-      text-decoration: none; visibility: hidden; opacity: 0;
+      text-decoration: none; display: none; opacity: 0;
       transition: color .2s, text-shadow .2s;
     }
     .holo-label:hover {
@@ -214,7 +214,7 @@
     // HTML labels
     var holoNav=document.getElementById('holo-nav');
     var labelEls=NAV_ITEMS.map(function(item,bi){
-      var el=document.createElement('a'); el.className='holo-label';
+      var el=document.createElement('a'); el.className='holo-label'; el.style.display='none';
       el.textContent=item.label; el.href=item.href;
       el.addEventListener('click',function(e){
         e.preventDefault();
@@ -344,7 +344,7 @@
         var ep=elemPulse(CHARS.length+bi,t);
         labelEls[bi].style.left=sc.x+'px';
         labelEls[bi].style.top=sc.y+'px';
-        labelEls[bi].style.visibility='visible';
+        labelEls[bi].style.display='block';
         labelEls[bi].style.opacity=introOp*(0.7+0.3*ep);
       });
 
