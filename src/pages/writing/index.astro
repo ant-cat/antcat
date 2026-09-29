@@ -176,9 +176,11 @@ const years = Object.keys(byYear).sort((a, b) => Number(b) - Number(a));
   opacity: 1;
 }
 
-@media (max-width: 560px) {
+@media (max-width: 600px) {
   .post-card { padding: 16px 0; }
   .post-title { font-size: 1rem; }
+  /* No hover on mobile — keep leads always hidden */
+  .post-lead { display: none; }
 }
 </style>
 

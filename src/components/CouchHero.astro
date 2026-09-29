@@ -1,5 +1,5 @@
 ---
-// CouchHero.astro — scroll-driven illustrated couch scene hero
+// CouchHero.astro — scroll-driven (desktop) / autoplay (mobile) illustrated couch scene hero
 interface Props {
   subtitle?: string;
 }
@@ -19,7 +19,7 @@ const { subtitle = '' } = Astro.props;
       </div>
 
       <!-- White shirt (char 2) -->
-      <div class="ch-char" id="ch-white" style="--seat-x:54%;--seat-y:43%;--size:29%">
+      <div class="ch-char" id="ch-white" style="--seat-x:54%;--seat-y:45%;--size:29%">
         <canvas class="ch-canvas" id="ch-white-canvas" width="768" height="768"></canvas>
       </div>
 
@@ -33,13 +33,13 @@ const { subtitle = '' } = Astro.props;
         <canvas class="ch-canvas" id="ch-yellow-canvas" width="768" height="768"></canvas>
       </div>
 
-      <!-- Hero text overlay -->
-      <div class="ch-content">
+      <!-- Hero text overlay (desktop only — hidden on mobile via CSS) -->
+      <div class="ch-content ch-content--overlay">
         <h1 class="ch-title">Writing</h1>
-        <p class="ch-sub" id="ch-sub"></p>
+        <p class="ch-sub" id="ch-sub-overlay"></p>
       </div>
 
-      <!-- Scroll cue -->
+      <!-- Scroll cue (desktop only) -->
       <div class="ch-scroll-cue" id="ch-cue">
         <span>scroll</span>
         <svg width="16" height="24" viewBox="0 0 16 24"><path d="M8 0v20M1 13l7 7 7-7" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -49,16 +49,20 @@ const { subtitle = '' } = Astro.props;
   </div>
 </div>
 
+<!-- Mobile text block — below the scene, normal flow -->
+<div class="ch-mobile-text" id="ch-mobile-text">
+  <h1 class="ch-title-mobile">Writing</h1>
+  <p class="ch-sub-mobile" id="ch-sub-mobile"></p>
+</div>
+
 <style>
 /* ── SCENE HEIGHT: cinematic 16:9-ish strip, capped so it's not too tall ── */
 :root { --ch-h: min(56vw, 92vh); }
 
 /* ── OUTER: tall scroll container that pins the scene ── */
 .ch-outer {
-  /* 3× scene height = pinned for ~2 scene-heights of scroll room */
   height: calc(var(--ch-h) * 3);
   position: relative;
-  /* Break fully out of .main's max-width and padding */
   width: 100vw;
   margin-left: calc(50% - 50vw);
   margin-bottom: 52px;
@@ -88,12 +92,6 @@ const { subtitle = '' } = Astro.props;
 }
 
 /* ── CHARACTERS ── */
-/* Each character div is a square anchored by its hip point.
-   Hip anchor within 768×768 canvas: (0.5, 0.612)
-   We place the character so that hip lands at (--seat-x, --seat-y) of scene.
-   Width = --size of scene width. Height = same (square canvas).
-   left = seat-x - size*0.5 (center horizontally)
-   top  = seat-y - size*0.612 (anchor hip vertically) */
 .ch-char {
   position: absolute;
   width: var(--size);
@@ -101,8 +99,9 @@ const { subtitle = '' } = Astro.props;
   left: calc(var(--seat-x) - var(--size) * 0.5);
   top: calc(var(--seat-y) - var(--size) * 0.612);
   will-change: transform, opacity;
-  transform-origin: 50% 61.2%; /* hip point */
+  transform-origin: 50% 61.2%;
   transform: translate(var(--x, 0px), var(--y, 0px)) rotate(var(--r, 0deg));
+  opacity: var(--opacity, 1);
 }
 
 .ch-canvas {
@@ -111,8 +110,8 @@ const { subtitle = '' } = Astro.props;
   display: block;
 }
 
-/* ── TEXT OVERLAY ── */
-.ch-content {
+/* ── TEXT OVERLAY (desktop) ── */
+.ch-content--overlay {
   position: absolute;
   bottom: 0;
   left: 0;
@@ -159,9 +158,68 @@ const { subtitle = '' } = Astro.props;
 }
 .ch-scroll-cue.hidden { opacity: 0; pointer-events: none; }
 
-@media (max-width: 560px) {
-  :root { --ch-h: min(75vw, 85vh); }
-  .ch-content { padding: 0 16px 20px; }
+/* ── MOBILE TEXT BLOCK ── hidden on desktop ── */
+.ch-mobile-text {
+  display: none;
+}
+
+/* ── MOBILE OVERRIDES ── */
+@media (max-width: 600px) {
+  /* Scene: normal flow, tighter crop, no sticky pinning */
+  :root { --ch-h: 65vw; }
+
+  .ch-outer {
+    height: var(--ch-h);   /* no 3x scroll room */
+    margin-bottom: 0;
+  }
+
+  .ch-sticky {
+    position: relative;    /* cancel sticky */
+    top: auto;
+  }
+
+  /* Mobile character overrides: bigger, shifted right and down */
+  #ch-blue   { --seat-x: 49%; --seat-y: 42%; --size: 32%; }
+  #ch-white  { --seat-x: 56%; --seat-y: 46%; --size: 32%; }
+  #ch-purple { --seat-x: 66%; --seat-y: 50%; --size: 32%; }
+  #ch-yellow { --seat-x: 75%; --seat-y: 53%; --size: 32%; }
+
+  /* Tighter crop — center on the couch */
+  .ch-bg {
+    object-position: 55% 40%;
+  }
+
+  /* Hide desktop overlay text and scroll cue */
+  .ch-content--overlay,
+  .ch-scroll-cue {
+    display: none;
+  }
+
+  /* Show mobile text block below the scene */
+  .ch-mobile-text {
+    display: block;
+    width: 100vw;
+    margin-left: calc(50% - 50vw);
+    padding: 20px 20px 32px;
+    margin-bottom: 32px;
+  }
+
+  .ch-title-mobile {
+    font-family: var(--serif);
+    font-size: 2rem;
+    font-weight: 400;
+    color: var(--text);
+    line-height: 1.1;
+    margin-bottom: 8px;
+  }
+
+  .ch-sub-mobile {
+    font-size: 0.8rem;
+    color: var(--text3);
+    font-family: var(--mono);
+    letter-spacing: 0.03em;
+    line-height: 1.5;
+  }
 }
 
 /* Reduced motion: show first frame statically, no sticky */
@@ -175,8 +233,12 @@ const { subtitle = '' } = Astro.props;
 <script is:inline>
 (function() {
   /* ── CONFIG ── */
-  var ANIM_START = 0.10;   // scene progress % where frames begin
-  var ANIM_END   = 0.68;   // scene progress % where animation completes
+  var ANIM_START = 0.10;
+  var ANIM_END   = 0.68;
+
+  /* Mobile autoplay config */
+  var MOBILE_FPS        = 18;   // frames per second for looping chars
+  var MOBILE_FLYOFF_DUR = 2200; // ms for blue shirt fly-off (once)
 
   var CHARS = [
     {
@@ -184,7 +246,7 @@ const { subtitle = '' } = Astro.props;
       canvasId: 'ch-blue-canvas',
       charId: 'ch-blue',
       dir: '/images/blue-shirt-animation/frames/',
-      prefix: 'frame_',   // underscore
+      prefix: 'frame_',
       maxFrame: 71,
       holdFrame: 71,
       flyOff: true,
@@ -194,7 +256,7 @@ const { subtitle = '' } = Astro.props;
       canvasId: 'ch-white-canvas',
       charId: 'ch-white',
       dir: '/images/white-shirt-animation/frames/',
-      prefix: 'frame-',   // dash
+      prefix: 'frame-',
       maxFrame: 56,
       holdFrame: 56,
       flyOff: false,
@@ -222,22 +284,25 @@ const { subtitle = '' } = Astro.props;
   ];
 
   /* ── STATE ── */
-  var loaded = {};    // charId -> array of HTMLImageElement (72 frames)
-  var loadCount = 0;
-  var totalFrames = 0;
-  var contexts = {};  // canvasId -> CanvasRenderingContext2D
-  var charEls = {};   // charId -> DOM element
-  var currentFrames = {}; // charId -> current drawn frame index
+  var loaded = {};
+  var contexts = {};
+  var charEls = {};
+  var currentFrames = {};
 
   /* ── DOM REFS ── */
-  var outer = document.getElementById('ch-outer');
-  var sticky = document.getElementById('ch-sticky');
-  var cue = document.getElementById('ch-cue');
-  var subEl = document.getElementById('ch-sub');
+  var outer   = document.getElementById('ch-outer');
+  var sticky  = document.getElementById('ch-sticky');
+  var cue     = document.getElementById('ch-cue');
 
-  if (subEl && outer) {
-    subEl.textContent = outer.dataset.subtitle || '';
-  }
+  // Subtitle: populate both overlay (desktop) and mobile block
+  var subOverlay = document.getElementById('ch-sub-overlay');
+  var subMobile  = document.getElementById('ch-sub-mobile');
+  var subtitle   = outer ? (outer.dataset.subtitle || '') : '';
+  if (subOverlay) subOverlay.textContent = subtitle;
+  if (subMobile)  subMobile.textContent  = subtitle;
+
+  /* ── DETECT MOBILE ── */
+  var isMobile = window.matchMedia('(max-width: 600px)').matches;
 
   /* ── PREFERS REDUCED MOTION ── */
   var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -245,9 +310,7 @@ const { subtitle = '' } = Astro.props;
   /* ── CANVAS SETUP ── */
   CHARS.forEach(function(ch) {
     var canvas = document.getElementById(ch.canvasId);
-    if (canvas) {
-      contexts[ch.id] = canvas.getContext('2d');
-    }
+    if (canvas) contexts[ch.id] = canvas.getContext('2d');
     charEls[ch.id] = document.getElementById(ch.charId);
     currentFrames[ch.id] = -1;
     loaded[ch.id] = [];
@@ -255,7 +318,7 @@ const { subtitle = '' } = Astro.props;
 
   /* ── DRAW FRAME ── */
   function drawFrame(ch, idx) {
-    if (currentFrames[ch.id] === idx) return; // no redraw needed
+    if (currentFrames[ch.id] === idx) return;
     var ctx = contexts[ch.id];
     if (!ctx) return;
     var imgs = loaded[ch.id];
@@ -265,9 +328,8 @@ const { subtitle = '' } = Astro.props;
     currentFrames[ch.id] = idx;
   }
 
-  /* ── APPLY FLYOFF TRANSFORM (matches prototype math exactly) ── */
+  /* ── APPLY FLYOFF TRANSFORM ── */
   function applyFlyOff(el, amount) {
-    // No transform at rest — keeps character anchored regardless of window size
     if (amount <= 0) {
       el.style.removeProperty('--x');
       el.style.removeProperty('--y');
@@ -280,88 +342,27 @@ const { subtitle = '' } = Astro.props;
     var sceneHeight = sticky ? sticky.offsetHeight : window.innerHeight;
 
     var flightStart = 0.1;
-
-    // Flight progress: starts at 10% of amount, completes 58% later at 68%
     var flight = Math.max(0, Math.min(1, (amount - flightStart) / 0.58));
-
-    // Smoothstep easing
     var easedFlight = flight * flight * (3 - 2 * flight);
-
-    // Initial lift as the scene begins
     var lift = Math.sin(Math.min(1, amount / flightStart) * Math.PI / 2);
 
-    // Ambient horizontal drift — zeroed at amount=0, grows with scroll
-    // Offset by +0.5 so the formula produces 0 at the start of scroll
-    var blueX = (amount - 0) * sceneWidth * 0.085 * 1.1
+    var blueX = amount * sceneWidth * 0.085 * 1.1
               + Math.sin(amount * Math.PI * 1.5) * 12 * amount;
-
-    // Move upward 122% of the scene height
     var blueY = -lift * 28 - easedFlight * sceneHeight * 1.22;
-
-    // Rotate up to 36 degrees
     var blueRotate = Math.sin(amount * Math.PI * 1.4) * 2 * amount
                    + easedFlight * 36;
 
     el.style.setProperty('--x', (blueX + easedFlight * sceneWidth * 0.34) + 'px');
     el.style.setProperty('--y', blueY + 'px');
     el.style.setProperty('--r', blueRotate + 'deg');
-    // Fade during the final 28% of the flight
     el.style.setProperty('--opacity', String(1 - Math.max(0, easedFlight - 0.72) / 0.28));
-  }
-
-  /* ── UPDATE SCENE FROM SCROLL ── */
-  function update() {
-    if (!outer || !sticky) return;
-
-    var outerTop = outer.getBoundingClientRect().top;
-    var outerHeight = outer.offsetHeight;
-    var sceneH = sticky ? sticky.offsetHeight : window.innerHeight;
-
-    // scene progress: 0 when outer top hits viewport top, 1 when outer bottom clears viewport
-    // scrollable range = outerHeight - sceneH  (the extra scroll room beyond the pinned height)
-    var scrolled = -outerTop;
-    var maxScroll = outerHeight - sceneH;
-    var sceneProgress = Math.max(0, Math.min(1, scrolled / Math.max(1, maxScroll)));
-
-    // Hide scroll cue after a bit
-    if (cue) {
-      if (sceneProgress > 0.04) cue.classList.add('hidden');
-      else cue.classList.remove('hidden');
-    }
-
-    // Normalize animation progress within ANIM_START..ANIM_END
-    var animP = Math.max(0, Math.min(1, (sceneProgress - ANIM_START) / (ANIM_END - ANIM_START)));
-
-    CHARS.forEach(function(ch) {
-      var imgs = loaded[ch.id];
-      if (!imgs || imgs.length === 0) return;
-
-      var frameIdx = Math.min(ch.holdFrame, Math.round(animP * ch.maxFrame));
-      drawFrame(ch, frameIdx);
-
-      // Blue shirt fly-off: always pass sceneProgress as `amount`
-      if (ch.flyOff) {
-        var el = charEls[ch.id];
-        if (!el) return;
-        applyFlyOff(el, sceneProgress);
-      }
-    });
-  }
-
-  /* ── RAF LOOP ── */
-  var rafId = null;
-  var lastScroll = -1;
-  function tick() {
-    var s = window.scrollY;
-    if (s !== lastScroll) { lastScroll = s; update(); }
-    rafId = requestAnimationFrame(tick);
   }
 
   /* ── LOAD FRAMES ── */
   function pad3(n) { return n < 10 ? '00'+n : n < 100 ? '0'+n : ''+n; }
 
   function loadCharFrames(ch, onAllDone) {
-    var total = ch.maxFrame + 1; // frames 0..maxFrame
+    var total = ch.maxFrame + 1;
     var done = 0;
     for (var i = 0; i <= ch.maxFrame; i++) {
       (function(idx) {
@@ -376,9 +377,114 @@ const { subtitle = '' } = Astro.props;
     }
   }
 
+  /* ════════════════════════════════════════════════
+     MOBILE — autoplay loop
+  ════════════════════════════════════════════════ */
+  function startMobileAutoplay() {
+    // Per-character looping frame counters (floats, advanced each tick)
+    var frameCounters = {};
+    CHARS.forEach(function(ch) {
+      frameCounters[ch.id] = 0;
+    });
+
+    var flyOffStarted = false;
+    var flyOffDone    = false;
+    var flyOffStart   = null; // timestamp when fly-off began
+
+    var lastTick = null;
+    var intervalMs = 1000 / MOBILE_FPS;
+
+    function mobileTick(now) {
+      if (!lastTick) lastTick = now;
+      var dt = now - lastTick;
+
+      if (dt >= intervalMs) {
+        lastTick = now - (dt % intervalMs); // keep drift-free
+
+        CHARS.forEach(function(ch) {
+          var imgs = loaded[ch.id];
+          if (!imgs || imgs.length === 0) return;
+
+          if (ch.flyOff) {
+            // Blue shirt: fly-off once, then hold at last frame
+            if (!flyOffDone) {
+              if (!flyOffStarted) {
+                // Small delay before fly-off starts (let scene settle)
+                flyOffStarted = true;
+                flyOffStart = now;
+              }
+              var elapsed = now - flyOffStart;
+              var amount = Math.min(1, elapsed / MOBILE_FLYOFF_DUR);
+
+              // Drive frame animation from amount (0→1 over flyoff duration)
+              var frameIdx = Math.round(amount * ch.maxFrame);
+              drawFrame(ch, frameIdx);
+
+              // Drive transform from amount
+              var el = charEls[ch.id];
+              if (el) applyFlyOff(el, amount);
+
+              if (amount >= 1) flyOffDone = true;
+            }
+            // When done, frame and transform are already at their final held state
+          } else {
+            // Loop animation continuously
+            frameCounters[ch.id] += 1;
+            if (frameCounters[ch.id] > ch.maxFrame) frameCounters[ch.id] = 0;
+            drawFrame(ch, Math.round(frameCounters[ch.id]));
+          }
+        });
+      }
+
+      requestAnimationFrame(mobileTick);
+    }
+
+    requestAnimationFrame(mobileTick);
+  }
+
+  /* ════════════════════════════════════════════════
+     DESKTOP — scroll-driven
+  ════════════════════════════════════════════════ */
+  function update() {
+    if (!outer || !sticky) return;
+
+    var outerTop    = outer.getBoundingClientRect().top;
+    var outerHeight = outer.offsetHeight;
+    var sceneH      = sticky.offsetHeight;
+
+    var scrolled      = -outerTop;
+    var maxScroll     = outerHeight - sceneH;
+    var sceneProgress = Math.max(0, Math.min(1, scrolled / Math.max(1, maxScroll)));
+
+    if (cue) {
+      if (sceneProgress > 0.04) cue.classList.add('hidden');
+      else cue.classList.remove('hidden');
+    }
+
+    var animP = Math.max(0, Math.min(1, (sceneProgress - ANIM_START) / (ANIM_END - ANIM_START)));
+
+    CHARS.forEach(function(ch) {
+      var imgs = loaded[ch.id];
+      if (!imgs || imgs.length === 0) return;
+      var frameIdx = Math.min(ch.holdFrame, Math.round(animP * ch.maxFrame));
+      drawFrame(ch, frameIdx);
+      if (ch.flyOff) {
+        var el = charEls[ch.id];
+        if (!el) return;
+        applyFlyOff(el, sceneProgress);
+      }
+    });
+  }
+
+  var lastScroll = -1;
+  function tick() {
+    var s = window.scrollY;
+    if (s !== lastScroll) { lastScroll = s; update(); }
+    requestAnimationFrame(tick);
+  }
+
   /* ── INIT ── */
   if (reduced) {
-    // Just draw first frame of each char statically
     CHARS.forEach(function(ch) {
       var img = new Image();
       img.onload = function() {
@@ -390,22 +496,25 @@ const { subtitle = '' } = Astro.props;
     return;
   }
 
-  // Load all chars, then draw frame 0 and start RAF
   var charsLoaded = 0;
   CHARS.forEach(function(ch) {
     loadCharFrames(ch, function() {
-      // Draw frame 0 as soon as this char is ready
       drawFrame(ch, 0);
       charsLoaded++;
       if (charsLoaded === CHARS.length) {
-        // All loaded — start RAF
-        tick();
+        if (isMobile) {
+          startMobileAutoplay();
+        } else {
+          tick();
+        }
       }
     });
   });
 
-  // Start RAF right away even before all frames loaded (partial draws)
-  rafId = requestAnimationFrame(tick);
+  // Start desktop RAF immediately even before all frames loaded
+  if (!isMobile) {
+    requestAnimationFrame(tick);
+  }
 
 })();
 </script>
