@@ -316,6 +316,25 @@ const { subtitle = '' } = Astro.props;
     loaded[ch.id] = [];
   });
 
+  /* ── MOBILE SEAT OVERRIDES — JS wins over inline style for CSS custom props ── */
+  var MOBILE_SEATS = {
+    blue:   { x: "49%", y: "42%", size: "32%" },
+    white:  { x: "56%", y: "46%", size: "32%" },
+    purple: { x: "66%", y: "50%", size: "32%" },
+    yellow: { x: "75%", y: "53%", size: "32%" },
+  };
+  if (isMobile) {
+    CHARS.forEach(function(ch) {
+      var el = charEls[ch.id];
+      var s  = MOBILE_SEATS[ch.id];
+      if (el && s) {
+        el.style.setProperty("--seat-x", s.x);
+        el.style.setProperty("--seat-y", s.y);
+        el.style.setProperty("--size",   s.size);
+      }
+    });
+  }
+
   /* ── DRAW FRAME ── */
   function drawFrame(ch, idx) {
     if (currentFrames[ch.id] === idx) return;
