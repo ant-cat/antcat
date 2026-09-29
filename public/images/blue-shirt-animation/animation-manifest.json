@@ -1,0 +1,553 @@
+{
+  "asset": "blue-shirt-character-animation",
+  "canvas": {
+    "width_px": 768,
+    "height_px": 768,
+    "color_mode": "RGBA",
+    "background": "transparent"
+  },
+  "frame_count": 72,
+  "fps": 24,
+  "duration_seconds": 3.0,
+  "frame_duration_ms": 41.666666666666664,
+  "loop": true,
+  "frame_order": [
+    "seated",
+    "01-lift",
+    "02-lift-to-rise",
+    "03-rise-to-float",
+    "04-floating",
+    "05-float-to-drift",
+    "06-near-drift",
+    "07-drifting",
+    "08-drift-to-tumble",
+    "09-near-tumble",
+    "10-tumbling",
+    "11-tumble-to-lift",
+    "12-return-to-lift",
+    "seated"
+  ],
+  "anchor": {
+    "type": "hip/couch-seat",
+    "coordinates_px": {
+      "x": 384,
+      "y": 470
+    },
+    "coordinates_normalized": {
+      "x": 0.5,
+      "y": 0.611979
+    },
+    "description": "Canonical placement anchor for aligning the character to the couch seat. Keep this point fixed when positioning the animation layer."
+  },
+  "files": {
+    "first_seated_frame": "first_seated_frame.png",
+    "final_seated_frame": "final_seated_frame.png",
+    "frames_directory": "frames/"
+  },
+  "frames": [
+    {
+      "index": 0,
+      "file": "frames/frame_000.png",
+      "duration_ms": 41.666667,
+      "transition_from": "seated",
+      "transition_to": "01-lift"
+    },
+    {
+      "index": 1,
+      "file": "frames/frame_001.png",
+      "duration_ms": 41.666667,
+      "transition_from": "seated",
+      "transition_to": "01-lift"
+    },
+    {
+      "index": 2,
+      "file": "frames/frame_002.png",
+      "duration_ms": 41.666667,
+      "transition_from": "seated",
+      "transition_to": "01-lift"
+    },
+    {
+      "index": 3,
+      "file": "frames/frame_003.png",
+      "duration_ms": 41.666667,
+      "transition_from": "seated",
+      "transition_to": "01-lift"
+    },
+    {
+      "index": 4,
+      "file": "frames/frame_004.png",
+      "duration_ms": 41.666667,
+      "transition_from": "seated",
+      "transition_to": "01-lift"
+    },
+    {
+      "index": 5,
+      "file": "frames/frame_005.png",
+      "duration_ms": 41.666667,
+      "transition_from": "seated",
+      "transition_to": "01-lift"
+    },
+    {
+      "index": 6,
+      "file": "frames/frame_006.png",
+      "duration_ms": 41.666667,
+      "transition_from": "01-lift",
+      "transition_to": "02-lift-to-rise"
+    },
+    {
+      "index": 7,
+      "file": "frames/frame_007.png",
+      "duration_ms": 41.666667,
+      "transition_from": "01-lift",
+      "transition_to": "02-lift-to-rise"
+    },
+    {
+      "index": 8,
+      "file": "frames/frame_008.png",
+      "duration_ms": 41.666667,
+      "transition_from": "01-lift",
+      "transition_to": "02-lift-to-rise"
+    },
+    {
+      "index": 9,
+      "file": "frames/frame_009.png",
+      "duration_ms": 41.666667,
+      "transition_from": "01-lift",
+      "transition_to": "02-lift-to-rise"
+    },
+    {
+      "index": 10,
+      "file": "frames/frame_010.png",
+      "duration_ms": 41.666667,
+      "transition_from": "01-lift",
+      "transition_to": "02-lift-to-rise"
+    },
+    {
+      "index": 11,
+      "file": "frames/frame_011.png",
+      "duration_ms": 41.666667,
+      "transition_from": "01-lift",
+      "transition_to": "02-lift-to-rise"
+    },
+    {
+      "index": 12,
+      "file": "frames/frame_012.png",
+      "duration_ms": 41.666667,
+      "transition_from": "02-lift-to-rise",
+      "transition_to": "03-rise-to-float"
+    },
+    {
+      "index": 13,
+      "file": "frames/frame_013.png",
+      "duration_ms": 41.666667,
+      "transition_from": "02-lift-to-rise",
+      "transition_to": "03-rise-to-float"
+    },
+    {
+      "index": 14,
+      "file": "frames/frame_014.png",
+      "duration_ms": 41.666667,
+      "transition_from": "02-lift-to-rise",
+      "transition_to": "03-rise-to-float"
+    },
+    {
+      "index": 15,
+      "file": "frames/frame_015.png",
+      "duration_ms": 41.666667,
+      "transition_from": "02-lift-to-rise",
+      "transition_to": "03-rise-to-float"
+    },
+    {
+      "index": 16,
+      "file": "frames/frame_016.png",
+      "duration_ms": 41.666667,
+      "transition_from": "02-lift-to-rise",
+      "transition_to": "03-rise-to-float"
+    },
+    {
+      "index": 17,
+      "file": "frames/frame_017.png",
+      "duration_ms": 41.666667,
+      "transition_from": "02-lift-to-rise",
+      "transition_to": "03-rise-to-float"
+    },
+    {
+      "index": 18,
+      "file": "frames/frame_018.png",
+      "duration_ms": 41.666667,
+      "transition_from": "03-rise-to-float",
+      "transition_to": "04-floating"
+    },
+    {
+      "index": 19,
+      "file": "frames/frame_019.png",
+      "duration_ms": 41.666667,
+      "transition_from": "03-rise-to-float",
+      "transition_to": "04-floating"
+    },
+    {
+      "index": 20,
+      "file": "frames/frame_020.png",
+      "duration_ms": 41.666667,
+      "transition_from": "03-rise-to-float",
+      "transition_to": "04-floating"
+    },
+    {
+      "index": 21,
+      "file": "frames/frame_021.png",
+      "duration_ms": 41.666667,
+      "transition_from": "03-rise-to-float",
+      "transition_to": "04-floating"
+    },
+    {
+      "index": 22,
+      "file": "frames/frame_022.png",
+      "duration_ms": 41.666667,
+      "transition_from": "03-rise-to-float",
+      "transition_to": "04-floating"
+    },
+    {
+      "index": 23,
+      "file": "frames/frame_023.png",
+      "duration_ms": 41.666667,
+      "transition_from": "03-rise-to-float",
+      "transition_to": "04-floating"
+    },
+    {
+      "index": 24,
+      "file": "frames/frame_024.png",
+      "duration_ms": 41.666667,
+      "transition_from": "04-floating",
+      "transition_to": "05-float-to-drift"
+    },
+    {
+      "index": 25,
+      "file": "frames/frame_025.png",
+      "duration_ms": 41.666667,
+      "transition_from": "04-floating",
+      "transition_to": "05-float-to-drift"
+    },
+    {
+      "index": 26,
+      "file": "frames/frame_026.png",
+      "duration_ms": 41.666667,
+      "transition_from": "04-floating",
+      "transition_to": "05-float-to-drift"
+    },
+    {
+      "index": 27,
+      "file": "frames/frame_027.png",
+      "duration_ms": 41.666667,
+      "transition_from": "04-floating",
+      "transition_to": "05-float-to-drift"
+    },
+    {
+      "index": 28,
+      "file": "frames/frame_028.png",
+      "duration_ms": 41.666667,
+      "transition_from": "04-floating",
+      "transition_to": "05-float-to-drift"
+    },
+    {
+      "index": 29,
+      "file": "frames/frame_029.png",
+      "duration_ms": 41.666667,
+      "transition_from": "04-floating",
+      "transition_to": "05-float-to-drift"
+    },
+    {
+      "index": 30,
+      "file": "frames/frame_030.png",
+      "duration_ms": 41.666667,
+      "transition_from": "05-float-to-drift",
+      "transition_to": "06-near-drift"
+    },
+    {
+      "index": 31,
+      "file": "frames/frame_031.png",
+      "duration_ms": 41.666667,
+      "transition_from": "05-float-to-drift",
+      "transition_to": "06-near-drift"
+    },
+    {
+      "index": 32,
+      "file": "frames/frame_032.png",
+      "duration_ms": 41.666667,
+      "transition_from": "05-float-to-drift",
+      "transition_to": "06-near-drift"
+    },
+    {
+      "index": 33,
+      "file": "frames/frame_033.png",
+      "duration_ms": 41.666667,
+      "transition_from": "05-float-to-drift",
+      "transition_to": "06-near-drift"
+    },
+    {
+      "index": 34,
+      "file": "frames/frame_034.png",
+      "duration_ms": 41.666667,
+      "transition_from": "05-float-to-drift",
+      "transition_to": "06-near-drift"
+    },
+    {
+      "index": 35,
+      "file": "frames/frame_035.png",
+      "duration_ms": 41.666667,
+      "transition_from": "05-float-to-drift",
+      "transition_to": "06-near-drift"
+    },
+    {
+      "index": 36,
+      "file": "frames/frame_036.png",
+      "duration_ms": 41.666667,
+      "transition_from": "06-near-drift",
+      "transition_to": "07-drifting"
+    },
+    {
+      "index": 37,
+      "file": "frames/frame_037.png",
+      "duration_ms": 41.666667,
+      "transition_from": "06-near-drift",
+      "transition_to": "07-drifting"
+    },
+    {
+      "index": 38,
+      "file": "frames/frame_038.png",
+      "duration_ms": 41.666667,
+      "transition_from": "06-near-drift",
+      "transition_to": "07-drifting"
+    },
+    {
+      "index": 39,
+      "file": "frames/frame_039.png",
+      "duration_ms": 41.666667,
+      "transition_from": "06-near-drift",
+      "transition_to": "07-drifting"
+    },
+    {
+      "index": 40,
+      "file": "frames/frame_040.png",
+      "duration_ms": 41.666667,
+      "transition_from": "06-near-drift",
+      "transition_to": "07-drifting"
+    },
+    {
+      "index": 41,
+      "file": "frames/frame_041.png",
+      "duration_ms": 41.666667,
+      "transition_from": "06-near-drift",
+      "transition_to": "07-drifting"
+    },
+    {
+      "index": 42,
+      "file": "frames/frame_042.png",
+      "duration_ms": 41.666667,
+      "transition_from": "07-drifting",
+      "transition_to": "08-drift-to-tumble"
+    },
+    {
+      "index": 43,
+      "file": "frames/frame_043.png",
+      "duration_ms": 41.666667,
+      "transition_from": "07-drifting",
+      "transition_to": "08-drift-to-tumble"
+    },
+    {
+      "index": 44,
+      "file": "frames/frame_044.png",
+      "duration_ms": 41.666667,
+      "transition_from": "07-drifting",
+      "transition_to": "08-drift-to-tumble"
+    },
+    {
+      "index": 45,
+      "file": "frames/frame_045.png",
+      "duration_ms": 41.666667,
+      "transition_from": "07-drifting",
+      "transition_to": "08-drift-to-tumble"
+    },
+    {
+      "index": 46,
+      "file": "frames/frame_046.png",
+      "duration_ms": 41.666667,
+      "transition_from": "07-drifting",
+      "transition_to": "08-drift-to-tumble"
+    },
+    {
+      "index": 47,
+      "file": "frames/frame_047.png",
+      "duration_ms": 41.666667,
+      "transition_from": "07-drifting",
+      "transition_to": "08-drift-to-tumble"
+    },
+    {
+      "index": 48,
+      "file": "frames/frame_048.png",
+      "duration_ms": 41.666667,
+      "transition_from": "08-drift-to-tumble",
+      "transition_to": "09-near-tumble"
+    },
+    {
+      "index": 49,
+      "file": "frames/frame_049.png",
+      "duration_ms": 41.666667,
+      "transition_from": "08-drift-to-tumble",
+      "transition_to": "09-near-tumble"
+    },
+    {
+      "index": 50,
+      "file": "frames/frame_050.png",
+      "duration_ms": 41.666667,
+      "transition_from": "08-drift-to-tumble",
+      "transition_to": "09-near-tumble"
+    },
+    {
+      "index": 51,
+      "file": "frames/frame_051.png",
+      "duration_ms": 41.666667,
+      "transition_from": "08-drift-to-tumble",
+      "transition_to": "09-near-tumble"
+    },
+    {
+      "index": 52,
+      "file": "frames/frame_052.png",
+      "duration_ms": 41.666667,
+      "transition_from": "08-drift-to-tumble",
+      "transition_to": "09-near-tumble"
+    },
+    {
+      "index": 53,
+      "file": "frames/frame_053.png",
+      "duration_ms": 41.666667,
+      "transition_from": "08-drift-to-tumble",
+      "transition_to": "09-near-tumble"
+    },
+    {
+      "index": 54,
+      "file": "frames/frame_054.png",
+      "duration_ms": 41.666667,
+      "transition_from": "09-near-tumble",
+      "transition_to": "10-tumbling"
+    },
+    {
+      "index": 55,
+      "file": "frames/frame_055.png",
+      "duration_ms": 41.666667,
+      "transition_from": "09-near-tumble",
+      "transition_to": "10-tumbling"
+    },
+    {
+      "index": 56,
+      "file": "frames/frame_056.png",
+      "duration_ms": 41.666667,
+      "transition_from": "09-near-tumble",
+      "transition_to": "10-tumbling"
+    },
+    {
+      "index": 57,
+      "file": "frames/frame_057.png",
+      "duration_ms": 41.666667,
+      "transition_from": "09-near-tumble",
+      "transition_to": "10-tumbling"
+    },
+    {
+      "index": 58,
+      "file": "frames/frame_058.png",
+      "duration_ms": 41.666667,
+      "transition_from": "09-near-tumble",
+      "transition_to": "10-tumbling"
+    },
+    {
+      "index": 59,
+      "file": "frames/frame_059.png",
+      "duration_ms": 41.666667,
+      "transition_from": "09-near-tumble",
+      "transition_to": "10-tumbling"
+    },
+    {
+      "index": 60,
+      "file": "frames/frame_060.png",
+      "duration_ms": 41.666667,
+      "transition_from": "10-tumbling",
+      "transition_to": "11-tumble-to-lift"
+    },
+    {
+      "index": 61,
+      "file": "frames/frame_061.png",
+      "duration_ms": 41.666667,
+      "transition_from": "10-tumbling",
+      "transition_to": "11-tumble-to-lift"
+    },
+    {
+      "index": 62,
+      "file": "frames/frame_062.png",
+      "duration_ms": 41.666667,
+      "transition_from": "10-tumbling",
+      "transition_to": "11-tumble-to-lift"
+    },
+    {
+      "index": 63,
+      "file": "frames/frame_063.png",
+      "duration_ms": 41.666667,
+      "transition_from": "10-tumbling",
+      "transition_to": "11-tumble-to-lift"
+    },
+    {
+      "index": 64,
+      "file": "frames/frame_064.png",
+      "duration_ms": 41.666667,
+      "transition_from": "10-tumbling",
+      "transition_to": "11-tumble-to-lift"
+    },
+    {
+      "index": 65,
+      "file": "frames/frame_065.png",
+      "duration_ms": 41.666667,
+      "transition_from": "10-tumbling",
+      "transition_to": "11-tumble-to-lift"
+    },
+    {
+      "index": 66,
+      "file": "frames/frame_066.png",
+      "duration_ms": 41.666667,
+      "transition_from": "11-tumble-to-lift",
+      "transition_to": "seated"
+    },
+    {
+      "index": 67,
+      "file": "frames/frame_067.png",
+      "duration_ms": 41.666667,
+      "transition_from": "11-tumble-to-lift",
+      "transition_to": "seated"
+    },
+    {
+      "index": 68,
+      "file": "frames/frame_068.png",
+      "duration_ms": 41.666667,
+      "transition_from": "11-tumble-to-lift",
+      "transition_to": "seated"
+    },
+    {
+      "index": 69,
+      "file": "frames/frame_069.png",
+      "duration_ms": 41.666667,
+      "transition_from": "11-tumble-to-lift",
+      "transition_to": "seated"
+    },
+    {
+      "index": 70,
+      "file": "frames/frame_070.png",
+      "duration_ms": 41.666667,
+      "transition_from": "11-tumble-to-lift",
+      "transition_to": "seated"
+    },
+    {
+      "index": 71,
+      "file": "frames/frame_071.png",
+      "duration_ms": 41.666667,
+      "transition_from": "11-tumble-to-lift",
+      "transition_to": "seated"
+    }
+  ]
+}

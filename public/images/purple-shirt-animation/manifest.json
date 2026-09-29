@@ -1,0 +1,45 @@
+{
+  "character": "purple-shirt",
+  "fps": 24,
+  "duration_seconds": 3.0,
+  "frame_count": 72,
+  "frame_order": [
+    {"frames": "frame-000.png through frame-017.png", "motion": "seated to looking up", "key_frame": "frame-017.png"},
+    {"frames": "frame-018.png through frame-035.png", "motion": "looking up to looking right", "key_frame": "frame-035.png"},
+    {"frames": "frame-036.png through frame-053.png", "motion": "looking right back to looking up", "key_frame": "frame-053.png"},
+    {"frames": "frame-054.png through frame-071.png", "motion": "looking up back to seated", "key_frame": "frame-071.png"}
+  ],
+  "canvas": {
+    "width": 768,
+    "height": 768,
+    "format": "PNG",
+    "background": "transparent"
+  },
+  "anchor": {
+    "definition": "hip/couch-seat placement anchor",
+    "scene_width": 1620,
+    "scene_height": 971,
+    "x_percent": 65,
+    "y_percent": 54,
+    "x_px": 1053,
+    "y_px": 524
+  },
+  "required_pose_frames": {
+    "frame-000.png": "seated pose",
+    "frame-017.png": "looking straight up, surprised/confused, mouth open",
+    "frame-035.png": "looking right, surprised/confused, mouth open",
+    "frame-053.png": "looking straight up, surprised/confused, mouth open",
+    "frame-071.png": "seated pose"
+  },
+  "seated_frames": {
+    "first": "first_seated_frame.png",
+    "final": "final_seated_frame.png"
+  },
+  "artifact_fix": "Frames 011-019 use the clean transparent up-pose source; frames 039-071 use clean single-pose holds to eliminate crossfade ghosting around the head.",
+  "cleanup": [
+    "transparent background",
+    "couch/background/scene removed",
+    "glow and halo removed",
+    "dark edge matte and fringing removed"
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "character": "white-shirt",
+  "fps": 24,
+  "duration_seconds": 3.0,
+  "frame_count": 72,
+  "playback": "reverse of clockwise-white-shirt-scroll-animation-v3",
+  "frame_order": [
+    {"frames": "frame-000.png through frame-017.png", "motion": "seated to looking left", "key_frame": "frame-017.png"},
+    {"frames": "frame-018.png through frame-035.png", "motion": "looking left to looking straight up", "key_frame": "frame-035.png"},
+    {"frames": "frame-036.png through frame-053.png", "motion": "looking straight up to looking right", "key_frame": "frame-053.png"},
+    {"frames": "frame-054.png through frame-071.png", "motion": "looking right to seated", "key_frame": "frame-071.png"}
+  ],
+  "canvas": {"width": 768, "height": 768, "format": "PNG", "background": "transparent"},
+  "anchor": {
+    "definition": "hip/couch-seat placement anchor",
+    "scene_width": 1620,
+    "scene_height": 971,
+    "x_percent": 57,
+    "y_percent": 51,
+    "x_px": 923,
+    "y_px": 495
+  },
+  "required_pose_frames": {
+    "frame-000.png": "seated pose",
+    "frame-017.png": "looking left",
+    "frame-035.png": "looking straight up",
+    "frame-053.png": "looking right",
+    "frame-071.png": "seated pose"
+  },
+  "seated_frames": {"first": "first_seated_frame.png", "final": "final_seated_frame.png"},
+  "cleanup": ["transparent background", "couch/background/scene removed", "glow and halo removed", "dark edge matte and fringing removed"]
+}

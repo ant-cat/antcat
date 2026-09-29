@@ -1,5 +1,6 @@
 ---
 import Base from '../../layouts/Base.astro';
+import CouchHero from '../../components/CouchHero.astro';
 import { getCollection } from 'astro:content';
 
 const allPosts = (await getCollection('blog'))
@@ -7,10 +8,6 @@ const allPosts = (await getCollection('blog'))
 
 function formatDate(d: Date) {
   return d.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
-}
-
-function formatYear(d: Date) {
-  return d.getFullYear().toString();
 }
 
 // Extract first meaningful paragraph as lead-in
@@ -41,14 +38,7 @@ for (const post of allPosts) {
 const years = Object.keys(byYear).sort((a, b) => Number(b) - Number(a));
 ---
 <Base title="Writing">
-  <div class="page-hero">
-    <img class="hero-image" src="/images/hero2_couch_illustrated.png" alt="" aria-hidden="true" />
-    <div class="hero-overlay"></div>
-    <div class="hero-content">
-      <h1 class="hero-title">Writing</h1>
-      <p class="hero-sub">{allPosts.length} posts since 2006 — observations, reviews, stories, and product thinking.</p>
-    </div>
-  </div>
+  <CouchHero subtitle={`${allPosts.length} posts since 2006 — observations, reviews, stories, and product thinking.`} />
 
   {years.map(year => (
     <div class="year-group">
@@ -78,76 +68,6 @@ const years = Object.keys(byYear).sort((a, b) => Number(b) - Number(a));
 </Base>
 
 <style>
-/* ── PAGE HERO ── */
-.page-hero {
-  position: relative;
-  width: calc(100% + 48px);
-  margin-left: -24px;
-  height: 42vh;
-  min-height: 260px;
-  max-height: 480px;
-  overflow: hidden;
-  margin-bottom: 52px;
-}
-.hero-image {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 130%;
-  object-fit: cover;
-  object-position: center 30%;
-  will-change: transform;
-}
-.hero-overlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    to bottom,
-    rgba(12,17,32,0.18) 0%,
-    rgba(12,17,32,0.10) 40%,
-    rgba(12,17,32,0.65) 100%
-  );
-}
-@media (prefers-color-scheme: light) {
-  .hero-overlay {
-    background: linear-gradient(
-      to bottom,
-      rgba(242,239,232,0.10) 0%,
-      rgba(242,239,232,0.05) 40%,
-      rgba(242,239,232,0.55) 100%
-    );
-  }
-}
-.hero-content {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  max-width: 860px;
-  margin: 0 auto;
-  padding: 0 24px 28px;
-}
-.hero-title {
-  font-family: var(--serif);
-  font-size: clamp(2.2rem, 5vw, 3.6rem);
-  font-weight: 400;
-  color: #fff;
-  line-height: 1.1;
-  margin-bottom: 8px;
-  text-shadow: 0 2px 16px rgba(0,0,0,0.4);
-}
-.hero-sub {
-  font-size: 0.9rem;
-  color: rgba(255,255,255,0.82);
-  font-family: var(--mono);
-  letter-spacing: 0.03em;
-  text-shadow: 0 1px 6px rgba(0,0,0,0.5);
-}
-@media (prefers-color-scheme: light) {
-  .hero-title { color: #fff; }
-  .hero-sub { color: rgba(255,255,255,0.88); }
-}
-
 .year-group {
   margin-bottom: 48px;
 }

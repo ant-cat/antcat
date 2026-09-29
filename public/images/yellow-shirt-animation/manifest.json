@@ -1,0 +1,45 @@
+{
+  "character": "yellow-shirt",
+  "fps": 24,
+  "duration_seconds": 3.0,
+  "frame_count": 72,
+  "frame_order": [
+    {"frames": "frame-000.png through frame-017.png", "motion": "seated hold leading into left-facing reaction", "key_frame": "frame-017.png"},
+    {"frames": "frame-018.png through frame-035.png", "motion": "left-facing surprised reaction", "key_frame": "frame-018.png"},
+    {"frames": "frame-036.png through frame-053.png", "motion": "looking up surprised/confused", "key_frame": "frame-036.png"},
+    {"frames": "frame-054.png through frame-071.png", "motion": "left-facing surprised reaction returning to seated endpoint", "key_frame": "frame-054.png"}
+  ],
+  "canvas": {
+    "width": 768,
+    "height": 768,
+    "format": "PNG",
+    "background": "transparent"
+  },
+  "anchor": {
+    "definition": "hip/couch-seat placement anchor",
+    "x_px": 384,
+    "y_px": 470,
+    "x_percent": 50,
+    "y_percent": 61.2
+  },
+  "required_pose_frames": {
+    "frame-000.png": "seated pose",
+    "frame-017.png": "left-facing, surprised/confused, mouth open",
+    "frame-035.png": "left-facing, surprised/confused, mouth open",
+    "frame-036.png": "looking straight up, surprised/confused, mouth open",
+    "frame-053.png": "looking straight up, surprised/confused, mouth open",
+    "frame-054.png": "left-facing, surprised/confused, mouth open",
+    "frame-071.png": "seated pose"
+  },
+  "seated_frames": {
+    "first": "first_seated_frame.png",
+    "final": "final_seated_frame.png"
+  },
+  "artifact_cleanup": [
+    "transparent background",
+    "couch/background/scene removed",
+    "glow and halo removed",
+    "dark edge matte and fringing removed",
+    "no crossfade ghosting; frames use clean single-pose source images"
+  ]
+}

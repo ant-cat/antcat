@@ -1,0 +1,411 @@
+---
+// CouchHero.astro — scroll-driven illustrated couch scene hero
+interface Props {
+  subtitle?: string;
+}
+const { subtitle = '' } = Astro.props;
+---
+<div class="ch-outer" id="ch-outer" data-subtitle={subtitle}>
+  <div class="ch-sticky" id="ch-sticky">
+    <div class="ch-scene" id="ch-scene">
+
+      <!-- Background -->
+      <img class="ch-bg" src="/images/couch-scene-background.png" alt="" aria-hidden="true" />
+
+      <!-- Character layers — positioned by CSS custom properties set from JS -->
+      <!-- Blue shirt (char 1) — flies off -->
+      <div class="ch-char" id="ch-blue" style="--seat-x:47%;--seat-y:41%;--size:29%">
+        <canvas class="ch-canvas" id="ch-blue-canvas" width="768" height="768"></canvas>
+      </div>
+
+      <!-- White shirt (char 2) -->
+      <div class="ch-char" id="ch-white" style="--seat-x:54%;--seat-y:43%;--size:29%">
+        <canvas class="ch-canvas" id="ch-white-canvas" width="768" height="768"></canvas>
+      </div>
+
+      <!-- Purple shirt (char 3) -->
+      <div class="ch-char" id="ch-purple" style="--seat-x:64%;--seat-y:49%;--size:29%">
+        <canvas class="ch-canvas" id="ch-purple-canvas" width="768" height="768"></canvas>
+      </div>
+
+      <!-- Yellow shirt (char 4) -->
+      <div class="ch-char" id="ch-yellow" style="--seat-x:73%;--seat-y:52%;--size:29%">
+        <canvas class="ch-canvas" id="ch-yellow-canvas" width="768" height="768"></canvas>
+      </div>
+
+      <!-- Hero text overlay -->
+      <div class="ch-content">
+        <h1 class="ch-title">Writing</h1>
+        <p class="ch-sub" id="ch-sub"></p>
+      </div>
+
+      <!-- Scroll cue -->
+      <div class="ch-scroll-cue" id="ch-cue">
+        <span>scroll</span>
+        <svg width="16" height="24" viewBox="0 0 16 24"><path d="M8 0v20M1 13l7 7 7-7" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<style>
+/* ── SCENE HEIGHT: cinematic 16:9-ish strip, capped so it's not too tall ── */
+:root { --ch-h: min(56vw, 92vh); }
+
+/* ── OUTER: tall scroll container that pins the scene ── */
+.ch-outer {
+  /* 3× scene height = pinned for ~2 scene-heights of scroll room */
+  height: calc(var(--ch-h) * 3);
+  position: relative;
+  /* Break fully out of .main's max-width and padding */
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  margin-bottom: 52px;
+}
+
+.ch-sticky {
+  position: sticky;
+  top: 0;
+  height: var(--ch-h);
+  overflow: hidden;
+}
+
+.ch-scene {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+/* Background fills scene wide, crops vertically */
+.ch-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 35%;
+}
+
+/* ── CHARACTERS ── */
+/* Each character div is a square anchored by its hip point.
+   Hip anchor within 768×768 canvas: (0.5, 0.612)
+   We place the character so that hip lands at (--seat-x, --seat-y) of scene.
+   Width = --size of scene width. Height = same (square canvas).
+   left = seat-x - size*0.5 (center horizontally)
+   top  = seat-y - size*0.612 (anchor hip vertically) */
+.ch-char {
+  position: absolute;
+  width: var(--size);
+  aspect-ratio: 1/1;
+  left: calc(var(--seat-x) - var(--size) * 0.5);
+  top: calc(var(--seat-y) - var(--size) * 0.612);
+  will-change: transform, opacity;
+  transform-origin: 50% 61.2%; /* hip point */
+  transform: translate(var(--x, 0px), var(--y, 0px)) rotate(var(--r, 0deg));
+}
+
+.ch-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* ── TEXT OVERLAY ── */
+.ch-content {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 0 24px 28px;
+  background: linear-gradient(to top, rgba(12,17,32,0.55) 0%, transparent 100%);
+}
+
+.ch-title {
+  font-family: var(--serif);
+  font-size: clamp(2.2rem, 5vw, 3.6rem);
+  font-weight: 400;
+  color: #fff;
+  line-height: 1.1;
+  margin-bottom: 8px;
+  text-shadow: 0 2px 16px rgba(0,0,0,0.4);
+}
+
+.ch-sub {
+  font-size: 0.9rem;
+  color: rgba(255,255,255,0.82);
+  font-family: var(--mono);
+  letter-spacing: 0.03em;
+  text-shadow: 0 1px 6px rgba(0,0,0,0.5);
+}
+
+/* ── SCROLL CUE ── */
+.ch-scroll-cue {
+  position: absolute;
+  bottom: 28px;
+  right: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  color: rgba(255,255,255,0.55);
+  font-family: var(--mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  transition: opacity 0.4s;
+}
+.ch-scroll-cue.hidden { opacity: 0; pointer-events: none; }
+
+@media (max-width: 560px) {
+  :root { --ch-h: min(75vw, 85vh); }
+  .ch-content { padding: 0 16px 20px; }
+}
+
+/* Reduced motion: show first frame statically, no sticky */
+@media (prefers-reduced-motion: reduce) {
+  .ch-outer { height: var(--ch-h); }
+  .ch-sticky { position: relative; }
+  .ch-scroll-cue { display: none; }
+}
+</style>
+
+<script is:inline>
+(function() {
+  /* ── CONFIG ── */
+  var ANIM_START = 0.10;   // scene progress % where frames begin
+  var ANIM_END   = 0.68;   // scene progress % where animation completes
+
+  var CHARS = [
+    {
+      id: 'blue',
+      canvasId: 'ch-blue-canvas',
+      charId: 'ch-blue',
+      dir: '/images/blue-shirt-animation/frames/',
+      prefix: 'frame_',   // underscore
+      maxFrame: 71,
+      holdFrame: 71,
+      flyOff: true,
+    },
+    {
+      id: 'white',
+      canvasId: 'ch-white-canvas',
+      charId: 'ch-white',
+      dir: '/images/white-shirt-animation/frames/',
+      prefix: 'frame-',   // dash
+      maxFrame: 56,
+      holdFrame: 56,
+      flyOff: false,
+    },
+    {
+      id: 'purple',
+      canvasId: 'ch-purple-canvas',
+      charId: 'ch-purple',
+      dir: '/images/purple-shirt-animation/frames/',
+      prefix: 'frame-',
+      maxFrame: 59,
+      holdFrame: 59,
+      flyOff: false,
+    },
+    {
+      id: 'yellow',
+      canvasId: 'ch-yellow-canvas',
+      charId: 'ch-yellow',
+      dir: '/images/yellow-shirt-animation/frames/',
+      prefix: 'frame-',
+      maxFrame: 71,
+      holdFrame: 71,
+      flyOff: false,
+    },
+  ];
+
+  /* ── STATE ── */
+  var loaded = {};    // charId -> array of HTMLImageElement (72 frames)
+  var loadCount = 0;
+  var totalFrames = 0;
+  var contexts = {};  // canvasId -> CanvasRenderingContext2D
+  var charEls = {};   // charId -> DOM element
+  var currentFrames = {}; // charId -> current drawn frame index
+
+  /* ── DOM REFS ── */
+  var outer = document.getElementById('ch-outer');
+  var sticky = document.getElementById('ch-sticky');
+  var cue = document.getElementById('ch-cue');
+  var subEl = document.getElementById('ch-sub');
+
+  if (subEl && outer) {
+    subEl.textContent = outer.dataset.subtitle || '';
+  }
+
+  /* ── PREFERS REDUCED MOTION ── */
+  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ── CANVAS SETUP ── */
+  CHARS.forEach(function(ch) {
+    var canvas = document.getElementById(ch.canvasId);
+    if (canvas) {
+      contexts[ch.id] = canvas.getContext('2d');
+    }
+    charEls[ch.id] = document.getElementById(ch.charId);
+    currentFrames[ch.id] = -1;
+    loaded[ch.id] = [];
+  });
+
+  /* ── DRAW FRAME ── */
+  function drawFrame(ch, idx) {
+    if (currentFrames[ch.id] === idx) return; // no redraw needed
+    var ctx = contexts[ch.id];
+    if (!ctx) return;
+    var imgs = loaded[ch.id];
+    if (!imgs || !imgs[idx] || !imgs[idx].complete) return;
+    ctx.clearRect(0, 0, 768, 768);
+    ctx.drawImage(imgs[idx], 0, 0, 768, 768);
+    currentFrames[ch.id] = idx;
+  }
+
+  /* ── APPLY FLYOFF TRANSFORM (matches prototype math exactly) ── */
+  function applyFlyOff(el, amount) {
+    // No transform at rest — keeps character anchored regardless of window size
+    if (amount <= 0) {
+      el.style.removeProperty('--x');
+      el.style.removeProperty('--y');
+      el.style.removeProperty('--r');
+      el.style.removeProperty('--opacity');
+      return;
+    }
+
+    var sceneWidth  = sticky ? sticky.offsetWidth  : window.innerWidth;
+    var sceneHeight = sticky ? sticky.offsetHeight : window.innerHeight;
+
+    var flightStart = 0.1;
+
+    // Flight progress: starts at 10% of amount, completes 58% later at 68%
+    var flight = Math.max(0, Math.min(1, (amount - flightStart) / 0.58));
+
+    // Smoothstep easing
+    var easedFlight = flight * flight * (3 - 2 * flight);
+
+    // Initial lift as the scene begins
+    var lift = Math.sin(Math.min(1, amount / flightStart) * Math.PI / 2);
+
+    // Ambient horizontal drift — zeroed at amount=0, grows with scroll
+    // Offset by +0.5 so the formula produces 0 at the start of scroll
+    var blueX = (amount - 0) * sceneWidth * 0.085 * 1.1
+              + Math.sin(amount * Math.PI * 1.5) * 12 * amount;
+
+    // Move upward 122% of the scene height
+    var blueY = -lift * 28 - easedFlight * sceneHeight * 1.22;
+
+    // Rotate up to 36 degrees
+    var blueRotate = Math.sin(amount * Math.PI * 1.4) * 2 * amount
+                   + easedFlight * 36;
+
+    el.style.setProperty('--x', (blueX + easedFlight * sceneWidth * 0.34) + 'px');
+    el.style.setProperty('--y', blueY + 'px');
+    el.style.setProperty('--r', blueRotate + 'deg');
+    // Fade during the final 28% of the flight
+    el.style.setProperty('--opacity', String(1 - Math.max(0, easedFlight - 0.72) / 0.28));
+  }
+
+  /* ── UPDATE SCENE FROM SCROLL ── */
+  function update() {
+    if (!outer || !sticky) return;
+
+    var outerTop = outer.getBoundingClientRect().top;
+    var outerHeight = outer.offsetHeight;
+    var sceneH = sticky ? sticky.offsetHeight : window.innerHeight;
+
+    // scene progress: 0 when outer top hits viewport top, 1 when outer bottom clears viewport
+    // scrollable range = outerHeight - sceneH  (the extra scroll room beyond the pinned height)
+    var scrolled = -outerTop;
+    var maxScroll = outerHeight - sceneH;
+    var sceneProgress = Math.max(0, Math.min(1, scrolled / Math.max(1, maxScroll)));
+
+    // Hide scroll cue after a bit
+    if (cue) {
+      if (sceneProgress > 0.04) cue.classList.add('hidden');
+      else cue.classList.remove('hidden');
+    }
+
+    // Normalize animation progress within ANIM_START..ANIM_END
+    var animP = Math.max(0, Math.min(1, (sceneProgress - ANIM_START) / (ANIM_END - ANIM_START)));
+
+    CHARS.forEach(function(ch) {
+      var imgs = loaded[ch.id];
+      if (!imgs || imgs.length === 0) return;
+
+      var frameIdx = Math.min(ch.holdFrame, Math.round(animP * ch.maxFrame));
+      drawFrame(ch, frameIdx);
+
+      // Blue shirt fly-off: always pass sceneProgress as `amount`
+      if (ch.flyOff) {
+        var el = charEls[ch.id];
+        if (!el) return;
+        applyFlyOff(el, sceneProgress);
+      }
+    });
+  }
+
+  /* ── RAF LOOP ── */
+  var rafId = null;
+  var lastScroll = -1;
+  function tick() {
+    var s = window.scrollY;
+    if (s !== lastScroll) { lastScroll = s; update(); }
+    rafId = requestAnimationFrame(tick);
+  }
+
+  /* ── LOAD FRAMES ── */
+  function pad3(n) { return n < 10 ? '00'+n : n < 100 ? '0'+n : ''+n; }
+
+  function loadCharFrames(ch, onAllDone) {
+    var total = ch.maxFrame + 1; // frames 0..maxFrame
+    var done = 0;
+    for (var i = 0; i <= ch.maxFrame; i++) {
+      (function(idx) {
+        var img = new Image();
+        img.onload = img.onerror = function() {
+          done++;
+          if (done === total) onAllDone();
+        };
+        img.src = ch.dir + ch.prefix + pad3(idx) + '.png';
+        loaded[ch.id][idx] = img;
+      })(i);
+    }
+  }
+
+  /* ── INIT ── */
+  if (reduced) {
+    // Just draw first frame of each char statically
+    CHARS.forEach(function(ch) {
+      var img = new Image();
+      img.onload = function() {
+        loaded[ch.id][0] = img;
+        drawFrame(ch, 0);
+      };
+      img.src = ch.dir + ch.prefix + '000.png';
+    });
+    return;
+  }
+
+  // Load all chars, then draw frame 0 and start RAF
+  var charsLoaded = 0;
+  CHARS.forEach(function(ch) {
+    loadCharFrames(ch, function() {
+      // Draw frame 0 as soon as this char is ready
+      drawFrame(ch, 0);
+      charsLoaded++;
+      if (charsLoaded === CHARS.length) {
+        // All loaded — start RAF
+        tick();
+      }
+    });
+  });
+
+  // Start RAF right away even before all frames loaded (partial draws)
+  rafId = requestAnimationFrame(tick);
+
+})();
+</script>
