@@ -24,20 +24,26 @@
     #c { display: block; width: 100%; height: 100%; position: fixed; inset: 0; z-index: 0; }
 
     /* "Watch me" TV prompt */
+    #beam-canvas { position: fixed; inset: 0; z-index: 5; pointer-events: none; opacity: 0; transition: opacity 1s ease; }
+    #beam-canvas.visible { opacity: 1; }
     #watch-me {
       position: fixed; z-index: 20; pointer-events: all;
       transform: translate(-50%, -50%);
       font-family: 'Courier New', monospace;
-      font-size: clamp(0.62rem, 1.1vw, 0.8rem);
-      letter-spacing: 0.14em;
-      color: rgba(255, 245, 130, 1);
+      font-size: clamp(1.0rem, 2.2vw, 1.7rem);
+      font-weight: 900;
+      letter-spacing: 0.22em;
+      line-height: 1.05;
+      text-align: center;
+      color: #b6ffb0;
       text-shadow:
-        0 0 6px rgba(255, 230, 80, 1),
-        0 0 18px rgba(255, 200, 0, 0.9),
-        0 0 40px rgba(255, 160, 0, 0.6),
-        0 0 80px rgba(255, 100, 0, 0.3);
+        0 0 4px #b6ffb0,
+        0 0 12px rgba(80, 255, 80, 1),
+        0 0 28px rgba(40, 220, 40, 0.9),
+        0 0 55px rgba(0, 180, 0, 0.65),
+        0 0 110px rgba(0, 140, 0, 0.35);
       cursor: pointer;
-      white-space: nowrap;
+      white-space: pre;
       animation: watchPulse 2s ease-in-out infinite;
       transition: opacity 0.5s ease;
       user-select: none;
@@ -45,20 +51,22 @@
     #watch-me.hidden { opacity: 0; pointer-events: none; }
     @keyframes watchPulse {
       0%, 100% {
-        color: rgba(255,230,100,0.85);
+        color: rgba(160,255,140,0.88);
         text-shadow:
-          0 0 6px rgba(255,210,60,0.9),
-          0 0 16px rgba(255,180,0,0.6),
-          0 0 36px rgba(255,140,0,0.3);
+          0 0 4px rgba(160,255,140,1),
+          0 0 12px rgba(80,255,80,0.9),
+          0 0 28px rgba(40,200,40,0.6),
+          0 0 55px rgba(0,160,0,0.3);
       }
       50% {
-        color: rgba(255,255,190,1);
+        color: #dfffdb;
         text-shadow:
-          0 0 10px rgba(255,250,120,1),
-          0 0 28px rgba(255,220,0,1),
-          0 0 60px rgba(255,180,0,0.85),
-          0 0 110px rgba(255,120,0,0.5),
-          0 0 180px rgba(255,80,0,0.2);
+          0 0 6px #dfffdb,
+          0 0 16px rgba(120,255,100,1),
+          0 0 36px rgba(60,230,60,0.95),
+          0 0 70px rgba(0,200,0,0.7),
+          0 0 130px rgba(0,160,0,0.4),
+          0 0 200px rgba(0,120,0,0.2);
       }
     }
 
@@ -110,23 +118,24 @@
       position: absolute;
       transform: translate(-50%, -50%);
       font-family: 'Courier New', monospace;
-      font-size: clamp(0.6rem, 1.05vw, 0.72rem);
-      letter-spacing: 0.14em;
-      color: rgba(0,255,200,0.95);
+      font-size: clamp(0.85rem, 3.5vw, 0.9rem);
+      letter-spacing: 0.16em;
+      color: rgba(0,255,200,1);
       text-decoration: none;
       white-space: nowrap;
       pointer-events: all;
       cursor: pointer;
-      padding: 0.38em 1.1em;
-      border: 1px solid rgba(0,255,200,0.6);
+      padding: 0.6em 1.6em;
+      border: 1.5px solid rgba(0,255,200,0.8);
       border-radius: 999px;
-      background: rgba(0,40,30,0.35);
-      backdrop-filter: blur(2px);
+      background: rgba(0,50,38,0.50);
+      backdrop-filter: blur(4px);
       box-shadow:
-        0 0 8px rgba(0,255,200,0.5),
-        0 0 22px rgba(0,255,200,0.25),
-        inset 0 0 8px rgba(0,255,200,0.08);
-      text-shadow: 0 0 6px rgba(0,255,200,0.9), 0 0 14px rgba(0,255,200,0.5);
+        0 0 12px rgba(0,255,200,0.7),
+        0 0 32px rgba(0,255,200,0.35),
+        0 0 60px rgba(0,255,200,0.12),
+        inset 0 0 10px rgba(0,255,200,0.12);
+      text-shadow: 0 0 8px rgba(0,255,200,1), 0 0 20px rgba(0,255,200,0.7);
       left: -9999px; top: -9999px; opacity: 0;
       transition: color .2s, box-shadow .2s, border-color .2s, background .2s;
     }
@@ -142,9 +151,6 @@
       text-shadow: 0 0 10px rgba(0,255,200,1), 0 0 28px rgba(0,255,200,0.7);
     }
 
-    /* Beam canvas */
-    #beam-canvas { position: fixed; inset: 0; z-index: 5; pointer-events: none; opacity: 0; transition: opacity 1s ease; }
-    #beam-canvas.visible { opacity: 1; }
 
     /* Zoom transition layer */
     #zoom-layer { position: fixed; inset: 0; z-index: 50; pointer-events: none; overflow: hidden; opacity: 0; transition: opacity 0.05s; }
@@ -173,9 +179,10 @@
 <body>
   <img id="raw-photo" src="/images/hero.png" alt="" />
   <canvas id="c"></canvas>
-  <canvas id="beam-canvas"></canvas>
   <div id="holo-nav"></div>
-  <span id="watch-me">Watch me</span>
+  <canvas id="beam-canvas"></canvas>
+  <span id="watch-me">TUNE
+IN</span>
   <div id="bottom-brand">
     <h1>ANT.CAT</h1>
     <p>Built this for me, but you can read it too.</p>
@@ -266,8 +273,8 @@
     cGroup.position.set(0,-2,0);
 
     // Title glyphs
-    var STROKES={"A":[[0,0,0.5,1],[0.5,1,1,0],[0.18,0.45,0.82,0.45]],"N":[[0,0,0,1],[0,1,1,0],[1,0,1,1]],"T":[[0,1,1,1],[0.5,1,0.5,0]],">":[[0,1,1,0.5],[1,0.5,0,0]],"<":[[1,1,0,0.5],[0,0.5,1,0]],"C":[[1,0.82,0.55,1],[0.55,1,0,0.75],[0,0.75,0,0.25],[0,0.25,0.55,0],[0.55,0,1,0.18]]};
-    var CHARS=["A","N","T",">","<","C","A","T"];
+    var STROKES={"A":[[0,0,0.5,1],[0.5,1,1,0],[0.18,0.45,0.82,0.45]],"N":[[0,0,0,1],[0,1,1,0],[1,0,1,1]],"T":[[0,1,1,1],[0.5,1,0.5,0]],">":[[0,1,1,0.5],[1,0.5,0,0]],"<":[[1,1,0,0.5],[0,0.5,1,0]],"C":[[1,0.82,0.55,1],[0.55,1,0,0.75],[0,0.75,0,0.25],[0,0.25,0.55,0],[0.55,0,1,0.18]],".":[[0.35,0.08,0.65,0.08],[0.65,0.08,0.65,0.28],[0.65,0.28,0.35,0.28],[0.35,0.28,0.35,0.08]]};
+    var CHARS=["A","N","T",".","C","A","T"];
     var GW=0.9,GH=1.3,GAP=0.18,totalW=CHARS.length*GW+(CHARS.length-1)*GAP;
     var tGroup=new T.Group(); tGroup.position.set(0,3.4,0); scene.add(tGroup);
     var glyphMats=[];
@@ -400,29 +407,79 @@
     for(var i=0;i<NUM_ELEMS;i++){elemPhases.push(Math.random()*Math.PI*2);elemSpeeds.push(1.3+Math.random()*1.5);}
     function elemPulse(idx,t){return 0.52+0.48*Math.sin(t*elemSpeeds[idx]+elemPhases[idx]);}
 
+    // Helpers
+    function tvPos(){
+      // object-fit:cover + object-position:center 40% on a 2000x1200 image
+      // TV screen center is at ~53% x, ~40% y of natural image
+      var imgW=2000,imgH=1200,tvNx=0.515,tvNy=0.400;
+      var vw=window.innerWidth,vh=window.innerHeight;
+      var scale=Math.max(vw/imgW,vh/imgH);
+      var rendW=imgW*scale,rendH=imgH*scale;
+      // object-position: center 40% — horizontal center, vertical 40% of overflow
+      var ox=(vw-rendW)/2;
+      var overflowY=rendH-vh;
+      var oy=-(overflowY*0.40);
+      return{x:ox+tvNx*rendW, y:oy+tvNy*rendH};
+    }
+    var _v3=new T.Vector3();
+    function w2s(wx,wy,wz){_v3.set(wx,wy,wz);_v3.project(camera);return{x:(_v3.x*0.5+0.5)*window.innerWidth,y:(-_v3.y*0.5+0.5)*window.innerHeight};}
+
     // Beams
     var bc=document.getElementById('beam-canvas'),bctx=bc.getContext('2d');
     function resizeBC(){bc.width=window.innerWidth;bc.height=window.innerHeight;} resizeBC();
-    function tvPos(){return{x:window.innerWidth*0.515,y:window.innerHeight*0.40};}
-    var _v3=new T.Vector3();
-    function w2s(wx,wy,wz){_v3.set(wx,wy,wz);_v3.project(camera);return{x:(_v3.x*0.5+0.5)*window.innerWidth,y:(-_v3.y*0.5+0.5)*window.innerHeight};}
-    function beamSeg(tv,p1,p2,eff,r,g,b){
-      var mid={x:(p1.x+p2.x)*0.5,y:(p1.y+p2.y)*0.5};
-      var gr=bctx.createLinearGradient(tv.x,tv.y,mid.x,mid.y);
-      gr.addColorStop(0,'rgba('+r+','+g+','+b+','+(eff*0.20)+')');gr.addColorStop(1,'rgba('+r+','+g+','+b+','+(eff*0.03)+')');
-      bctx.save();bctx.beginPath();bctx.moveTo(tv.x,tv.y);bctx.lineTo(p1.x,p1.y);bctx.lineTo(p2.x,p2.y);bctx.closePath();bctx.fillStyle=gr;bctx.fill();bctx.restore();
-      var lg=bctx.createLinearGradient(tv.x,tv.y,mid.x,mid.y);
-      lg.addColorStop(0,'rgba('+(Math.min(r+80,255))+','+g+','+b+','+(eff*0.52)+')');lg.addColorStop(1,'rgba('+r+','+g+','+b+','+(eff*0.07)+')');
-      bctx.save();bctx.beginPath();bctx.moveTo(tv.x,tv.y);bctx.lineTo(mid.x,mid.y);bctx.strokeStyle=lg;bctx.lineWidth=1.1;bctx.stroke();bctx.restore();
+    // Draw one wide volumetric cone beam from TV to a target point
+    function volBeam(tv,tx,ty,eff,r,g,b){
+      var dx=tx-tv.x,dy=ty-tv.y;
+      var len=Math.sqrt(dx*dx+dy*dy); if(len<1) return;
+      var nx=-dy/len,ny=dx/len;
+      // Half-width at tip = 2px, at end = spread proportional to distance
+      var spread=len*0.38;
+      var p1x=tx+nx*spread,p1y=ty+ny*spread;
+      var p2x=tx-nx*spread,p2y=ty-ny*spread;
+      // Radial gradient from TV origin outward
+      var gr=bctx.createRadialGradient(tv.x,tv.y,0,tv.x,tv.y,len);
+      gr.addColorStop(0,'rgba(255,255,255,'+(eff*0.85)+')');
+      gr.addColorStop(0.08,'rgba('+(Math.min(r+60,255))+','+(Math.min(g+60,255))+','+b+','+(eff*0.55)+')');
+      gr.addColorStop(0.45,'rgba('+r+','+g+','+b+','+(eff*0.22)+')');
+      gr.addColorStop(1,'rgba('+r+','+g+','+b+',0)');
+      bctx.save();
+      bctx.globalCompositeOperation='lighter';
+      bctx.beginPath();bctx.moveTo(tv.x,tv.y);bctx.lineTo(p1x,p1y);bctx.lineTo(p2x,p2y);bctx.closePath();
+      bctx.fillStyle=gr;bctx.fill();
+      bctx.restore();
     }
     function drawBeams(introOp,t){
       bctx.clearRect(0,0,bc.width,bc.height); if(introOp<=0.001) return;
-      var tv=tvPos(),yOff=tGroup.position.y-3.4;
-      CHARS.forEach(function(ch,ci){var segs=charStrokeWorld[ci];if(!segs||!segs.length) return;var eff=introOp*elemPulse(ci,t);segs.forEach(function(s){beamSeg(tv,w2s(s.x1,s.y1+yOff,s.z),w2s(s.x2,s.y2+yOff,s.z),eff,100,255,220);});});
-      NAV_ITEMS.forEach(function(item,bi){var segs=btnBeamSegs[bi];if(!segs||!segs.length) return;var eff=introOp*elemPulse(CHARS.length+bi,t),by=btnGroup.position.y;segs.forEach(function(s){beamSeg(tv,w2s(s.x1,s.y1+by,s.z),w2s(s.x2,s.y2+by,s.z),eff,120,210,255);});});
-      var grd=bctx.createRadialGradient(tv.x,tv.y,0,tv.x,tv.y,18);
-      grd.addColorStop(0,'rgba(200,255,245,'+(introOp*0.9)+')');grd.addColorStop(0.4,'rgba(0,255,200,'+(introOp*0.4)+')');grd.addColorStop(1,'rgba(0,255,200,0)');
-      bctx.beginPath();bctx.arc(tv.x,tv.y,18,0,Math.PI*2);bctx.fillStyle=grd;bctx.fill();
+      var tv=tvPos(),yOff=0;
+      // Collect all target points first so we can batch by side
+      var leftPts=[],rightPts=[];
+      CHARS.forEach(function(ch,ci){
+        var segs=charStrokeWorld[ci];if(!segs||!segs.length) return;
+        var eff=introOp*elemPulse(ci,t);
+        segs.forEach(function(s){
+          var p=w2s((s.x1+s.x2)/2,(s.y1+s.y2)/2+yOff,s.z);
+          // Warm amber for glyphs (left side)
+          volBeam(tv,p.x,p.y,eff*0.55,255,180,60);
+        });
+      });
+      NAV_ITEMS.forEach(function(item,bi){
+        var segs=btnBeamSegs[bi];if(!segs||!segs.length) return;
+        var eff=introOp*elemPulse(CHARS.length+bi,t),by=btnGroup.position.y;
+        segs.forEach(function(s){
+          var p=w2s((s.x1+s.x2)/2,(s.y1+s.y2)/2+by,s.z);
+          // Cool teal/cyan for nav (right side)
+          volBeam(tv,p.x,p.y,eff*0.55,40,220,255);
+        });
+      });
+      // White-hot origin burst
+      var grd=bctx.createRadialGradient(tv.x,tv.y,0,tv.x,tv.y,32);
+      grd.addColorStop(0,'rgba(255,255,255,'+(introOp*1.0)+')');
+      grd.addColorStop(0.3,'rgba(180,255,240,'+(introOp*0.7)+')');
+      grd.addColorStop(0.7,'rgba(0,255,200,'+(introOp*0.25)+')');
+      grd.addColorStop(1,'rgba(0,255,200,0)');
+      bctx.save();bctx.globalCompositeOperation='lighter';
+      bctx.beginPath();bctx.arc(tv.x,tv.y,32,0,Math.PI*2);bctx.fillStyle=grd;bctx.fill();
+      bctx.restore();
     }
 
     // "Watch me" — positioned above TV screen
@@ -430,8 +487,7 @@
     function positionWatchMe(){
       var tv=tvPos();
       watchEl.style.left=tv.x+'px';
-      // TV screen center is just above the beam origin
-      watchEl.style.top=(tv.y - window.innerHeight*0.01)+'px';
+      watchEl.style.top=tv.y+'px';
     }
     positionWatchMe();
 
@@ -466,7 +522,8 @@
       smx+=(mx-smx)*0.06; smy+=(my-smy)*0.06;
       cGroup.rotation.y=smx*0.32; cGroup.rotation.x=-smy*0.20;
       camera.position.x=smx*3.0; camera.position.y=2-smy*1.5; camera.lookAt(0,1,0);
-      tGroup.position.y=3.4+Math.sin(t*0.4)*0.06;
+      var isPort=window.innerHeight>window.innerWidth;
+      tGroup.position.y=(isPort?5.2:3.4)+Math.sin(t*0.4)*0.06;
       btnGroup.position.y=Math.sin(t*0.35+1.2)*0.04;
       btnGroup.rotation.x=-0.16+Math.sin(t*0.27)*0.03;
       btnGroup.rotation.y=Math.sin(t*0.21+0.5)*0.05;
@@ -479,13 +536,26 @@
         // Crossfade shader bg in over 1.2s
         if(bgMesh) bgMesh.material.uniforms.uOpacity.value=Math.min(1.0, sinceAct/1.2);
         glyphMats.forEach(function(obj){obj.mat.opacity=obj.base*introFade*elemPulse(obj.elemIdx,t);});
-        btnMats.forEach(function(obj){obj.mat.opacity=obj.base*introFade*elemPulse(obj.elemIdx,t);});
+        btnMats.forEach(function(obj){obj.mat.opacity=isPort?0:obj.base*introFade*elemPulse(obj.elemIdx,t);});
         NAV_ITEMS.forEach(function(item,bi){
           var sc=w2s(item.wx, item.wy+btnGroup.position.y, item.wz);
           var ep=elemPulse(CHARS.length+bi,t);
-          gemEls[bi].style.left=sc.x+'px';
-          gemEls[bi].style.top=sc.y+'px';
-          gemEls[bi].style.opacity=introOp*(0.65+0.35*ep)+'';
+          if(isPort){
+            // Portrait: lay out in 2x2 grid — top row: Mind Grapes | Experiments, bottom row: About | Now
+            var col=bi%2, row=Math.floor(bi/2);
+            // bi order: 0=MindGrapes, 1=About, 2=Now, 3=Experiments
+            // remap to 2x2: top-left=MG(0), top-right=Exp(3), bot-left=About(1), bot-right=Now(2)
+            var remapX=[0,0,1,1][bi], remapY=[0,1,1,0][bi];
+            var gx=window.innerWidth*(0.22+remapX*0.56);
+            var baseY=window.innerHeight*0.60;
+            var gy=baseY+(remapY===0?-window.innerHeight*0.07:window.innerHeight*0.07);
+            gemEls[bi].style.left=gx+'px';
+            gemEls[bi].style.top=gy+'px';
+          } else {
+            gemEls[bi].style.left=sc.x+'px';
+            gemEls[bi].style.top=sc.y+'px';
+          }
+          gemEls[bi].style.opacity=introOp*(isPort?0.92:0.65+0.35*ep)+'';
           var g=Math.round(ep*255);
           gemEls[bi].style.boxShadow='0 0 '+Math.round(6+ep*8)+'px rgba(0,'+g+',180,0.55), 0 0 '+Math.round(16+ep*20)+'px rgba(0,'+g+',180,0.28), inset 0 0 8px rgba(0,255,200,0.08)';
         });
@@ -496,6 +566,7 @@
         bctx.clearRect(0,0,bc.width,bc.height);
       }
 
+      cGroup.children.forEach(function(c){if(c.material) c.material.opacity=(isPort?0.12:0.45)*1;});
       renderer.render(scene,camera);
     }
     animate();
