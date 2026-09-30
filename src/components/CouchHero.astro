@@ -504,12 +504,10 @@ const { subtitle = '' } = Astro.props;
   }
 
   if (isMobile) {
-    // Mobile: start each character's loop independently as soon as it loads
+    // Mobile: start loop immediately; frames trickle in as they load
     CHARS.forEach(function(ch) {
-      loadCharFrames(ch, function() {
-        drawFrame(ch, 0);
-        startMobileCharLoop(ch);
-      });
+      startMobileCharLoop(ch);
+      loadCharFrames(ch, function() {});
     });
   } else {
     // Desktop: start RAF immediately, draw frames as they arrive
