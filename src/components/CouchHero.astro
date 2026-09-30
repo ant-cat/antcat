@@ -262,23 +262,24 @@ const { subtitle = '' } = Astro.props;
       flyOff: false,
     },
     {
+      // purple: 3 unique poses — default (000), look up (011), look left (034)
+      // sequence holds each pose for multiple ticks to create natural timing
       id: 'purple',
       canvasId: 'ch-purple-canvas',
       charId: 'ch-purple',
       dir: '/images/purple-shirt-animation/frames/',
-      prefix: 'frame-',
-      maxFrame: 59,
-      holdFrame: 59,
+      frames: ['frame-000.png', 'frame-011.png', 'frame-034.png'],
+      sequence: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,2,2,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,0,0],
       flyOff: false,
     },
     {
+      // yellow: 4 unique poses — default (000), look right (018), look up (036), look right (054=same as 018)
       id: 'yellow',
       canvasId: 'ch-yellow-canvas',
       charId: 'ch-yellow',
       dir: '/images/yellow-shirt-animation/frames/',
-      prefix: 'frame-',
-      maxFrame: 71,
-      holdFrame: 71,
+      frames: ['frame-000.png', 'frame-018.png', 'frame-036.png', 'frame-054.png'],
+      sequence: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,2,2,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,3,3,3,3,3,3,0,0,0,0,0,0,0],
       flyOff: false,
     },
   ];
@@ -381,18 +382,34 @@ const { subtitle = '' } = Astro.props;
   function pad3(n) { return n < 10 ? '00'+n : n < 100 ? '0'+n : ''+n; }
 
   function loadCharFrames(ch, onAllDone) {
-    var total = ch.maxFrame + 1;
-    var done = 0;
-    for (var i = 0; i <= ch.maxFrame; i++) {
-      (function(idx) {
+    if (ch.frames) {
+      // Sequence-based: load only the named unique frames
+      var total = ch.frames.length;
+      var done = 0;
+      ch.frames.forEach(function(fname, idx) {
         var img = new Image();
         img.onload = img.onerror = function() {
           done++;
           if (done === total) onAllDone();
         };
-        img.src = ch.dir + ch.prefix + pad3(idx) + '.png';
+        img.src = ch.dir + fname;
         loaded[ch.id][idx] = img;
-      })(i);
+      });
+    } else {
+      // Legacy: sequential numbered frames
+      var total = ch.maxFrame + 1;
+      var done = 0;
+      for (var i = 0; i <= ch.maxFrame; i++) {
+        (function(idx) {
+          var img = new Image();
+          img.onload = img.onerror = function() {
+            done++;
+            if (done === total) onAllDone();
+          };
+          img.src = ch.dir + ch.prefix + pad3(idx) + '.png';
+          loaded[ch.id][idx] = img;
+        })(i);
+      }
     }
   }
 
@@ -437,8 +454,14 @@ const { subtitle = '' } = Astro.props;
           } else {
             // Loop continuously
             frameCounter += 1;
-            if (frameCounter > ch.maxFrame) frameCounter = 0;
-            drawFrame(ch, Math.round(frameCounter));
+            if (ch.sequence) {
+              // Sequence-based: walk the sequence array, index into unique frames
+              var seqIdx = frameCounter % ch.sequence.length;
+              drawFrame(ch, ch.sequence[seqIdx]);
+            } else {
+              if (frameCounter > ch.maxFrame) frameCounter = 0;
+              drawFrame(ch, Math.round(frameCounter));
+            }
           }
         }
       }
@@ -473,7 +496,14 @@ const { subtitle = '' } = Astro.props;
     CHARS.forEach(function(ch) {
       var imgs = loaded[ch.id];
       if (!imgs || imgs.length === 0) return;
-      var frameIdx = Math.min(ch.holdFrame, Math.round(animP * ch.maxFrame));
+      var frameIdx;
+      if (ch.sequence) {
+        // Map scroll progress through the sequence
+        var seqIdx = Math.round(animP * (ch.sequence.length - 1));
+        frameIdx = ch.sequence[Math.min(seqIdx, ch.sequence.length - 1)];
+      } else {
+        frameIdx = Math.min(ch.holdFrame, Math.round(animP * ch.maxFrame));
+      }
       drawFrame(ch, frameIdx);
       if (ch.flyOff) {
         var el = charEls[ch.id];
