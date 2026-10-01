@@ -445,7 +445,7 @@ const { subtitle = '' } = Astro.props;
                 flyOffStart   = now;
               }
               var elapsed = now - flyOffStart - MOBILE_FLYOFF_DELAY;
-              if (elapsed < 0) return;
+              if (elapsed < 0) { drawFrame(ch, 0); return; }
               var amount  = Math.min(1, elapsed / MOBILE_FLYOFF_DUR);
               drawFrame(ch, Math.round(amount * ch.maxFrame));
               var el = charEls[ch.id];
