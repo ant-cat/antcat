@@ -74,14 +74,30 @@
   var OW, OH;   // overlay (viewport) dimensions
   var SW, SH;   // settled canvas (footer) dimensions
 
+  var DPR = window.devicePixelRatio || 1;
+
   function resizeSettled() {
-    SW = settled.width  = outer.offsetWidth;
-    SH = settled.height = outer.offsetHeight;
+    var cssW = outer.offsetWidth;
+    var cssH = outer.offsetHeight;
+    settled.width  = cssW * DPR;
+    settled.height = cssH * DPR;
+    settled.style.width  = cssW + 'px';
+    settled.style.height = cssH + 'px';
+    sCtx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    SW = cssW;
+    SH = cssH;
   }
 
   function resizeOverlay() {
-    OW = overlay.width  = window.innerWidth;
-    OH = overlay.height = window.innerHeight;
+    var cssW = window.innerWidth;
+    var cssH = window.innerHeight;
+    overlay.width  = cssW * DPR;
+    overlay.height = cssH * DPR;
+    overlay.style.width  = cssW + 'px';
+    overlay.style.height = cssH + 'px';
+    oCtx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    OW = cssW;
+    OH = cssH;
   }
 
   resizeSettled();
