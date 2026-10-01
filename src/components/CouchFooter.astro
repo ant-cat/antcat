@@ -28,7 +28,7 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: 50% 75%; /* show more of the lower couch/seat area */
+  object-position: 50% 45%; /* show more upper scene */
 }
 
 .cf-canvas {
@@ -110,20 +110,15 @@
   }
 
   /* ── Seat position in footer ──
-     bg image: 1619×971 px, object-fit:cover, object-position:50% 62%
-     seat at ~52% x, 58% y of the original image
-  */
-  /* ── Seat position in footer ──
      bg image: 1619×971 px, object-fit:cover, object-position:50% 75%
-     left cushion center: ~42% x, ~62% y of source image
-     Tweak from console: window._cf.nx / .ny / .sz / .replay()
+     left cushion: nx=0.49, ny=0.51, sz=0.29
   */
-  var SEAT_NX   = 0.42;
-  var SEAT_NY   = 0.66;
+  var SEAT_NX   = 0.49;
+  var SEAT_NY   = 0.51;
   var IMG_W     = 1619;
   var IMG_H     = 971;
-  var OBJ_POS_Y = 0.75;   // matches object-position: 50% 75%
-  var _charSize = 0.22;   // fraction of rendered image width
+  var OBJ_POS_Y = 0.45;   // matches object-position: 50% 45%
+  var _charSize = 0.29;   // fraction of rendered image width
 
   /* Returns seat {x, y} in VIEWPORT coords, and character size */
   function seatViewport() {
