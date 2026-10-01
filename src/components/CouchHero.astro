@@ -528,7 +528,7 @@ const { subtitle = '' } = Astro.props;
         loaded[ch.id][0] = img;
         drawFrame(ch, 0);
       };
-      img.src = ch.dir + ch.prefix + '000.png';
+      img.src = ch.frames ? ch.dir + ch.frames[0] : ch.dir + ch.prefix + '000.png';
     });
     return;
   }
