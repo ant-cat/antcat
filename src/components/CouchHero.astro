@@ -238,7 +238,8 @@ const { subtitle = '' } = Astro.props;
 
   /* Mobile autoplay config */
   var MOBILE_FPS        = 18;   // frames per second for looping chars
-  var MOBILE_FLYOFF_DUR = 2200; // ms for blue shirt fly-off (once)
+  var MOBILE_FLYOFF_DUR = 3200; // ms for blue shirt fly-off (once)
+  var MOBILE_FLYOFF_DELAY = 500; // ms before fly-off starts
 
   var CHARS = [
     {
@@ -443,7 +444,8 @@ const { subtitle = '' } = Astro.props;
                 flyOffStarted = true;
                 flyOffStart   = now;
               }
-              var elapsed = now - flyOffStart;
+              var elapsed = now - flyOffStart - MOBILE_FLYOFF_DELAY;
+              if (elapsed < 0) return;
               var amount  = Math.min(1, elapsed / MOBILE_FLYOFF_DUR);
               drawFrame(ch, Math.round(amount * ch.maxFrame));
               var el = charEls[ch.id];
