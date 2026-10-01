@@ -451,25 +451,33 @@ IN</span>
     function drawBeams(introOp,t){
       bctx.clearRect(0,0,bc.width,bc.height); if(introOp<=0.001) return;
       var tv=tvPos(),yOff=0;
-      // Collect all target points first so we can batch by side
-      var leftPts=[],rightPts=[];
+      var isPort=window.innerHeight>window.innerWidth;
       CHARS.forEach(function(ch,ci){
         var segs=charStrokeWorld[ci];if(!segs||!segs.length) return;
         var eff=introOp*elemPulse(ci,t);
         segs.forEach(function(s){
           var p=w2s((s.x1+s.x2)/2,(s.y1+s.y2)/2+yOff,s.z);
-          // Warm amber for glyphs (left side)
+          // Warm amber for glyphs
           volBeam(tv,p.x,p.y,eff*0.55,255,180,60);
         });
       });
       NAV_ITEMS.forEach(function(item,bi){
-        var segs=btnBeamSegs[bi];if(!segs||!segs.length) return;
-        var eff=introOp*elemPulse(CHARS.length+bi,t),by=btnGroup.position.y;
-        segs.forEach(function(s){
-          var p=w2s((s.x1+s.x2)/2,(s.y1+s.y2)/2+by,s.z);
-          // Cool teal/cyan for nav (right side)
-          volBeam(tv,p.x,p.y,eff*0.55,40,220,255);
-        });
+        var eff=introOp*elemPulse(CHARS.length+bi,t);
+        var lx,ly;
+        if(isPort){
+          // On mobile use the gem element's actual screen position
+          lx=parseFloat(gemEls[bi].style.left);
+          ly=parseFloat(gemEls[bi].style.top);
+        } else {
+          var by=btnGroup.position.y;
+          var segs=btnBeamSegs[bi];if(!segs||!segs.length) return;
+          var p=w2s(btnCenters[bi].x,btnCenters[bi].y+by,btnCenters[bi].z);
+          lx=p.x; ly=p.y;
+        }
+        if(!isNaN(lx)&&!isNaN(ly)){
+          // Cool teal/cyan for nav
+          volBeam(tv,lx,ly,eff*0.75,40,220,255);
+        }
       });
       // White-hot origin burst
       var grd=bctx.createRadialGradient(tv.x,tv.y,0,tv.x,tv.y,32);
