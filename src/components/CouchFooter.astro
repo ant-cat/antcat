@@ -1,0 +1,282 @@
+---
+// CouchFooter.astro — Blue shirt tumbles from above the page and lands on the couch
+---
+
+<div class="cf-outer" id="cf-outer" aria-hidden="true">
+  <img class="cf-bg" src="/images/couch-scene-background.png" alt="" />
+  <!-- Settled canvas — only drawn after landing -->
+  <canvas class="cf-canvas" id="cf-canvas"></canvas>
+  <div class="cf-fade-top"></div>
+</div>
+
+<!-- Overlay canvas for the tumble — sits above all page content -->
+<canvas class="cf-overlay" id="cf-overlay" aria-hidden="true"></canvas>
+
+<style>
+.cf-outer {
+  position: relative;
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  height: clamp(252px, 40vw, 480px); /* 40% taller */
+  overflow: hidden;
+  margin-top: 64px;
+}
+
+.cf-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 75%; /* show more of the lower couch/seat area */
+}
+
+.cf-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+/* Soft fade from page background into the scene */
+.cf-fade-top {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 48px;
+  background: linear-gradient(to bottom, var(--bg, #0d1117), transparent);
+  pointer-events: none;
+}
+
+/* Full-page overlay canvas for the tumble phase */
+.cf-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 9999;
+  display: none; /* shown only during animation */
+}
+</style>
+
+<script is:inline>
+(function() {
+  var outer   = document.getElementById('cf-outer');
+  var settled = document.getElementById('cf-canvas');
+  var overlay = document.getElementById('cf-overlay');
+  if (!outer || !settled || !overlay) return;
+
+  var sCtx = settled.getContext('2d');
+  var oCtx = overlay.getContext('2d');
+
+  var OW, OH;   // overlay (viewport) dimensions
+  var SW, SH;   // settled canvas (footer) dimensions
+
+  function resizeSettled() {
+    SW = settled.width  = outer.offsetWidth;
+    SH = settled.height = outer.offsetHeight;
+  }
+
+  function resizeOverlay() {
+    OW = overlay.width  = window.innerWidth;
+    OH = overlay.height = window.innerHeight;
+  }
+
+  resizeSettled();
+  resizeOverlay();
+  window.addEventListener('resize', function() {
+    resizeSettled();
+    resizeOverlay();
+    if (isDone) drawSettled();
+  });
+
+  /* ── Load blue shirt frames ── */
+  var FRAME_COUNT  = 72;
+  var frames       = [];
+  var framesLoaded = 0;
+
+  function pad3(n) { return n < 10 ? '00'+n : n < 100 ? '0'+n : ''+n; }
+
+  for (var i = 0; i < FRAME_COUNT; i++) {
+    (function(idx) {
+      var img = new Image();
+      img.onload  = function() { framesLoaded++; };
+      img.onerror = function() { framesLoaded++; };
+      img.src = '/images/blue-shirt-animation/frames/frame_' + pad3(idx) + '.png';
+      frames[idx] = img;
+    })(i);
+  }
+
+  /* ── Seat position in footer ──
+     bg image: 1619×971 px, object-fit:cover, object-position:50% 62%
+     seat at ~52% x, 58% y of the original image
+  */
+  /* ── Seat position in footer ──
+     bg image: 1619×971 px, object-fit:cover, object-position:50% 75%
+     left cushion center: ~42% x, ~62% y of source image
+     Tweak from console: window._cf.nx / .ny / .sz / .replay()
+  */
+  var SEAT_NX   = 0.42;
+  var SEAT_NY   = 0.66;
+  var IMG_W     = 1619;
+  var IMG_H     = 971;
+  var OBJ_POS_Y = 0.75;   // matches object-position: 50% 75%
+  var _charSize = 0.22;   // fraction of rendered image width
+
+  /* Returns seat {x, y} in VIEWPORT coords, and character size */
+  function seatViewport() {
+    var rect   = outer.getBoundingClientRect();
+    var scale  = Math.max(SW / IMG_W, SH / IMG_H);
+    var rendW  = IMG_W * scale;
+    var rendH  = IMG_H * scale;
+    var ox     = (SW - rendW) / 2;
+    var oy     = -(rendH - SH) * OBJ_POS_Y;
+    /* seat in footer-local coords */
+    var lx = ox + SEAT_NX * rendW;
+    var ly = oy + SEAT_NY * rendH;
+    return {
+      x:    rect.left + lx,
+      y:    rect.top  + ly,
+      size: rendW * _charSize,
+      /* also return footer-local seat for the settled canvas */
+      lx:   lx,
+      ly:   ly
+    };
+  }
+
+  /* ── Animation state ── */
+  var ANIM_DUR = 4500;
+  var startTime = null;
+  var rafId     = null;
+  var triggered = false;
+  var isDone    = false;
+
+  function draw(now) {
+    if (!startTime) startTime = now;
+    var elapsed = now - startTime;
+    var t       = Math.min(1, elapsed / ANIM_DUR);
+
+    oCtx.clearRect(0, 0, OW, OH);
+
+    var seat   = seatViewport();
+    var charSz = seat.size;
+
+    var frameIdx, x, y, rot, opacity;
+
+    if (t < 0.5) {
+      /* Phase 1: tumbling in from top-right of viewport */
+      var p    = t / 0.5;
+      var ease = p * p * (3 - 2 * p);
+      frameIdx = Math.round(71 - ease * 35);   // 71 → 36
+
+      var startX = OW + charSz * 0.5;           // just off right edge
+      var startY = -charSz * 0.5;               // just above viewport top — visible immediately
+      var midX   = seat.x;
+      var midY   = seat.y - charSz * 1.5;       // hover above couch
+
+      x       = startX + (midX - startX) * ease;
+      y       = startY + (midY - startY) * ease;
+      rot     = (1 - ease) * 400;
+      opacity = Math.min(1, p * 2.5);
+
+    } else if (t < 0.85) {
+      /* Phase 2: drop to seat */
+      var p    = (t - 0.5) / 0.35;
+      var ease = p * p * (3 - 2 * p);
+      frameIdx = Math.round(35 - ease * 35);    // 35 → 0
+
+      var midX = seat.x;
+      var midY = seat.y - charSz * 1.5;
+
+      x       = midX + (seat.x - midX) * ease;
+      y       = midY + (seat.y - midY) * ease;
+      rot     = (1 - ease) * 25;
+      opacity = 1;
+
+    } else {
+      /* Phase 3: tiny bounce settle */
+      var p      = (t - 0.85) / 0.15;
+      var bounce = Math.sin(p * Math.PI) * 8 * (1 - p);
+      frameIdx   = 0;
+      x          = seat.x;
+      y          = seat.y - bounce;
+      rot        = 0;
+      opacity    = 1;
+    }
+
+    frameIdx = Math.max(0, Math.min(71, frameIdx));
+    var img  = frames[frameIdx];
+
+    if (img && img.complete && img.naturalWidth) {
+      oCtx.save();
+      oCtx.globalAlpha = opacity;
+      oCtx.translate(x, y);
+      oCtx.rotate(rot * Math.PI / 180);
+      oCtx.drawImage(img, -charSz / 2, -charSz / 2, charSz, charSz);
+      oCtx.restore();
+    }
+
+    if (t < 1) {
+      rafId = requestAnimationFrame(draw);
+    } else {
+      /* Landing done — hide overlay, draw settled pose on footer canvas */
+      overlay.style.display = 'none';
+      isDone = true;
+      drawSettled();
+    }
+  }
+
+  function drawSettled() {
+    sCtx.clearRect(0, 0, SW, SH);
+    var seat = seatViewport();
+    var img  = frames[0];
+    if (img && img.complete && img.naturalWidth) {
+      sCtx.drawImage(img, seat.lx - seat.size / 2, seat.ly - seat.size / 2, seat.size, seat.size);
+    }
+  }
+
+  /* ── Trigger on scroll into view ── */
+  var obs = new IntersectionObserver(function(entries) {
+    if (entries[0].isIntersecting && !triggered) {
+      triggered = true;
+      obs.disconnect();
+      function tryStart() {
+        if (framesLoaded >= 20) {
+          overlay.style.display = 'block';
+          resizeOverlay(); // ensure canvas dims are set before first draw
+          rafId = requestAnimationFrame(draw);
+        } else {
+          setTimeout(tryStart, 80);
+        }
+      }
+      tryStart();
+    }
+  }, { threshold: 0.2 });
+
+  obs.observe(outer);
+
+  /* ── Dev helper: tweak from console ──
+     window._cf.nx = 0.44   → move left/right
+     window._cf.ny = 0.60   → move up/down
+     window._cf.sz = 0.18   → resize character
+     window._cf.replay()    → re-run the animation
+  */
+  window._cf = {
+    get nx() { return SEAT_NX; },
+    set nx(v) { SEAT_NX = v; drawSettled(); console.log('nx =', v); },
+    get ny() { return SEAT_NY; },
+    set ny(v) { SEAT_NY = v; drawSettled(); console.log('ny =', v); },
+    get sz() { return _charSize; },
+    set sz(v) { _charSize = v; drawSettled(); console.log('sz =', v); },
+    replay: function() {
+      isDone = false; triggered = false; startTime = null;
+      sCtx.clearRect(0, 0, SW, SH);
+      overlay.style.display = 'block';
+      rafId = requestAnimationFrame(draw);
+    }
+  };
+
+})();
+</script>
