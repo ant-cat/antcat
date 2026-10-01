@@ -125,6 +125,12 @@
     })(i);
   }
 
+  /* ── Load settled pose image ── */
+  var settledImg = new Image();
+  var settledImgReady = false;
+  settledImg.onload = function() { settledImgReady = true; if (isDone) drawSettled(); };
+  settledImg.src = '/images/blue-shirt-settled.png';
+
   /* ── Seat position in footer ──
      bg image: 1619×971 px, object-fit:cover, object-position:50% 75%
      left cushion: nx=0.49, ny=0.51, sz=0.29
@@ -242,7 +248,7 @@
   function drawSettled() {
     sCtx.clearRect(0, 0, SW, SH);
     var seat = seatViewport();
-    var img  = frames[0];
+    var img  = settledImgReady ? settledImg : frames[0];
     if (img && img.complete && img.naturalWidth) {
       sCtx.drawImage(img, seat.lx - seat.size / 2, seat.ly - seat.size / 2, seat.size, seat.size);
     }
