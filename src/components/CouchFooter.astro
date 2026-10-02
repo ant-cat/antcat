@@ -109,7 +109,7 @@
   });
 
   /* ── Load blue shirt frames ── */
-  var FRAME_COUNT  = 72;
+  var FRAME_COUNT  = 73;
   var frames       = [];
   var framesLoaded = 0;
 
@@ -124,12 +124,6 @@
       frames[idx] = img;
     })(i);
   }
-
-  /* ── Load settled pose image ── */
-  var settledImg = new Image();
-  var settledImgReady = false;
-  settledImg.onload = function() { settledImgReady = true; if (isDone) drawSettled(); };
-  settledImg.src = '/images/blue-shirt-animation/blue-shirt-settled.png';
 
   /* ── Seat position in footer ──
      bg image: 1619×971 px, object-fit:cover, object-position:50% 75%
@@ -248,7 +242,7 @@
   function drawSettled() {
     sCtx.clearRect(0, 0, SW, SH);
     var seat = seatViewport();
-    var img  = settledImgReady ? settledImg : frames[0];
+    var img  = frames[72];
     if (img && img.complete && img.naturalWidth) {
       sCtx.drawImage(img, seat.lx - seat.size / 2, seat.ly - seat.size / 2, seat.size, seat.size);
     }
