@@ -17,7 +17,7 @@
   position: relative;
   width: 100vw;
   margin-left: calc(50% - 50vw);
-  height: clamp(252px, 40vw, 480px); /* 40% taller */
+  height: clamp(252px, 40vw, 750px); /* 40% taller */
   overflow: hidden;
   margin-top: 64px;
 }
@@ -123,6 +123,35 @@
       img.src = '/images/blue-shirt-animation/frames/frame_' + pad3(idx) + '.png';
       frames[idx] = img;
     })(i);
+  }
+
+  /* ── Load Sam poses (4 unique images, named) ── */
+  var SAM_POSES = ['seated', 'startled', 'looking-up', 'composed'];
+  var samImgs   = {};
+  var samLoaded = 0;
+
+  SAM_POSES.forEach(function(name) {
+    var img = new Image();
+    img.onload  = function() { samLoaded++; };
+    img.onerror = function() { samLoaded++; };
+    img.src = '/images/sam-reaction-animation/poses/' + name + '.png';
+    samImgs[name] = img;
+  });
+
+  /* ── Sam seat position (left couch cushion) ── */
+  var SAM_NX   = 0.52;
+  var SAM_NY   = 0.39;
+  var SAM_SZ   = 0.22;
+
+  function samSeat() {
+    var scale  = Math.max(SW / IMG_W, SH / IMG_H);
+    var rendW  = IMG_W * scale;
+    var rendH  = IMG_H * scale;
+    var ox     = (SW - rendW) / 2;
+    var oy     = -(rendH - SH) * OBJ_POS_Y;
+    var lx     = ox + SAM_NX * rendW;
+    var ly     = oy + SAM_NY * rendH;
+    return { lx: lx, ly: ly, size: rendW * SAM_SZ };
   }
 
   /* ── Seat position in footer ──
@@ -235,17 +264,67 @@
       /* Landing done — hide overlay, draw settled pose on footer canvas */
       overlay.style.display = 'none';
       isDone = true;
-      drawSettled();
+      drawCanvas();
     }
   }
 
-  function drawSettled() {
+  /* ── Sam pose animation ── */
+  var SAM_SEQUENCE = [
+    { pose: 'looking-up', hold: 800   },
+    { pose: 'startled',   hold: 600   },
+    { pose: 'looking-up', hold: 1200  },
+    { pose: 'composed',   hold: 1000  },
+    { pose: 'seated',     hold: 99999 }  // rest
+  ];
+  var samPoseIdx  = 0;
+  var samPoseAt   = null;  // timestamp when current pose started
+  var samAnimOn   = false;
+  var samRafId    = null;
+  var samCurrentPose = 'seated';
+
+  function drawCanvas() {
     sCtx.clearRect(0, 0, SW, SH);
-    var seat = seatViewport();
-    var img  = frames[72];
-    if (img && img.complete && img.naturalWidth) {
-      sCtx.drawImage(img, seat.lx - seat.size / 2, seat.ly - seat.size / 2, seat.size, seat.size);
+    /* Sam on left cushion — always */
+    var ss = samSeat();
+    var samImg = samImgs[samCurrentPose];
+    if (samImg && samImg.complete && samImg.naturalWidth) {
+      sCtx.drawImage(samImg, ss.lx - ss.size / 2, ss.ly - ss.size / 2, ss.size, ss.size);
     }
+    /* Blue shirt on right cushion — only after his animation is done */
+    if (isDone) {
+      var seat = seatViewport();
+      var img  = frames[72];
+      if (img && img.complete && img.naturalWidth) {
+        sCtx.drawImage(img, seat.lx - seat.size / 2, seat.ly - seat.size / 2, seat.size, seat.size);
+      }
+    }
+  }
+
+  function samLoop(now) {
+    if (!samPoseAt) samPoseAt = now;
+    var step = SAM_SEQUENCE[samPoseIdx];
+    if (now - samPoseAt >= step.hold) {
+      samPoseIdx++;
+      if (samPoseIdx >= SAM_SEQUENCE.length) { samAnimOn = false; return; }
+      samPoseAt = now;
+      samCurrentPose = SAM_SEQUENCE[samPoseIdx].pose;
+      drawCanvas();
+    }
+    if (samAnimOn) samRafId = requestAnimationFrame(samLoop);
+  }
+
+  function startSamAnim() {
+    if (samAnimOn) return;
+    samAnimOn   = true;
+    samPoseIdx  = 0;
+    samPoseAt   = null;
+    samCurrentPose = SAM_SEQUENCE[0].pose;
+    drawCanvas();
+    samRafId = requestAnimationFrame(samLoop);
+  }
+
+  function drawSettled() {
+    drawCanvas();
   }
 
   /* ── Trigger on scroll into view ── */
@@ -255,6 +334,10 @@
       obs.disconnect();
       function tryStart() {
         if (framesLoaded >= 20) {
+          /* Draw Sam seated immediately */
+          drawCanvas();
+          /* Sam reacts after blue shirt's Phase 1 ends (2250ms) */
+          setTimeout(startSamAnim, 2250);
           overlay.style.display = 'block';
           resizeOverlay(); // ensure canvas dims are set before first draw
           rafId = requestAnimationFrame(draw);
@@ -269,9 +352,12 @@
   obs.observe(outer);
 
   /* ── Dev helper: tweak from console ──
-     window._cf.nx = 0.44   → move left/right
-     window._cf.ny = 0.60   → move up/down
-     window._cf.sz = 0.18   → resize character
+     window._cf.nx = 0.44   → blue shirt left/right
+     window._cf.ny = 0.60   → blue shirt up/down
+     window._cf.sz = 0.18   → blue shirt size
+     window._cf.snx = 0.49  → Sam left/right
+     window._cf.sny = 0.51  → Sam up/down
+     window._cf.ssz = 0.29  → Sam size
      window._cf.replay()    → re-run the animation
   */
   window._cf = {
@@ -281,9 +367,18 @@
     set ny(v) { SEAT_NY = v; drawSettled(); console.log('ny =', v); },
     get sz() { return _charSize; },
     set sz(v) { _charSize = v; drawSettled(); console.log('sz =', v); },
+    get snx() { return SAM_NX; },
+    set snx(v) { SAM_NX = v; drawSettled(); console.log('snx =', v); },
+    get sny() { return SAM_NY; },
+    set sny(v) { SAM_NY = v; drawSettled(); console.log('sny =', v); },
+    get ssz() { return SAM_SZ; },
+    set ssz(v) { SAM_SZ = v; drawSettled(); console.log('ssz =', v); },
     replay: function() {
       isDone = false; triggered = false; startTime = null;
+      samAnimOn = false; samPoseIdx = 0; samPoseAt = null; samCurrentPose = 'seated';
       sCtx.clearRect(0, 0, SW, SH);
+      drawCanvas();
+      setTimeout(startSamAnim, 2250);
       overlay.style.display = 'block';
       rafId = requestAnimationFrame(draw);
     }
