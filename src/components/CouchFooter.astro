@@ -196,7 +196,7 @@
       /* Phase 2: drop to seat */
       var p    = (t - 0.5) / 0.35;
       var ease = p * p * (3 - 2 * p);
-      frameIdx = Math.round(35 - ease * 35);    // 35 → 0
+      frameIdx = ease < 0.97 ? Math.round(35 - ease * 33) : 72;  // 35 → 2 → 72
 
       var midX = seat.x;
       var midY = seat.y - charSz * 1.5;
@@ -210,14 +210,14 @@
       /* Phase 3: tiny bounce settle */
       var p      = (t - 0.85) / 0.15;
       var bounce = Math.sin(p * Math.PI) * 8 * (1 - p);
-      frameIdx   = 0;
+      frameIdx   = 72;
       x          = seat.x;
       y          = seat.y - bounce;
       rot        = 0;
       opacity    = 1;
     }
 
-    frameIdx = Math.max(0, Math.min(71, frameIdx));
+    frameIdx = Math.max(0, Math.min(72, frameIdx));
     var img  = frames[frameIdx];
 
     if (img && img.complete && img.naturalWidth) {
