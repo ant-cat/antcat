@@ -109,7 +109,7 @@
   });
 
   /* ── Load blue shirt frames ── */
-  var FRAME_COUNT  = 73;
+  var FRAME_COUNT  = 75;  // 000–072 tumble/settle, 073–074 fist-bump poses
   var frames       = [];
   var framesLoaded = 0;
 
@@ -139,21 +139,26 @@
   });
 
   /* ── Load Astronaut poses ── */
-  var ASTRO_POSES = ['seated','turn-toward-sam','fist-raise','fist-extend','fist-bump','fist-wiggle','glance-up','turn-front'];
+  var ASTRO_POSES = [
+    'seated', 'turn-toward-sam', 'facing-sam',
+    'fist-raise', 'fist-extend', 'fist-bump',
+    'glance-up-start', 'glance-up-hold',
+    'thumbs-up-raise', 'thumbs-up-hold'
+  ];
   var astroImgs   = {};
   var astroLoaded = 0;
 
   ASTRO_POSES.forEach(function(name) {
     var img = new Image();
-    img.onload  = function() { astroLoaded++; };
+    img.onload  = function() { astroLoaded++; drawCanvas(); };
     img.onerror = function() { astroLoaded++; };
     img.src = '/images/astronaut-animation/poses/' + name + '.png';
     astroImgs[name] = img;
   });
 
   /* ── Astronaut seat position (back of couch, between Sam and blue shirt) ── */
-  var ASTRO_NX = 0.65;
-  var ASTRO_NY = 0.35;
+  var ASTRO_NX = 0.66;
+  var ASTRO_NY = 0.37;
   var ASTRO_SZ = 0.20;
 
   function astroSeat() {
@@ -189,8 +194,8 @@
      bg image: 1619×971 px, object-fit:cover, object-position:50% 75%
      left cushion: nx=0.49, ny=0.51, sz=0.29
   */
-  var SEAT_NX   = 0.74;
-  var SEAT_NY   = 0.57;
+  var SEAT_NX   = 0.75;
+  var SEAT_NY   = 0.56;
   var IMG_W     = 1619;
   var IMG_H     = 971;
   var OBJ_POS_Y = 0.45;   // matches object-position: 50% 45%
@@ -296,22 +301,24 @@
       overlay.style.display = 'none';
       isDone = true;
       drawCanvas();
+      startBsAnim();
     }
   }
 
   /* ── Astronaut pose animation ── */
   var ASTRO_SEQUENCE = [
-    { pose: 'glance-up',       hold: 300   },
-    { pose: 'turn-toward-sam', hold: 500   },
-    { pose: 'glance-up',       hold: 600   },
-    { pose: 'turn-front',      hold: 500   },
-    { pose: 'fist-raise',      hold: 400   },
+    { pose: 'seated',          hold: 400   },
+    { pose: 'turn-toward-sam', hold: 350   },
+    { pose: 'glance-up-start', hold: 350   },
+    { pose: 'glance-up-hold',  hold: 800   },
+    { pose: 'facing-sam',      hold: 600   },
+    { pose: 'fist-raise',      hold: 350   },
     { pose: 'fist-extend',     hold: 300   },
-    { pose: 'fist-bump',       hold: 600   },
-    { pose: 'fist-wiggle',     hold: 800   },
-    { pose: 'glance-up',       hold: 900   },
-    { pose: 'turn-front',      hold: 500   },
-    { pose: 'seated',          hold: 99999 }  // rest
+    { pose: 'fist-bump',       hold: 700   },
+    { pose: 'fist-raise',      hold: 300   },  // retract
+    { pose: 'facing-sam',      hold: 400   },
+    { pose: 'thumbs-up-raise', hold: 350   },
+    { pose: 'thumbs-up-hold',  hold: 99999 }   // rest
   ];
   var astroPoseIdx = 0;
   var astroPoseAt  = null;
@@ -326,8 +333,8 @@
       if (astroPoseIdx >= ASTRO_SEQUENCE.length) { astroAnimOn = false; return; }
       astroPoseAt = now;
       astroPose = ASTRO_SEQUENCE[astroPoseIdx].pose;
-      drawCanvas();
     }
+    drawCanvas();
     if (astroAnimOn) astroRafId = requestAnimationFrame(astroLoop);
   }
 
@@ -372,11 +379,52 @@
     /* Blue shirt on right cushion — only after his animation is done */
     if (isDone) {
       var seat = seatViewport();
-      var img  = frames[72];
+      var img  = frames[bsFrame];
       if (img && img.complete && img.naturalWidth) {
         sCtx.drawImage(img, seat.lx - seat.size / 2, seat.ly - seat.size / 2, seat.size, seat.size);
       }
     }
+  }
+
+  /* ── Blue shirt fist-bump animation ── */
+  /* Blue shirt fist-bump timing math (all times from scroll trigger):
+     Blue shirt lands:          4500ms
+     Astro fist-bump starts:    2250 + 400+350+350+800+600+350+300 = 6050ms
+     BS wait until bump frame:  4500 + 1200 + 350 = 6050ms  ✓
+  */
+  var BS_SEQUENCE = [
+    { frame: 72, hold: 550   },   // settled — wait for astro to reach fist-extend
+    { frame: 73, hold: 350   },   // fist raise (mirrors astro fist-extend → fist-bump)
+    { frame: 74, hold: 700   },   // fist bump hold (matches astronaut's 700ms)
+    { frame: 73, hold: 300   },   // retract
+    { frame: 72, hold: 99999 }    // rest
+  ];
+  var bsIdx    = 0;
+  var bsAt     = null;
+  var bsFrame  = 72;
+  var bsAnimOn = false;
+  var bsRafId  = null;
+
+  function bsLoop(now) {
+    if (!bsAt) bsAt = now;
+    var step = BS_SEQUENCE[bsIdx];
+    if (now - bsAt >= step.hold) {
+      bsIdx++;
+      if (bsIdx >= BS_SEQUENCE.length) { bsAnimOn = false; return; }
+      bsAt    = now;
+      bsFrame = BS_SEQUENCE[bsIdx].frame;
+    }
+    drawCanvas();
+    if (bsAnimOn) bsRafId = requestAnimationFrame(bsLoop);
+  }
+
+  function startBsAnim() {
+    if (bsAnimOn) return;
+    bsAnimOn = true;
+    bsIdx    = 0;
+    bsAt     = null;
+    bsFrame  = BS_SEQUENCE[0].frame;
+    bsRafId  = requestAnimationFrame(bsLoop);
   }
 
   function samLoop(now) {
@@ -432,15 +480,27 @@
   obs.observe(outer);
 
   /* ── Dev helper: tweak from console ──
-     window._cf.nx = 0.44   → blue shirt left/right
-     window._cf.ny = 0.60   → blue shirt up/down
-     window._cf.sz = 0.18   → blue shirt size
-     window._cf.snx = 0.49  → Sam left/right
-     window._cf.sny = 0.51  → Sam up/down
-     window._cf.ssz = 0.29  → Sam size
-     window._cf.replay()    → re-run the animation
+     Positions (take effect immediately):
+       window._cf.nx  / ny  / sz   → blue shirt left/right / up/down / size
+       window._cf.snx / sny / ssz  → Sam
+       window._cf.anx / any / asz  → Astronaut
+
+     Fist-bump timing (edit then replay):
+       window._cf.bs           → view the BS_SEQUENCE array
+       window._cf.bs[0].hold = 600   → delay before blue shirt raises fist
+       window._cf.bs[1].hold = 300   → fist raise duration
+       window._cf.bs[2].hold = 800   → fist bump hold duration
+
+     Astronaut timing (edit then replay):
+       window._cf.astro        → view the ASTRO_SEQUENCE array
+       window._cf.astro[5].hold = 400  → fist-raise duration (step 6)
+       window._cf.astro[7].hold = 800  → fist-bump hold duration (step 8)
+
+     window._cf.replay()    → re-run everything from scratch
   */
   window._cf = {
+    get bs()   { return BS_SEQUENCE; },
+    get astro(){ return ASTRO_SEQUENCE; },
     get nx() { return SEAT_NX; },
     set nx(v) { SEAT_NX = v; drawSettled(); console.log('nx =', v); },
     get ny() { return SEAT_NY; },
@@ -463,9 +523,11 @@
       isDone = false; triggered = false; startTime = null;
       samAnimOn = false; samPoseIdx = 0; samPoseAt = null; samCurrentPose = 'seated';
       astroAnimOn = false; astroPoseIdx = 0; astroPoseAt = null; astroPose = 'seated';
+      bsAnimOn = false; bsIdx = 0; bsAt = null; bsFrame = 72;
       sCtx.clearRect(0, 0, SW, SH);
       drawCanvas();
-      setTimeout(startSamAnim, 2250);
+      setTimeout(startSamAnim,   2250);
+      setTimeout(startAstroAnim, 2250);
       overlay.style.display = 'block';
       rafId = requestAnimationFrame(draw);
     }
