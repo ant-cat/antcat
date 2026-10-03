@@ -108,21 +108,32 @@
     if (isDone) drawSettled();
   });
 
-  /* ── Load blue shirt frames ── */
+  /* ── Load blue shirt frames (lazy — deferred until footer is near) ── */
   var FRAME_COUNT  = 75;  // 000–072 tumble/settle, 073–074 fist-bump poses
   var frames       = [];
   var framesLoaded = 0;
 
   function pad3(n) { return n < 10 ? '00'+n : n < 100 ? '0'+n : ''+n; }
 
-  for (var i = 0; i < FRAME_COUNT; i++) {
-    (function(idx) {
-      var img = new Image();
-      img.onload  = function() { framesLoaded++; };
-      img.onerror = function() { framesLoaded++; };
-      img.src = '/images/blue-shirt-animation/frames/frame_' + pad3(idx) + '.png';
-      frames[idx] = img;
-    })(i);
+  function loadFrame(idx) {
+    var img = new Image();
+    img.onload  = function() { framesLoaded++; };
+    img.onerror = function() { framesLoaded++; };
+    img.src = '/images/blue-shirt-animation/frames/frame_' + pad3(idx) + '.png';
+    frames[idx] = img;
+  }
+
+  function loadFrames() {
+    /* Priority: frames used in first ~1s of animation (tumble start: 71 down to ~55)
+       plus the settled/fist-bump frames (72, 73, 74). Load these first. */
+    var priority = [74, 73, 72, 71, 70, 69, 68, 67, 66, 65, 64, 63, 62, 61, 60];
+    priority.forEach(function(i) { loadFrame(i); });
+    /* Load remaining frames after a short delay so priority frames win bandwidth */
+    setTimeout(function() {
+      for (var i = 0; i < FRAME_COUNT; i++) {
+        if (!frames[i]) loadFrame(i);
+      }
+    }, 300);
   }
 
   /* ── Load Sam poses (4 unique images, named) ── */
@@ -454,13 +465,22 @@
     drawCanvas();
   }
 
-  /* ── Trigger on scroll into view ── */
+  /* ── Pre-load frames when footer is within 1.5× viewport height ── */
+  var preloadObs = new IntersectionObserver(function(entries) {
+    if (entries[0].isIntersecting) {
+      preloadObs.disconnect();
+      loadFrames();
+    }
+  }, { rootMargin: '150% 0px', threshold: 0 });
+  preloadObs.observe(outer);
+
+  /* ── Trigger animation when footer is actually in view ── */
   var obs = new IntersectionObserver(function(entries) {
     if (entries[0].isIntersecting && !triggered) {
       triggered = true;
       obs.disconnect();
       function tryStart() {
-        if (framesLoaded >= 20) {
+        if (framesLoaded >= 15) {
           /* Draw Sam seated immediately */
           drawCanvas();
           /* Sam reacts after blue shirt's Phase 1 ends (2250ms) */
