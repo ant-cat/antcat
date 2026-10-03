@@ -393,7 +393,7 @@
      BS wait until bump frame:  4500 + 1200 + 350 = 6050ms  ✓
   */
   var BS_SEQUENCE = [
-    { frame: 72, hold: 550   },   // settled — wait for astro to reach fist-extend
+    { frame: 72, hold: 350   },   // settled — wait for astro to reach fist-extend
     { frame: 73, hold: 350   },   // fist raise (mirrors astro fist-extend → fist-bump)
     { frame: 74, hold: 700   },   // fist bump hold (matches astronaut's 700ms)
     { frame: 73, hold: 300   },   // retract
