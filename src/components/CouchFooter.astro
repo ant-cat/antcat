@@ -138,6 +138,37 @@
     samImgs[name] = img;
   });
 
+  /* ── Load Astronaut poses ── */
+  var ASTRO_POSES = ['seated','turn-toward-sam','fist-raise','fist-extend','fist-bump','fist-wiggle','glance-up','turn-front'];
+  var astroImgs   = {};
+  var astroLoaded = 0;
+
+  ASTRO_POSES.forEach(function(name) {
+    var img = new Image();
+    img.onload  = function() { astroLoaded++; };
+    img.onerror = function() { astroLoaded++; };
+    img.src = '/images/astronaut-animation/poses/' + name + '.png';
+    astroImgs[name] = img;
+  });
+
+  /* ── Astronaut seat position (back of couch, between Sam and blue shirt) ── */
+  var ASTRO_NX = 0.65;
+  var ASTRO_NY = 0.35;
+  var ASTRO_SZ = 0.20;
+
+  function astroSeat() {
+    var scale = Math.max(SW / IMG_W, SH / IMG_H);
+    var rendW = IMG_W * scale;
+    var rendH = IMG_H * scale;
+    var ox    = (SW - rendW) / 2;
+    var oy    = -(rendH - SH) * OBJ_POS_Y;
+    var lx    = ox + ASTRO_NX * rendW;
+    var ly    = oy + ASTRO_NY * rendH;
+    return { lx: lx, ly: ly, size: rendW * ASTRO_SZ };
+  }
+
+  var astroPose = 'seated';
+
   /* ── Sam seat position (left couch cushion) ── */
   var SAM_NX   = 0.52;
   var SAM_NY   = 0.39;
@@ -268,6 +299,48 @@
     }
   }
 
+  /* ── Astronaut pose animation ── */
+  var ASTRO_SEQUENCE = [
+    { pose: 'glance-up',       hold: 300   },
+    { pose: 'turn-toward-sam', hold: 500   },
+    { pose: 'glance-up',       hold: 600   },
+    { pose: 'turn-front',      hold: 500   },
+    { pose: 'fist-raise',      hold: 400   },
+    { pose: 'fist-extend',     hold: 300   },
+    { pose: 'fist-bump',       hold: 600   },
+    { pose: 'fist-wiggle',     hold: 800   },
+    { pose: 'glance-up',       hold: 900   },
+    { pose: 'turn-front',      hold: 500   },
+    { pose: 'seated',          hold: 99999 }  // rest
+  ];
+  var astroPoseIdx = 0;
+  var astroPoseAt  = null;
+  var astroAnimOn  = false;
+  var astroRafId   = null;
+
+  function astroLoop(now) {
+    if (!astroPoseAt) astroPoseAt = now;
+    var step = ASTRO_SEQUENCE[astroPoseIdx];
+    if (now - astroPoseAt >= step.hold) {
+      astroPoseIdx++;
+      if (astroPoseIdx >= ASTRO_SEQUENCE.length) { astroAnimOn = false; return; }
+      astroPoseAt = now;
+      astroPose = ASTRO_SEQUENCE[astroPoseIdx].pose;
+      drawCanvas();
+    }
+    if (astroAnimOn) astroRafId = requestAnimationFrame(astroLoop);
+  }
+
+  function startAstroAnim() {
+    if (astroAnimOn) return;
+    astroAnimOn  = true;
+    astroPoseIdx = 0;
+    astroPoseAt  = null;
+    astroPose    = ASTRO_SEQUENCE[0].pose;
+    drawCanvas();
+    astroRafId = requestAnimationFrame(astroLoop);
+  }
+
   /* ── Sam pose animation ── */
   var SAM_SEQUENCE = [
     { pose: 'looking-up', hold: 800   },
@@ -289,6 +362,12 @@
     var samImg = samImgs[samCurrentPose];
     if (samImg && samImg.complete && samImg.naturalWidth) {
       sCtx.drawImage(samImg, ss.lx - ss.size / 2, ss.ly - ss.size / 2, ss.size, ss.size);
+    }
+    /* Astronaut between Sam and blue shirt — always */
+    var as = astroSeat();
+    var aImg = astroImgs[astroPose];
+    if (aImg && aImg.complete && aImg.naturalWidth) {
+      sCtx.drawImage(aImg, as.lx - as.size / 2, as.ly - as.size / 2, as.size, as.size);
     }
     /* Blue shirt on right cushion — only after his animation is done */
     if (isDone) {
@@ -338,6 +417,7 @@
           drawCanvas();
           /* Sam reacts after blue shirt's Phase 1 ends (2250ms) */
           setTimeout(startSamAnim, 2250);
+          setTimeout(startAstroAnim, 2250);
           overlay.style.display = 'block';
           resizeOverlay(); // ensure canvas dims are set before first draw
           rafId = requestAnimationFrame(draw);
@@ -367,6 +447,12 @@
     set ny(v) { SEAT_NY = v; drawSettled(); console.log('ny =', v); },
     get sz() { return _charSize; },
     set sz(v) { _charSize = v; drawSettled(); console.log('sz =', v); },
+    get anx() { return ASTRO_NX; },
+    set anx(v) { ASTRO_NX = v; drawCanvas(); console.log('anx =', v); },
+    get any() { return ASTRO_NY; },
+    set any(v) { ASTRO_NY = v; drawCanvas(); console.log('any =', v); },
+    get asz() { return ASTRO_SZ; },
+    set asz(v) { ASTRO_SZ = v; drawCanvas(); console.log('asz =', v); },
     get snx() { return SAM_NX; },
     set snx(v) { SAM_NX = v; drawSettled(); console.log('snx =', v); },
     get sny() { return SAM_NY; },
@@ -376,6 +462,7 @@
     replay: function() {
       isDone = false; triggered = false; startTime = null;
       samAnimOn = false; samPoseIdx = 0; samPoseAt = null; samCurrentPose = 'seated';
+      astroAnimOn = false; astroPoseIdx = 0; astroPoseAt = null; astroPose = 'seated';
       sCtx.clearRect(0, 0, SW, SH);
       drawCanvas();
       setTimeout(startSamAnim, 2250);
