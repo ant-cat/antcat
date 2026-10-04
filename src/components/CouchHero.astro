@@ -238,8 +238,7 @@ const { subtitle = '' } = Astro.props;
 
   /* Mobile autoplay config */
   var MOBILE_FPS        = 18;   // frames per second for looping chars
-  var MOBILE_FLYOFF_DUR = 3200; // ms for blue shirt fly-off (once)
-  var MOBILE_FLYOFF_DELAY = 500; // ms before fly-off starts
+  var MOBILE_FLYOFF_DUR = 2200; // ms for blue shirt fly-off (once)
 
   var CHARS = [
     {
@@ -343,7 +342,7 @@ const { subtitle = '' } = Astro.props;
     var ctx = contexts[ch.id];
     if (!ctx) return;
     var imgs = loaded[ch.id];
-    if (!imgs || !imgs[idx] || !imgs[idx].complete) return;
+    if (!imgs || !imgs[idx] || !imgs[idx].complete || !imgs[idx].naturalWidth) return;
     ctx.clearRect(0, 0, 768, 768);
     ctx.drawImage(imgs[idx], 0, 0, 768, 768);
     currentFrames[ch.id] = idx;
@@ -389,7 +388,13 @@ const { subtitle = '' } = Astro.props;
       var done = 0;
       ch.frames.forEach(function(fname, idx) {
         var img = new Image();
-        img.onload = img.onerror = function() {
+        img.onload = function() {
+          done++;
+          // Draw frame 0 immediately once it's ready (so char appears on mobile)
+          if (idx === 0) drawFirstLoaded(ch);
+          if (done === total) onAllDone();
+        };
+        img.onerror = function() {
           done++;
           if (done === total) onAllDone();
         };
@@ -410,6 +415,22 @@ const { subtitle = '' } = Astro.props;
           img.src = ch.dir + ch.prefix + pad3(idx) + '.png';
           loaded[ch.id][idx] = img;
         })(i);
+      }
+    }
+  }
+
+  /* ── DRAW FIRST AVAILABLE FRAME (mobile fallback) ── */
+  // Draws the earliest loaded frame of a sequence char so it appears
+  // as soon as even frame 0 is ready, without waiting for all frames.
+  function drawFirstLoaded(ch) {
+    var imgs = loaded[ch.id];
+    if (!imgs) return;
+    for (var i = 0; i < imgs.length; i++) {
+      if (imgs[i] && imgs[i].complete && imgs[i].naturalWidth) {
+        // Temporarily clear currentFrames cache so drawFrame forces a draw
+        currentFrames[ch.id] = -1;
+        drawFrame(ch, i);
+        return;
       }
     }
   }
@@ -444,16 +465,12 @@ const { subtitle = '' } = Astro.props;
                 flyOffStarted = true;
                 flyOffStart   = now;
               }
-              var elapsed = now - flyOffStart - MOBILE_FLYOFF_DELAY;
-              if (elapsed < 0) {
-                drawFrame(ch, 0);
-              } else {
-                var amount  = Math.min(1, elapsed / MOBILE_FLYOFF_DUR);
-                drawFrame(ch, Math.round(amount * ch.maxFrame));
-                var el = charEls[ch.id];
-                if (el) applyFlyOff(el, amount);
-                if (amount >= 1) flyOffDone = true;
-              }
+              var elapsed = now - flyOffStart;
+              var amount  = Math.min(1, elapsed / MOBILE_FLYOFF_DUR);
+              drawFrame(ch, Math.round(amount * ch.maxFrame));
+              var el = charEls[ch.id];
+              if (el) applyFlyOff(el, amount);
+              if (amount >= 1) flyOffDone = true;
             }
             // When done: frame + transform already held at final state
           } else {
@@ -527,12 +544,14 @@ const { subtitle = '' } = Astro.props;
 
   /* ── INIT ── */
   if (reduced) {
+    // Show first pose of each character statically, no animation
     CHARS.forEach(function(ch) {
       var img = new Image();
       img.onload = function() {
         loaded[ch.id][0] = img;
         drawFrame(ch, 0);
       };
+      // Sequence-based chars (purple/yellow) name their frames explicitly
       img.src = ch.frames ? ch.dir + ch.frames[0] : ch.dir + ch.prefix + '000.png';
     });
     return;
