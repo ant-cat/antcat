@@ -408,10 +408,19 @@ const { subtitle = '' } = Astro.props;
       // Sequential numbered frames
       var total = ch.maxFrame + 1;
       var done = 0;
+      var firstDrawn = false;
       for (var i = 0; i <= ch.maxFrame; i++) {
         (function(idx) {
           var img = new Image();
-          img.onload = img.onerror = function() {
+          img.onload = function() {
+            done++;
+            if (!firstDrawn && idx === 0) {
+              firstDrawn = true;
+              drawFirstLoaded(ch);
+            }
+            if (done === total) onAllDone();
+          };
+          img.onerror = function() {
             done++;
             if (done === total) onAllDone();
           };
@@ -460,7 +469,8 @@ const { subtitle = '' } = Astro.props;
         lastTick = now - (dt % intervalMs);
 
         var imgs = loaded[ch.id];
-        if (imgs && imgs.length > 0) {
+        var frame0ready = imgs && imgs[0] && imgs[0].complete && imgs[0].naturalWidth;
+        if (frame0ready) {
           if (ch.flyOff) {
             // Blue shirt: fly-off once then hold
             if (!flyOffDone) {
