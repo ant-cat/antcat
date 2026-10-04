@@ -10,7 +10,7 @@ const { subtitle = '' } = Astro.props;
     <div class="ch-scene" id="ch-scene">
 
       <!-- Background -->
-      <picture>
+      <picture style="display:contents">
         <source srcset="/images/couch-scene-background.webp" type="image/webp" />
         <img class="ch-bg" src="/images/couch-scene-background.png" alt="" aria-hidden="true" />
       </picture>
@@ -571,10 +571,42 @@ const { subtitle = '' } = Astro.props;
   }
 
   if (isMobile) {
-    // Mobile: start loop immediately; frames trickle in as they load
+    // Mobile: load frame 0 first so something draws immediately,
+    // then kick off the full frame load + loop
     CHARS.forEach(function(ch) {
-      startMobileCharLoop(ch);
-      loadCharFrames(ch, function() {});
+      if (ch.frames) {
+        // Pose-based (purple/yellow): load all poses then start loop
+        loadCharFrames(ch, function() {
+          startMobileCharLoop(ch);
+        });
+      } else {
+        // Sequential (blue/white): load frame 0 first, draw it, then load rest
+        var f0 = new Image();
+        f0.onload = function() {
+          loaded[ch.id][0] = f0;
+          currentFrames[ch.id] = -1;
+          drawFrame(ch, 0);
+          // Now load remaining frames and start the loop
+          var done1 = 1;
+          var total1 = ch.maxFrame + 1;
+          startMobileCharLoop(ch);
+          for (var i = 1; i <= ch.maxFrame; i++) {
+            (function(idx) {
+              var img = new Image();
+              img.onload = img.onerror = function() { done1++; };
+              img.src = ch.dir + ch.prefix + pad3(idx) + '.webp';
+              loaded[ch.id][idx] = img;
+            })(i);
+          }
+        };
+        f0.onerror = function() {
+          // Frame 0 failed — try anyway
+          startMobileCharLoop(ch);
+          loadCharFrames(ch, function() {});
+        };
+        f0.src = ch.dir + ch.prefix + '000.webp';
+        loaded[ch.id][0] = f0;
+      }
     });
   } else {
     // Desktop: start RAF immediately, draw frames as they arrive
