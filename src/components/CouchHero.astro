@@ -225,12 +225,7 @@ const { subtitle = '' } = Astro.props;
   }
 }
 
-/* Reduced motion: show first frame statically, no sticky */
-@media (prefers-reduced-motion: reduce) {
-  .ch-outer { height: var(--ch-h); }
-  .ch-sticky { position: relative; }
-  .ch-scroll-cue { display: none; }
-}
+
 </style>
 
 <script is:inline>
@@ -307,9 +302,6 @@ const { subtitle = '' } = Astro.props;
 
   /* ── DETECT MOBILE ── */
   var isMobile = window.matchMedia('(max-width: 600px)').matches;
-
-  /* ── PREFERS REDUCED MOTION ── */
-  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   /* ── CANVAS SETUP ── */
   CHARS.forEach(function(ch) {
@@ -556,20 +548,6 @@ const { subtitle = '' } = Astro.props;
   }
 
   /* ── INIT ── */
-  if (reduced) {
-    // Show first pose of each character statically, no animation
-    CHARS.forEach(function(ch) {
-      var img = new Image();
-      img.onload = function() {
-        loaded[ch.id][0] = img;
-        drawFrame(ch, 0);
-      };
-      // Sequence-based chars (purple/yellow) name their frames explicitly
-      img.src = ch.frames ? ch.dir + ch.frames[0] : ch.dir + ch.prefix + '000.webp';
-    });
-    return;
-  }
-
   if (isMobile) {
     // Mobile: load frame 0 first so something draws immediately,
     // then kick off the full frame load + loop
