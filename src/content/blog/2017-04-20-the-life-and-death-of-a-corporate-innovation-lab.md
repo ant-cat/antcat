@@ -68,7 +68,7 @@ It makes sense, seems logical and simple, and was the completely wrong thing to 
 <a id="first-100-days"></a>
 ## The First 100 Days:
 
-![The Ignite Office in Downtown Jacksonville, FL](/images/2017-04-20-the-life-and-death-of-a-corporate-innovation-lab/04-ignite-office-2.jpeg)
+![The Ignite Office in Downtown Jacksonville, FL](/images/2017-04-20-the-life-and-death-of-a-corporate-innovation-lab/04-ignite-office-2.jpeg#full)
 *The Ignite Office in Downtown Jacksonville, FL*
 
 The first 100 days of building anything are the most important, hardest, and exhausting, especially when you have to prove quick value. Corporate innovation labs seem to only have a 3 to 4-year shelf-life before they're axed. We didn't have all the time in the world to figure things out, we needed to show progress as fast as possible.
@@ -85,7 +85,7 @@ Here are the takeaways that stuck with me and gave me a sense that we were aweso
 **Kick things off right.**
 Set the tone of your organization from the very start. After we received funding, we took a one week trip to Stockholm to work with an organization called [Britny.se](http://britny.se/) and did essentially a [5-day Design Sprint](https://library.gv.com/gvs-sprint-process-in-90-seconds-cf5cc0f06c30). This gave us a chance to work as a team and broke up the corporate "move slow" mentality. It helped us set a direction and get moving.
 
-![Stockholm, Sweden](/images/2017-04-20-the-life-and-death-of-a-corporate-innovation-lab/06-stockholm.jpeg)
+![Stockholm, Sweden](/images/2017-04-20-the-life-and-death-of-a-corporate-innovation-lab/06-stockholm.jpeg#full)
 *Stockholm, Sweden*
 
 **Get out of the building, and work at a coworking facility.**
@@ -133,7 +133,7 @@ We made some amazing first hires that lasted almost the whole 4 years we were ar
 
 > Biggest Learning — bring in experts, and give them room to make an impact. We brought in [Jessie Shternshus](https://www.linkedin.com/in/jessie-shternshus-04765a11/), CEO of the [ImprovEffect](http://www.improveffect.com/), to break down our walls and start communicating with each other. It took a year of continuous training to save the team, and hit product milestones.
 
-![The Ignite team](/images/2017-04-20-the-life-and-death-of-a-corporate-innovation-lab/08-ignite-team.jpeg)
+![The Ignite team](/images/2017-04-20-the-life-and-death-of-a-corporate-innovation-lab/08-ignite-team.jpeg#full)
 
 <a id="make-it-count"></a>
 ## Make it Count:

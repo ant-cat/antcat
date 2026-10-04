@@ -200,6 +200,16 @@ a:hover { text-decoration: underline; }
   text-align: center;
 }
 
+/* Edge-to-edge option: add #full to an image path, e.g. ![Alt](/images/post/01.jpeg#full)
+   Spans the whole browser width; the page column is centred, so offset by half the leftover space. */
+.article-body p:has(> img[src$="#full"]) {
+  --col: min(860px, calc(100vw - 48px));
+  width: 100vw;
+  margin-left: calc((100vw - var(--col)) / -2);
+}
+.article-body img[src$="#full"] { border-radius: 0; }
+.article-body p:has(> img[src$="#full"]) > em { padding-inline: 24px; }
+
 /* ── BACK LINK ── */
 .back-link {
   display: inline-flex;
@@ -254,4 +264,5 @@ a:hover { text-decoration: underline; }
   .post-item { grid-template-columns: 1fr; gap: 2px; }
   .post-date { font-size: 0.65rem; }
   .article-body p:has(> img), .article-body iframe { width: 100%; }
+  .article-body p:has(> img[src$="#full"]) { --col: calc(100vw - 32px); width: 100vw; }
 }
