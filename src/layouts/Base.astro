@@ -115,7 +115,7 @@ const currentPath = Astro.url.pathname;
           observer.unobserve(entry.target);
         }
       });
-    }, { threshold: 0.08, rootMargin: '0px 0px -30px 0px' });
+    }, { threshold: 0, rootMargin: '0px 0px -30px 0px' });
     fadeEls.forEach(function(el) { observer.observe(el); });
   }
 
