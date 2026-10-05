@@ -177,7 +177,10 @@
   </style>
 </head>
 <body>
-  <img id="raw-photo" src="/images/hero.png" alt="" />
+  <picture id="raw-photo-wrap" style="display:contents">
+    <source srcset="/images/hero.webp" type="image/webp" />
+    <img id="raw-photo" src="/images/hero.png" alt="" fetchpriority="high" />
+  </picture>
   <canvas id="c"></canvas>
   <div id="holo-nav"></div>
   <canvas id="beam-canvas"></canvas>
@@ -191,8 +194,8 @@ IN</span>
     <div id="brand">ant.cat <em>lab</em></div>
   </div>
   <div id="zoom-layer">
-    <img id="zoom-photo" src="/images/hero.png" alt="" />
-    <img id="zoom-illustrated" src="/images/hero_couch_transition.png" alt="" />
+    <picture style="display:contents"><source id="zoom-photo-src" srcset="" type="image/webp" /><img id="zoom-photo" src="" data-webp="/images/hero.webp" data-src="/images/hero.png" alt="" /></picture>
+    <picture style="display:contents"><source id="zoom-illus-src" srcset="" type="image/webp" /><img id="zoom-illustrated" src="" data-webp="/images/hero_couch_transition.webp" data-src="/images/hero_couch_transition.png" alt="" /></picture>
     <div id="zoom-scanlines"></div>
     <canvas id="zoom-iris"></canvas>
     <div id="zoom-fade"></div>
@@ -219,7 +222,7 @@ IN</span>
 
     // Shader bg — starts at opacity 0, fades in after Watch Me
     var bgMesh = null;
-    new T.TextureLoader().load('/images/hero.png',function(tex){
+    new T.TextureLoader().load('/images/hero.webp',function(tex){
       tex.minFilter=T.LinearFilter;
       var m=new T.ShaderMaterial({
         uniforms:{uTex:{value:tex},uOpacity:{value:0.0},uTexSize:{value:new T.Vector2(tex.image.width,tex.image.height)},uViewport:{value:new T.Vector2(window.innerWidth,window.innerHeight)}},
@@ -502,6 +505,21 @@ IN</span>
     watchEl.addEventListener('click',function(){
       if(activated) return;
       activated=true;
+      // Lazy-load zoom images now that user has interacted
+      (function() {
+        var zp = document.getElementById('zoom-photo');
+        var zi = document.getElementById('zoom-illustrated');
+        var zps = document.getElementById('zoom-photo-src');
+        var zis = document.getElementById('zoom-illus-src');
+        if (zp && zp.dataset.src) {
+          if (zps) zps.srcset = zp.dataset.webp || '';
+          zp.src = zp.dataset.src;
+        }
+        if (zi && zi.dataset.src) {
+          if (zis) zis.srcset = zi.dataset.webp || '';
+          zi.src = zi.dataset.src;
+        }
+      })();
       watchEl.classList.add('hidden');
       var bb=document.getElementById('bottom-brand');
       bb.style.opacity='0';
