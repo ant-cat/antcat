@@ -139,20 +139,32 @@
     }, 300);
   }
 
-  /* ── Load Sam poses (4 unique images, named) ── */
+  /* ── Load Sam poses — seated first, draw immediately, then load rest ── */
   var SAM_POSES = ['seated', 'startled', 'looking-up', 'composed'];
   var samImgs   = {};
   var samLoaded = 0;
 
-  SAM_POSES.forEach(function(name) {
-    var img = new Image();
-    img.onload  = function() { samLoaded++; };
-    img.onerror = function() { samLoaded++; };
-    img.src = '/images/sam-reaction-animation/poses/' + name + '.png';
-    samImgs[name] = img;
-  });
+  // Load Sam 'seated' with high priority so she appears with the background
+  var samSeated = new Image();
+  samSeated.fetchPriority = 'high';
+  samSeated.onload = function() {
+    samImgs['seated'] = samSeated;
+    samLoaded++;
+    drawCanvas(); // draw Sam immediately once seated pose is ready
+    // Now load remaining Sam poses
+    ['startled', 'looking-up', 'composed'].forEach(function(name) {
+      var img = new Image();
+      img.onload  = function() { samImgs[name] = img; samLoaded++; };
+      img.onerror = function() { samLoaded++; };
+      img.src = '/images/sam-reaction-animation/poses/' + name + '.webp';
+      samImgs[name] = img;
+    });
+  };
+  samSeated.onerror = function() { samLoaded++; };
+  samSeated.src = '/images/sam-reaction-animation/poses/seated.webp';
+  samImgs['seated'] = samSeated;
 
-  /* ── Load Astronaut poses ── */
+  /* ── Load Astronaut poses — seated first, draw immediately, then load rest ── */
   var ASTRO_POSES = [
     'seated', 'turn-toward-sam', 'facing-sam',
     'fist-raise', 'fist-extend', 'fist-bump',
@@ -162,13 +174,26 @@
   var astroImgs   = {};
   var astroLoaded = 0;
 
-  ASTRO_POSES.forEach(function(name) {
-    var img = new Image();
-    img.onload  = function() { astroLoaded++; drawCanvas(); };
-    img.onerror = function() { astroLoaded++; };
-    img.src = '/images/astronaut-animation/poses/' + name + '.png';
-    astroImgs[name] = img;
-  });
+  // Load Astronaut 'seated' with high priority so it appears with the background
+  var astroSeated = new Image();
+  astroSeated.fetchPriority = 'high';
+  astroSeated.onload = function() {
+    astroImgs['seated'] = astroSeated;
+    astroLoaded++;
+    drawCanvas(); // draw Astronaut immediately once seated pose is ready
+    // Now load remaining Astronaut poses
+    ['turn-toward-sam', 'facing-sam', 'fist-raise', 'fist-extend', 'fist-bump',
+     'glance-up-start', 'glance-up-hold', 'thumbs-up-raise', 'thumbs-up-hold'].forEach(function(name) {
+      var img = new Image();
+      img.onload  = function() { astroImgs[name] = img; astroLoaded++; drawCanvas(); };
+      img.onerror = function() { astroLoaded++; };
+      img.src = '/images/astronaut-animation/poses/' + name + '.webp';
+      astroImgs[name] = img;
+    });
+  };
+  astroSeated.onerror = function() { astroLoaded++; };
+  astroSeated.src = '/images/astronaut-animation/poses/seated.webp';
+  astroImgs['seated'] = astroSeated;
 
   /* ── Astronaut seat position (back of couch, between Sam and blue shirt) ── */
   var ASTRO_NX = 0.66;
