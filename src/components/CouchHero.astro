@@ -12,7 +12,7 @@ const { subtitle = '' } = Astro.props;
       <!-- Background -->
       <picture style="display:contents">
         <source srcset="/images/couch-scene-background.webp" type="image/webp" />
-        <img class="ch-bg" src="/images/couch-scene-background.png" alt="" aria-hidden="true" />
+        <img class="ch-bg" src="/images/couch-scene-background.png" alt="" aria-hidden="true" fetchpriority="high" />
       </picture>
 
       <!-- Character layers — positioned by CSS custom properties set from JS -->
@@ -564,17 +564,26 @@ const { subtitle = '' } = Astro.props;
           loaded[ch.id][0] = f0;
           currentFrames[ch.id] = -1;
           drawFrame(ch, 0);
-          // Now load remaining frames and start the loop
-          var done1 = 1;
-          var total1 = ch.maxFrame + 1;
+          // Start loop immediately (frame 0 is ready)
           startMobileCharLoop(ch);
-          for (var i = 1; i <= ch.maxFrame; i++) {
-            (function(idx) {
-              var img = new Image();
-              img.onload = img.onerror = function() { done1++; };
-              img.src = ch.dir + ch.prefix + pad3(idx) + '.webp';
-              loaded[ch.id][idx] = img;
-            })(i);
+          // Defer loading remaining frames until after page load
+          function loadRestFrames(chRef) {
+            for (var i = 1; i <= chRef.maxFrame; i++) {
+              (function(idx) {
+                var img = new Image();
+                img.onload = img.onerror = function() {};
+                img.src = chRef.dir + chRef.prefix + pad3(idx) + '.webp';
+                loaded[chRef.id][idx] = img;
+              })(i);
+            }
+          }
+          var chCapture = ch;
+          if (document.readyState === 'complete') {
+            setTimeout(function() { loadRestFrames(chCapture); }, 500);
+          } else {
+            window.addEventListener('load', function() {
+              setTimeout(function() { loadRestFrames(chCapture); }, 500);
+            });
           }
         };
         f0.onerror = function() {
@@ -587,13 +596,31 @@ const { subtitle = '' } = Astro.props;
       }
     });
   } else {
-    // Desktop: start RAF immediately, draw frames as they arrive
-    CHARS.forEach(function(ch) {
-      loadCharFrames(ch, function() {
-        drawFrame(ch, 0);
-      });
-    });
+    // Desktop: start scroll loop immediately, but defer ALL frame loading
+    // until after the page is idle so the initial paint is not blocked
     requestAnimationFrame(tick);
+    function startDesktopLoad() {
+      CHARS.forEach(function(ch) {
+        loadCharFrames(ch, function() {
+          drawFrame(ch, 0);
+        });
+      });
+    }
+    if (document.readyState === 'complete') {
+      if (window.requestIdleCallback) {
+        requestIdleCallback(startDesktopLoad, { timeout: 2000 });
+      } else {
+        setTimeout(startDesktopLoad, 200);
+      }
+    } else {
+      window.addEventListener('load', function() {
+        if (window.requestIdleCallback) {
+          requestIdleCallback(startDesktopLoad, { timeout: 2000 });
+        } else {
+          setTimeout(startDesktopLoad, 200);
+        }
+      });
+    }
   }
 
 })();
