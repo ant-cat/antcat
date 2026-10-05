@@ -3,7 +3,7 @@ title: "A Bird Wants to Be a Cat"
 date: 2014-10-13
 slug: "a-bird-wants-to-be-a-cat"
 categories: ["Story", "Observation"]
-tags: ["Perspective", "Creativity", "Innovation", "Reincarnation", "Kids"]
+tags: ["After Life", "Birds", "Cats", "Perspective", "Creativity", "Metric", "Artificial Nocturne"]
 ---
 
 *A story about choices, death, and new life.*
@@ -25,5 +25,9 @@ My brain felt like it was dipped in Sprite…..cold and refreshing bath of thoug
 I hadn't felt that way in such a long time. Having a new way of looking at life or hearing a fresh perspective. It felt great, as if I had just heard my newest favorite song that wasn't anything else like I currently listen to.
 
 I asked her how she just came up with that. She said, "I didn't. My 5 year old says that all the time." I immediately got excited to have kids.
+
+**Metric - "Artificial Nocturne"**
+
+<iframe width="100%" style="aspect-ratio:16/9;border-radius:6px;margin:1em 0" src="https://www.youtube.com/embed/gVnQ5wsIaaA" frameborder="0" allowfullscreen></iframe>
 
 *Originally published on [Medium](https://medium.com/@Cat_knees/a-bird-wants-to-be-a-cat-fc02753af8e4), October 13, 2014.*
