@@ -156,10 +156,6 @@ The last 4+ years I couldn't personally be more proud of the team who did an ama
 
 Ignite's parent, [Adecco Group](http://www.adeccogroup.com/), is a $30B public company based in Switzerland. It's made of 40+ brands spread across 60 countries around the world. They have 30,000 employees and are considered the world's largest staffing firm helping 800,000+ people find work each year.
 
-### Who's this guy?
-
-My name is [Anthony Catanese](https://www.linkedin.com/in/anthonycatanese/) and I love working with teams at the intersection of real-world problems and technology. By day, I'm at Cognizant Accelerator (QuickLeft) in Boulder, CO as a PM. Previously, I was the co-founder at Ignite and Senior Product Manager at [Beeline](http://www.beeline.com). At night, I help other product teams and play in the VR space.
-
 ### The Ignite Space
 
 I got some questions about our space…here you go: We were located at 6 E. Bay St. in Downtown Jacksonville, FL. [Content Design Group](http://www.contentmodern.com/ignite/) + our designers [Katy Garrison](http://www.katygarrison.com/) and [Amber Aultman](http://amberaultman.com/) did all the interior design, and the walls were hand-painted by a bunch of the Igniters (they did a fantastic job).

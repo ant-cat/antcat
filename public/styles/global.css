@@ -264,7 +264,8 @@ a:hover { text-decoration: underline; }
   max-width: none;
 }
 .article-body p:has(> img) { margin: 2.4em 0; }
-.article-body p:has(> img) img { width: 100%; }
+/* Never upscale: small images keep their natural size and sit centered; big ones fill the width */
+.article-body p:has(> img) img { width: auto; max-width: 100%; margin-inline: auto; }
 .article-body p:has(> img) > em {
   display: block;
   margin-top: 0.75em;
@@ -285,7 +286,7 @@ body { overflow-x: clip; }
   width: 100vw;
   margin-left: calc((100vw - var(--col)) / -2);
 }
-.article-body img[src$="#full"] { border-radius: 0; }
+.article-body p:has(> img) img[src$="#full"] { width: 100%; border-radius: 0; }
 .article-body p:has(> img[src$="#full"]) > em { padding-inline: 24px; }
 
 /* ── BACK LINK ── */
