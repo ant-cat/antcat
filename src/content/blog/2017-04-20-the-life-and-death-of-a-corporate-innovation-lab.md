@@ -8,7 +8,7 @@ tags: ["Innovation", "Entrepreneurship", "Workshop", "HR", "Teamwork", "Ignite",
 
 *What happens when a team of three receive a few million dollars with the unlimited mission to, "Go forth and innovate!" for an enterprise organization?*
 
-![The Ignite Office in Downtown Jacksonville, FL](/images/2017-04-20-the-life-and-death-of-a-corporate-innovation-lab/01-ignite-office.jpeg)
+![The Ignite Office in Downtown Jacksonville, FL](/images/2017-04-20-the-life-and-death-of-a-corporate-innovation-lab/01-ignite-office.jpeg#full)
 *The Ignite Office in Downtown Jacksonville, FL*
 
 This is the story of [Ignite](http://www.ignitewithus.com/), an innovation lab for one of the world's largest companies, Adecco Group [*(1)*](#adecco). All parts included — what went right, went wrong, and wish we would have done. I was one of the original three founding members, and the last to stay near the end. My goal is to share all I learned, to not only remember and apply to future projects but hopefully help other groups from falling into similar traps.
