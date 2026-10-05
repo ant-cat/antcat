@@ -55,6 +55,6 @@ On a positive note, she is much more independent.
 
 (because this is the song that comes to mind when I think of this story...it's very independent)
 
-**Beyonce - "Single Ladies"**
+**Destiny's Child - "Independent Women Part I"**
 
-<iframe width="100%" style="aspect-ratio:16/9;border-radius:6px;margin:1em 0" src="https://www.youtube.com/embed/4m1EFMoRFvY" frameborder="0" allowfullscreen></iframe>
+<iframe width="100%" style="aspect-ratio:16/9;border-radius:6px;margin:1em 0" src="https://www.youtube.com/embed/0lPQZni7I18" frameborder="0" allowfullscreen></iframe>
