@@ -252,6 +252,8 @@ a:hover { text-decoration: underline; }
   font-style: italic;
   margin: 1.4em 0;
 }
+/* Back-to-back quotes (e.g. a series of updates) get extra breathing room */
+.article-body blockquote + blockquote { margin-top: 3em; }
 .article-body ul, .article-body ol { padding-left: 1.4em; margin-bottom: 1.4em; }
 .article-body li { margin-bottom: 0.3em; }
 .article-body hr { border: none; border-top: 1px solid var(--border); margin: 2em 0; }
