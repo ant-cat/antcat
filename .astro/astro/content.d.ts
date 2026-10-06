@@ -894,13 +894,6 @@ declare module 'astro:content' {
   collection: "blog";
   data: InferEntrySchema<"blog">
 } & { render(): Render[".md"] };
-"2013-04-29-a-bird-wants-to-be-a-cat.md": {
-	id: "2013-04-29-a-bird-wants-to-be-a-cat.md";
-  slug: "a-bird-wants-to-be-a-cat";
-  body: string;
-  collection: "blog";
-  data: InferEntrySchema<"blog">
-} & { render(): Render[".md"] };
 "2013-05-07-my-brown-mm.md": {
 	id: "2013-05-07-my-brown-mm.md";
   slug: "my-brown-mm";
@@ -1069,6 +1062,20 @@ declare module 'astro:content' {
   collection: "blog";
   data: InferEntrySchema<"blog">
 } & { render(): Render[".md"] };
+"2014-10-13-a-bird-wants-to-be-a-cat.md": {
+	id: "2014-10-13-a-bird-wants-to-be-a-cat.md";
+  slug: "a-bird-wants-to-be-a-cat";
+  body: string;
+  collection: "blog";
+  data: InferEntrySchema<"blog">
+} & { render(): Render[".md"] };
+"2017-04-20-the-life-and-death-of-a-corporate-innovation-lab.md": {
+	id: "2017-04-20-the-life-and-death-of-a-corporate-innovation-lab.md";
+  slug: "the-life-and-death-of-a-corporate-innovation-lab";
+  body: string;
+  collection: "blog";
+  data: InferEntrySchema<"blog">
+} & { render(): Render[".md"] };
 "2017-07-15-this-world-is-a-great-wiggly-affair-v2-2017.md": {
 	id: "2017-07-15-this-world-is-a-great-wiggly-affair-v2-2017.md";
   slug: "this-world-is-a-great-wiggly-affair-v2-2017";
@@ -1226,6 +1233,20 @@ declare module 'astro:content' {
 "2026-09-22-baby-is-a-go.md": {
 	id: "2026-09-22-baby-is-a-go.md";
   slug: "2026-09-22-baby-is-a-go";
+  body: string;
+  collection: "blog";
+  data: InferEntrySchema<"blog">
+} & { render(): Render[".md"] };
+"2026-10-04-poor-lorenzo.md": {
+	id: "2026-10-04-poor-lorenzo.md";
+  slug: "poor-lorenzo";
+  body: string;
+  collection: "blog";
+  data: InferEntrySchema<"blog">
+} & { render(): Render[".md"] };
+"2026-10-06-ant-cat.md": {
+	id: "2026-10-06-ant-cat.md";
+  slug: "2026-10-06-ant-cat";
   body: string;
   collection: "blog";
   data: InferEntrySchema<"blog">
