@@ -9,6 +9,7 @@ export async function getStaticPaths() {
 
 const { post } = Astro.props;
 const { Content } = await post.render();
+const isDev = import.meta.env.DEV;
 
 function formatDate(d: Date) {
   return d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
@@ -29,7 +30,163 @@ const cats = post.data.categories.filter((c: string) => c !== 'Uncategorized');
     </div>
   </header>
 
-  <div class="article-body fade-in">
+  <div class="article-body fade-in" id="article-body" data-slug={post.slug}>
     <Content />
   </div>
+
+  {isDev && (
+    <>
+      <div id="edit-bar">
+        <span id="edit-status">✎ Edit mode — click any text to edit</span>
+        <button id="save-btn" disabled>Save changes</button>
+      </div>
+
+      <script is:inline>
+        (function() {
+          var body = document.getElementById('article-body');
+          var saveBtn = document.getElementById('save-btn');
+          var statusEl = document.getElementById('edit-status');
+          var slug = body.dataset.slug;
+          var dirty = false;
+
+          // Make all text nodes editable
+          var editables = body.querySelectorAll('p, h1, h2, h3, h4, h5, h6, li, blockquote');
+          editables.forEach(function(el) {
+            el.setAttribute('contenteditable', 'true');
+            el.setAttribute('spellcheck', 'true');
+          });
+
+          // Track changes
+          body.addEventListener('input', function() {
+            if (!dirty) {
+              dirty = true;
+              saveBtn.disabled = false;
+              statusEl.textContent = '● Unsaved changes';
+              statusEl.style.color = '#E76F51';
+            }
+          });
+
+          // Save
+          saveBtn.addEventListener('click', function() {
+            saveBtn.disabled = true;
+            saveBtn.textContent = 'Saving…';
+
+            // Collect markdown from current DOM
+            // Simple approach: serialize the article body innerHTML back
+            // We pass the inner HTML and let the server handle it as markdown
+            // (Astro will re-render on file save)
+            var lines = [];
+            var children = body.children;
+            for (var i = 0; i < children.length; i++) {
+              var el = children[i];
+              var tag = el.tagName.toLowerCase();
+              var text = el.innerText.trim();
+              if (!text) continue;
+              if (tag === 'h1') lines.push('# ' + text);
+              else if (tag === 'h2') lines.push('## ' + text);
+              else if (tag === 'h3') lines.push('### ' + text);
+              else if (tag === 'h4') lines.push('#### ' + text);
+              else if (tag === 'p') lines.push(text);
+              else if (tag === 'blockquote') lines.push('> ' + text);
+              else if (tag === 'ul') {
+                el.querySelectorAll('li').forEach(function(li) {
+                  lines.push('- ' + li.innerText.trim());
+                });
+              } else if (tag === 'ol') {
+                var idx = 1;
+                el.querySelectorAll('li').forEach(function(li) {
+                  lines.push((idx++) + '. ' + li.innerText.trim());
+                });
+              } else {
+                lines.push(text);
+              }
+              lines.push('');
+            }
+
+            fetch('http://localhost:4322/save', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ slug: slug, markdown: lines.join('\n') })
+            })
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+              if (data.ok) {
+                dirty = false;
+                saveBtn.textContent = 'Save changes';
+                statusEl.textContent = '✓ Saved — Astro will reload';
+                statusEl.style.color = '#2A9D8F';
+                setTimeout(function() {
+                  statusEl.textContent = '✎ Edit mode — click any text to edit';
+                  statusEl.style.color = '';
+                }, 3000);
+              } else {
+                saveBtn.disabled = false;
+                saveBtn.textContent = 'Save changes';
+                statusEl.textContent = '✗ Error: ' + data.error;
+                statusEl.style.color = '#E76F51';
+              }
+            })
+            .catch(function(e) {
+              saveBtn.disabled = false;
+              saveBtn.textContent = 'Save changes';
+              statusEl.textContent = '✗ Could not reach edit server (run npm run dev:edit)';
+              statusEl.style.color = '#E76F51';
+            });
+          });
+        })();
+      </script>
+
+      <style>
+        #edit-bar {
+          position: fixed;
+          bottom: 24px;
+          left: 50%;
+          transform: translateX(-50%);
+          background: var(--surface);
+          border: 1px solid var(--border);
+          border-radius: 8px;
+          padding: 10px 16px;
+          display: flex;
+          align-items: center;
+          gap: 16px;
+          box-shadow: 0 4px 24px rgba(0,0,0,0.4);
+          z-index: 1000;
+          font-family: var(--mono);
+          font-size: 0.72rem;
+        }
+        #edit-status {
+          color: var(--text3);
+          letter-spacing: 0.04em;
+        }
+        #save-btn {
+          background: var(--accent);
+          color: #fff;
+          border: none;
+          border-radius: 5px;
+          padding: 6px 14px;
+          font-family: var(--mono);
+          font-size: 0.72rem;
+          font-weight: 600;
+          cursor: pointer;
+          letter-spacing: 0.04em;
+          transition: opacity 0.15s;
+        }
+        #save-btn:disabled {
+          opacity: 0.4;
+          cursor: default;
+        }
+        #save-btn:not(:disabled):hover {
+          opacity: 0.85;
+        }
+        [contenteditable]:hover {
+          outline: 1px dashed var(--border);
+          border-radius: 3px;
+        }
+        [contenteditable]:focus {
+          outline: 1px solid var(--accent);
+          border-radius: 3px;
+        }
+      </style>
+    </>
+  )}
 </Base>
