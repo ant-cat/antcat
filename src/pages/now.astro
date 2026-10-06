@@ -1,7 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 import CouchFooter from '../components/CouchFooter.astro';
-const updated = "September 2026";
+const updated = "October 2026";
 ---
 <Base title="Now" description="What Anthony Catanese is up to right now.">
   <div class="page-header">
@@ -14,24 +14,24 @@ const updated = "September 2026";
 
     <section class="now-section">
       <h2 class="now-heading">Building</h2>
-      <p>Turning ant.cat into something alive — migrating 20 years of writing from WordPress and building small AI-powered experiments in public. The experiments page is where the new work lives.</p>
-      <p>Current focus: <a href="/experiments">Baby is a Go</a> — a broadcast tool for sharing big life news without the chaos of group texts.</p>
+      <p>Turning <strong>ant.cat</strong> into something alive — migrating 20 years of writing from WordPress and building small AI-powered experiments in public. The <a href="/experiments">experiments page</a> is where the new work lives: currently hacking on Three.js shaders, volumetric CRT projection beams, and how local LLMs and agent frameworks fit into everyday product prototyping.</p>
+      <p>By day, leading product strategy for enterprise workforce platforms at LotusOne / Aya Healthcare.</p>
     </section>
 
     <section class="now-section">
       <h2 class="now-heading">Reading</h2>
-      <p>Working through my backlog. Always have three books going at once and finish none of them on schedule.</p>
+      <p>Working through my backlog. Always have three books going at once and finish none of them on schedule — usually toggling between behavioral economics, decision architecture (pre-mortems and kill-criteria), biographies, and the theology of work.</p>
     </section>
 
     <section class="now-section">
       <h2 class="now-heading">Thinking about</h2>
-      <p>What it means to build software for a single emotional moment. Most software is designed for recurring use — retention, habit, the returning user. But some of the most meaningful things only happen once.</p>
-      <p>Also: how AI changes what a personal website can be. This site is part of that experiment.</p>
+      <p>What it means to build software when it's become as easy as a prompt and it's as simple as an email or Excel file. Most software is designed for recurring use: retention, habit, the returning user. But some of the most meaningful and helpful things only happen once.</p>
+      <p>Also: time perception and the half-life of knowledge. Once you pass your <a href="/writing/32-doublings/">32nd doubling</a>, cumulative value matters far more than urgent friction. Software should help us feel more creative and more human without anything more.</p>
     </section>
 
     <section class="now-section">
       <h2 class="now-heading">Life</h2>
-      <p>Based in the northeast. New baby on the way. Finding that the best ideas come from building things for myself first.</p>
+      <p>Based in Jacksonville Beach, Florida. Loving my partner, Samantha, and life. Keeping up with my 5-year-old daughter and navigating kindergarten milestones. Pretend to be a surfer when the swell cooperates, daily workouts, and keeping my 1997 Jeep TJ running clean. Learning upright bass, focusing on finger-plucking rhythm and walking jazz blues lines. Finding that the best ideas still come from building things vs what if'ing them to death.</p>
     </section>
 
     <div style="margin-top:48px;padding-top:24px;border-top:1px solid var(--border)">
@@ -56,4 +56,5 @@ const updated = "September 2026";
 }
 .now-section p { font-size: 0.95rem; color: var(--text2); line-height: 1.75; margin-bottom: 0.8em; }
 .now-section a { color: var(--accent); }
+.now-section strong { color: var(--text); }
 </style>
