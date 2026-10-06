@@ -36,6 +36,7 @@ const experiments = [
     learning: 'The thing that makes something better is almost never the idea. Making the decision to actually do it is. A 10MB homepage becomes sub-1MB when you stop meaning to fix it and just fix it.',
     tags: ['astro', 'webp', 'three.js', 'performance', 'ai'],
     demoUrl: 'https://ant.cat',
+    demoLabel: 'You\'re here already',
     writeupUrl: '/writing/2026-10-06-ant-cat',
   },
 ];
@@ -83,7 +84,7 @@ const accentMap: Record<string, string> = {
           <span style="font-family:var(--mono);font-size:0.62rem;color:var(--text3)">{exp.date}</span>
           <div style="display:flex;gap:8px;align-items:center">
             {exp.demoUrl && (
-              <a href={exp.demoUrl} target="_blank" rel="noopener" style="font-size:0.72rem;font-weight:600;color:var(--accent);text-decoration:none">Try demo →</a>
+              <a href={exp.demoUrl} target="_blank" rel="noopener" style="font-size:0.72rem;font-weight:600;color:var(--accent);text-decoration:none">{exp.demoLabel ?? 'Try demo'} →</a>
             )}
             {exp.writeupUrl && (
               <>
