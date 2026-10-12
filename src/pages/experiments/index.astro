@@ -39,6 +39,18 @@ const experiments = [
     demoLabel: 'You\'re here already',
     writeupUrl: '/writing/2026-10-06-ant-cat',
   },
+  {
+    id: 'EXP-004',
+    title: 'Show Go',
+    status: 'building',
+    color: 'coral',
+    date: 'Oct 2026',
+    description: 'A radio station built from every band on every bill near you. Pick a place, a radius and a date range, and hear 30 seconds of each act, openers included, so you know what a band sounds like before you buy the ticket.',
+    learning: 'The listing data is the product. Two ticketing sites can describe the same night at the same room in ways that do not match, and openers (the whole point) are missing from most listings.',
+    tags: ['next.js 14', 'typescript', 'postgresql', 'prisma', 'ticketmaster', 'seatgeek', 'vercel'],
+    demoUrl: 'https://show.ant.cat',
+    writeupUrl: '/writing/2026-10-11-show-go',
+  },
 ];
 
 const accentMap: Record<string, string> = {
@@ -99,7 +111,7 @@ const accentMap: Record<string, string> = {
 
     <!-- Next slot -->
     <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:24px;opacity:0.6;border-top:3px solid var(--border)">
-      <div style="font-family:var(--mono);font-size:0.62rem;color:var(--text3);letter-spacing:0.08em;margin-bottom:8px">EXP-004</div>
+      <div style="font-family:var(--mono);font-size:0.62rem;color:var(--text3);letter-spacing:0.08em;margin-bottom:8px">EXP-005</div>
       <div style="font-family:var(--serif);font-size:1.25rem;font-weight:400;color:var(--text);margin-bottom:14px">Next Experiment</div>
       <p style="font-size:0.82rem;color:var(--text2);line-height:1.6">This slot is open. Ideas in the queue.... What should I build next?</p>
       <div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--border)">
