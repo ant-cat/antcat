@@ -385,16 +385,19 @@ IN</span>
         x.shadowBlur=8; x.lineWidth=3; x.strokeStyle='rgba(215,248,255,1)'; x.strokeText(label,cx,cy);
         x.shadowBlur=0; x.fillStyle='rgba(225,245,255,0.35)'; x.fillText(label,cx,cy);
       } else if(mode==='capHot'){
-        x.shadowColor='rgba(70,255,170,1)'; x.shadowBlur=42;
-        x.lineWidth=7; x.strokeStyle='rgba(110,255,180,1)'; x.strokeText(label,cx,cy); x.strokeText(label,cx,cy);
-        x.shadowBlur=16; x.fillStyle='rgba(190,255,220,0.7)'; x.fillText(label,cx,cy);
-        x.shadowBlur=6; x.lineWidth=2.5; x.strokeStyle='#f6fff8'; x.strokeText(label,cx,cy);
+        x.shadowColor='rgba(60,255,160,0.9)'; x.shadowBlur=22;
+        x.lineWidth=5; x.strokeStyle='rgba(90,255,170,1)'; x.strokeText(label,cx,cy);
+        x.shadowBlur=0; x.fillStyle='#ffffff'; x.fillText(label,cx,cy);
       } else if(mode==='strata'){
         x.shadowColor='rgba(0,170,255,0.9)'; x.shadowBlur=10;
         x.lineWidth=3; x.strokeStyle='rgba(120,215,255,0.95)'; x.strokeText(label,cx,cy);
       } else if(mode==='strataHot'){
         x.shadowColor='rgba(40,255,150,1)'; x.shadowBlur=20;
         x.lineWidth=4.5; x.strokeStyle='rgba(150,255,200,1)'; x.strokeText(label,cx,cy); x.strokeText(label,cx,cy);
+      } else if(mode==='shadow'){ // dark backing plate for contrast
+        x.fillStyle='#000'; x.strokeStyle='#000'; x.lineWidth=16;
+        x.shadowColor='#000'; x.shadowBlur=26;
+        x.strokeText(label,cx,cy); x.fillText(label,cx,cy);
       } else { // hit mask: the letterforms plus a tight tolerance ring
         x.fillStyle='#000'; x.strokeStyle='#000'; x.lineWidth=14;
         x.fillText(label,cx,cy); x.strokeText(label,cx,cy);
@@ -419,6 +422,8 @@ IN</span>
         var mesh=new T.Mesh(geo,mat); mesh.renderOrder=2+s;
         scene.add(mesh); slices.push(mesh);
       }
+      var shadow=new T.Mesh(geo,new T.MeshBasicMaterial({map:toTex(wordCanvas(item.label,'shadow')),transparent:true,opacity:0,depthWrite:false,fog:false}));
+      shadow.renderOrder=SLICES+0.5; scene.add(shadow);
       // Carrier laser tether: hot core + soft sheath + travelling pulses
       var core=new T.Mesh(unitCyl,new T.MeshBasicMaterial({color:0xe0ffff,transparent:true,opacity:0,blending:T.AdditiveBlending,depthWrite:false,fog:false}));
       var sheath=new T.Mesh(unitCyl,new T.MeshBasicMaterial({color:0x00c8ff,transparent:true,opacity:0,blending:T.AdditiveBlending,depthWrite:false,fog:false}));
@@ -434,7 +439,7 @@ IN</span>
       a.addEventListener('blur',function(){ if(focusIdx===bi) focusIdx=-1; });
       a.addEventListener('click',function(ev){ if(!activated) return; ev.preventDefault(); go(bi); });
       holoNav.appendChild(a);
-      return {item:item,bi:bi,tex:tex,mask:mask,slices:slices,core:core,sheath:sheath,pulses:pulses,
+      return {item:item,bi:bi,tex:tex,mask:mask,slices:slices,shadow:shadow,core:core,sheath:sheath,pulses:pulses,
               hover:0,hot:false,front:new T.Vector3(),cap:new T.Vector3(),
               phase:Math.random()*Math.PI*2,tiltX:0,tiltY:0};
     });
@@ -794,9 +799,16 @@ IN</span>
             _cold.copy(_deep).lerp(_near,u);
             if(h>0.01) _cold.lerp(_hotDeep.clone().lerp(_hotNear,u*u),h*0.85);
             m.material.color.copy(_cold).multiplyScalar(1+0.5*h);
-            m.material.opacity=vis*Math.min(1,(0.07+0.4*Math.pow(u,1.5))*(0.8+0.2*pulse)*(1+1.4*h));
+            var nearCap=clamp01((u-0.7)/0.3); nearCap=nearCap*nearCap*(3-2*nearCap);
+            m.material.opacity=vis*Math.min(1,(0.07+0.4*Math.pow(u,1.5))*(0.8+0.2*pulse)*(1+1.4*h*(1-u*u)))*(1-0.92*h*nearCap);
           }
         }
+
+        // Dark backing just behind the cap so the word stays legible over its own trail
+        var capM=w.slices[SLICES-1];
+        w.shadow.position.copy(capM.position).addScaledVector(_capPos.subVectors(tvWorld,w.cap).normalize(),0.04);
+        w.shadow.scale.copy(capM.scale); w.shadow.rotation.copy(capM.rotation);
+        w.shadow.material.opacity=vis*(0.15+0.55*h);
 
         // Carrier laser tether from the TV glass to the cap
         _seg.subVectors(w.cap,tvWorld); len=_seg.length(); _segN.copy(_seg).normalize();
