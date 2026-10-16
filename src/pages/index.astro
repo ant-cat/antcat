@@ -1,5 +1,7 @@
 ---
-// ant.cat — hero v10: raw photo first, "Watch me" activates the holo-UI
+// ant.cat: hero v11. Raw photo first, "Tune in" activates the holo-UI.
+// v11: CRT emitter cone, desert wireframe dunes, 20-layer word extrusions that
+// retrace into the TV screen, hover physics with Web Audio chirps, corridor fly-in.
 ---
 <!doctype html>
 <html lang="en">
@@ -11,7 +13,7 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html, body { width: 100%; height: 100%; max-height: 100%; overflow: hidden; background: #000; position: fixed; }
 
-    /* Raw photo — full screen, shown first */
+    /* Raw photo, full screen, shown first */
     #raw-photo {
       position: fixed; inset: 0; z-index: 1;
       width: 100%; height: 100%;
@@ -21,9 +23,9 @@
     #raw-photo.fade-out { opacity: 0; pointer-events: none; }
 
     /* Three.js canvas */
-    #c { display: block; width: 100%; height: 100%; position: fixed; inset: 0; z-index: 0; }
+    #c { display: block; width: 100%; height: 100%; position: fixed; inset: 0; z-index: 0; touch-action: none; }
 
-    /* "Watch me" TV prompt */
+    /* "Tune in" TV prompt */
     #beam-canvas { position: fixed; inset: 0; z-index: 5; pointer-events: none; opacity: 0; transition: opacity 1s ease; }
     #beam-canvas.visible { opacity: 1; }
     #watch-me {
@@ -70,7 +72,7 @@
       }
     }
 
-    /* Holo UI — starts invisible */
+    /* Holo UI, starts invisible */
     #ui {
       position: fixed; inset: 0; z-index: 10;
       display: flex; flex-direction: column;
@@ -110,47 +112,15 @@
       text-shadow: 0 1px 6px rgba(0,0,0,0.6);
     }
 
-    /* Holo nav */
+    /* Nav links: the visible buttons are 3D word extrusions in the WebGL scene.
+       These real links stay in the DOM for keyboard and screen reader users. */
     #holo-nav { position: fixed; inset: 0; z-index: 8; pointer-events: none; overflow: hidden; }
-
-    /* Pill gem buttons */
-    .gem-btn {
-      position: absolute;
-      transform: translate(-50%, -50%);
-      font-family: 'Courier New', monospace;
-      font-size: clamp(0.85rem, 3.5vw, 0.9rem);
-      letter-spacing: 0.16em;
-      color: rgba(0,255,200,1);
-      text-decoration: none;
+    #holo-nav a {
+      position: absolute; left: 0; top: 0;
+      width: 1px; height: 1px; overflow: hidden;
+      clip: rect(0 0 0 0); clip-path: inset(50%);
       white-space: nowrap;
-      pointer-events: all;
-      cursor: pointer;
-      padding: 0.6em 1.6em;
-      border: 1.5px solid rgba(0,255,200,0.8);
-      border-radius: 999px;
-      background: rgba(0,50,38,0.50);
-      backdrop-filter: blur(4px);
-      box-shadow:
-        0 0 12px rgba(0,255,200,0.7),
-        0 0 32px rgba(0,255,200,0.35),
-        0 0 60px rgba(0,255,200,0.12),
-        inset 0 0 10px rgba(0,255,200,0.12);
-      text-shadow: 0 0 8px rgba(0,255,200,1), 0 0 20px rgba(0,255,200,0.7);
-      left: -9999px; top: -9999px; opacity: 0;
-      transition: color .2s, box-shadow .2s, border-color .2s, background .2s;
     }
-    .gem-btn:hover {
-      color: #fff;
-      border-color: rgba(0,255,200,1);
-      background: rgba(0,60,45,0.55);
-      box-shadow:
-        0 0 14px rgba(0,255,200,0.9),
-        0 0 40px rgba(0,255,200,0.5),
-        0 0 80px rgba(0,255,200,0.2),
-        inset 0 0 14px rgba(0,255,200,0.15);
-      text-shadow: 0 0 10px rgba(0,255,200,1), 0 0 28px rgba(0,255,200,0.7);
-    }
-
 
     /* Zoom transition layer */
     #zoom-layer { position: fixed; inset: 0; z-index: 50; pointer-events: none; overflow: hidden; opacity: 0; transition: opacity 0.05s; }
@@ -182,7 +152,7 @@
     <img id="raw-photo" src="/images/hero.png" alt="" fetchpriority="high" />
   </picture>
   <canvas id="c"></canvas>
-  <div id="holo-nav"></div>
+  <nav id="holo-nav" aria-label="Main"></nav>
   <canvas id="beam-canvas"></canvas>
   <span id="watch-me">TUNE
 IN</span>
@@ -208,19 +178,26 @@ IN</span>
     var activated = false;
     var activatedAt = null;
     var INTRO_DUR = 1.8;
+    var SLICES = 20;
+    var TV_Z = -6.0;            // depth of the CRT glass in world space
+    var clamp01 = function(v){ return v < 0 ? 0 : (v > 1 ? 1 : v); };
+    var lerp = function(a,b,k){ return a + (b - a) * k; };
 
     var renderer = new T.WebGLRenderer({ canvas: document.getElementById('c'), antialias: true, alpha: true });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
     renderer.setSize(window.innerWidth,window.innerHeight);
     renderer.setClearColor(0x000000,0);
     var scene = new T.Scene();
+    scene.fog = new T.Fog(0x000000, 16, 46);
     var isPortrait = window.innerHeight > window.innerWidth;
-    var camera = new T.PerspectiveCamera(isPortrait?82:55, window.innerWidth/window.innerHeight, 0.1, 100);
-    var camZ = isPortrait?14.5:10;
+    var baseFov = isPortrait ? 82 : 55;
+    var camera = new T.PerspectiveCamera(baseFov, window.innerWidth/window.innerHeight, 0.1, 120);
+    var camZ = isPortrait ? 14.5 : 10;
+    var lookCur = new T.Vector3(0,1,0);
     camera.position.set(0,2,camZ);
-    camera.lookAt(0,1,0);
+    camera.lookAt(lookCur);
 
-    // Shader bg — starts at opacity 0, fades in after Watch Me
+    // ---------- Shader bg: starts at opacity 0, fades in after Tune In ----------
     var bgMesh = null;
     new T.TextureLoader().load('/images/hero.webp',function(tex){
       tex.minFilter=T.LinearFilter;
@@ -230,7 +207,6 @@ IN</span>
         fragmentShader:[
           'uniform sampler2D uTex; uniform float uOpacity; uniform vec2 uTexSize; uniform vec2 uViewport; varying vec2 vUv;',
           'void main(){',
-          // object-fit:cover + object-position:center 40% — scale to cover viewport, anchor horizontally center, vertically 40%
           '  float scaleX=uViewport.x/uTexSize.x; float scaleY=uViewport.y/uTexSize.y;',
           '  float scale=max(scaleX,scaleY);',
           '  vec2 covered=uTexSize*scale;',
@@ -256,7 +232,7 @@ IN</span>
       bgMesh.renderOrder=-1; scene.add(bgMesh);
     });
 
-    // Icosphere
+    // ---------- Overhead canopy: rotating wireframe icosahedron dome ----------
     var cGroup=new T.Group(); scene.add(cGroup);
     var icoGeo=new T.IcosahedronGeometry(7.5,2);
     var ipos=icoGeo.attributes.position;
@@ -271,12 +247,45 @@ IN</span>
       }
       for(var v=0;v<3;v++){if(ipos.getY(tri[v])>=0) nodePts.push(new T.Vector3(ipos.getX(tri[v]),ipos.getY(tri[v]),ipos.getZ(tri[v])));}
     }
-    cGroup.add(new T.LineSegments(new T.BufferGeometry().setFromPoints(edgePts),new T.LineBasicMaterial({color:0x1a4060,transparent:true,opacity:0.45})));
-    cGroup.add(new T.Points(new T.BufferGeometry().setFromPoints(nodePts),new T.PointsMaterial({color:0x4488cc,size:0.12,sizeAttenuation:true})));
+    var canopyLines=new T.LineSegments(new T.BufferGeometry().setFromPoints(edgePts),new T.LineBasicMaterial({color:0x1a4060,transparent:true,opacity:0.45}));
+    var canopyNodes=new T.Points(new T.BufferGeometry().setFromPoints(nodePts),new T.PointsMaterial({color:0x4488cc,size:0.12,sizeAttenuation:true,transparent:true}));
+    cGroup.add(canopyLines); cGroup.add(canopyNodes);
     cGroup.position.set(0,-2,0);
 
-    // Title glyphs
-    var STROKES={"A":[[0,0,0.5,1],[0.5,1,1,0],[0.18,0.45,0.82,0.45]],"N":[[0,0,0,1],[0,1,1,0],[1,0,1,1]],"T":[[0,1,1,1],[0.5,1,0.5,0]],">":[[0,1,1,0.5],[1,0.5,0,0]],"<":[[1,1,0,0.5],[0,0.5,1,0]],"C":[[1,0.82,0.55,1],[0.55,1,0,0.75],[0,0.75,0,0.25],[0,0.25,0.55,0],[0.55,0,1,0.18]],".":[[0.35,0.08,0.65,0.08],[0.65,0.08,0.65,0.28],[0.65,0.28,0.35,0.28],[0.35,0.28,0.35,0.08]]};
+    // ---------- Desert horizon: undulating wireframe dunes beneath the TV ----------
+    var TERR_W=110, TERR_D=52, TERR_SX=64, TERR_SZ=30;
+    var terrGeo=new T.PlaneGeometry(TERR_W,TERR_D,TERR_SX,TERR_SZ);
+    terrGeo.rotateX(-Math.PI/2);
+    var terrPos=terrGeo.attributes.position;
+    var terrMat=new T.MeshBasicMaterial({color:0x1f86b0,vertexColors:true,wireframe:true,transparent:true,opacity:0,blending:T.AdditiveBlending,depthWrite:false});
+    var terrain=new T.Mesh(terrGeo,terrMat);
+    terrain.position.set(0,-3.6,-24);
+    scene.add(terrain);
+    function duneHeight(x,z,t){
+      var h = Math.sin(x*0.15 + z*0.05 + t*0.14)*0.85
+            + Math.sin(x*0.06 - z*0.12 - t*0.09)*1.15
+            + Math.sin((x+z)*0.33 + t*0.3)*0.16;
+      var side = Math.min(1, Math.abs(x)/10);   // flatter valley under the TV
+      return h*(0.35 + 0.65*side);
+    }
+    // Fade the mesh toward its near and side edges so grazing lines never pile up
+    var terrCol=new Float32Array(terrPos.count*3);
+    for(var tk=0;tk<terrPos.count;tk++){
+      var fx=Math.abs(terrPos.getX(tk))/(TERR_W*0.5), fz=(terrPos.getZ(tk)/(TERR_D*0.5))*0.5+0.5;
+      var f=Math.pow(1-fx,1.4)*Math.pow(1-fz,1.2);
+      terrCol[tk*3]=terrCol[tk*3+1]=terrCol[tk*3+2]=Math.max(0,f);
+    }
+    terrGeo.setAttribute('color',new T.BufferAttribute(terrCol,3));
+    function updateTerrain(t){
+      for(var k=0;k<terrPos.count;k++){
+        terrPos.setY(k, duneHeight(terrPos.getX(k), terrPos.getZ(k), t));
+      }
+      terrPos.needsUpdate=true;
+    }
+    updateTerrain(0);
+
+    // ---------- Title glyphs: glowing wireframe ANT.CAT ----------
+    var STROKES={"A":[[0,0,0.5,1],[0.5,1,1,0],[0.18,0.45,0.82,0.45]],"N":[[0,0,0,1],[0,1,1,0],[1,0,1,1]],"T":[[0,1,1,1],[0.5,1,0.5,0]],"C":[[1,0.82,0.55,1],[0.55,1,0,0.75],[0,0.75,0,0.25],[0,0.25,0.55,0],[0.55,0,1,0.18]],".":[[0.35,0.08,0.65,0.08],[0.65,0.08,0.65,0.28],[0.65,0.28,0.35,0.28],[0.35,0.28,0.35,0.08]]};
     var CHARS=["A","N","T",".","C","A","T"];
     var GW=0.9,GH=1.3,GAP=0.18,totalW=CHARS.length*GW+(CHARS.length-1)*GAP;
     var tGroup=new T.Group(); tGroup.position.set(0,3.4,0); scene.add(tGroup);
@@ -291,308 +300,526 @@ IN</span>
         var geo=new T.BufferGeometry().setFromPoints(pts);
         [1,-1].forEach(function(side){
           if(gl.dz===0&&side===-1) return;
-          var mat=new T.LineBasicMaterial({color:gl.color,transparent:true,opacity:0,blending:T.AdditiveBlending,depthWrite:false});
+          var mat=new T.LineBasicMaterial({color:gl.color,transparent:true,opacity:0,blending:T.AdditiveBlending,depthWrite:false,fog:false});
           var m=new T.LineSegments(geo,mat); m.position.z=gl.dz*side; tGroup.add(m);
           glyphMats.push({mat:mat,base:gl.op*(side===1?1:0.55),elemIdx:ci});
         });
-        if(gl.dz===0) segs.forEach(function(s){worldSegs.push({x1:tGroup.position.x+ox+s[0]*GW,y1:tGroup.position.y+s[1]*GH,x2:tGroup.position.x+ox+s[2]*GW,y2:tGroup.position.y+s[3]*GH,z:tGroup.position.z});});
+        if(gl.dz===0) segs.forEach(function(s){worldSegs.push({x1:ox+(s[0]+s[2])*0.5*GW,y1:(s[1]+s[3])*0.5*GH});});
       });
       charStrokeWorld.push(worldSegs);
     });
 
-    // Gems
-    var NAV_ITEMS=[
-      {label:'Writing', href:'/writing',     wx:-2.8, wy:1.0, wz:0.1},
-      {label:'About',       href:'/about',       wx:-0.9, wy:0.5, wz:0.2},
-      {label:'Now',         href:'/now',         wx: 0.9, wy:0.5, wz:0.2},
-      {label:'Experiments', href:'/experiments', wx: 2.8, wy:1.0, wz:0.1},
-    ];
-    // Gem: octagon outline only (no inner cross lines), bigger, deeper
-    var GEM_V=[[0.22,1.0],[0.78,1.0],[1.0,0.6],[1.0,0.4],[0.78,0.0],[0.22,0.0],[0.0,0.4],[0.0,0.6]];
-    var GEM_OUTLINE=[[0,1],[1,2],[2,3],[3,4],[4,5],[5,6],[6,7],[7,0]]; // outer ring only, no diagonals
-    var BW=2.2,BH=1.1,DEPTH=1.0;
-    var btnGroup=new T.Group(); scene.add(btnGroup);
-    var btnMats=[],btnBeamSegs=[],btnCenters=[];
-    var btnGlowDefs=[{color:0xffffff,op:0.85,dz:0},{color:0x44ffdd,op:0.55,dz:0.03},{color:0x00ffcc,op:0.30,dz:0.09},{color:0x00aaaa,op:0.12,dz:0.22}];
-    NAV_ITEMS.forEach(function(item,bi){
-      var ox=-BW*0.5,oy=-BH*0.5,fz=DEPTH*0.5,bkz=-DEPTH*0.5;
-      var segs3D=[];
-      // Front face outline
-      GEM_OUTLINE.forEach(function(e){var va=GEM_V[e[0]],vb=GEM_V[e[1]];segs3D.push([ox+va[0]*BW,oy+va[1]*BH,fz,ox+vb[0]*BW,oy+vb[1]*BH,fz]);});
-      // Back face outline
-      GEM_OUTLINE.forEach(function(e){var va=GEM_V[e[0]],vb=GEM_V[e[1]];segs3D.push([ox+va[0]*BW,oy+va[1]*BH,bkz,ox+vb[0]*BW,oy+vb[1]*BH,bkz]);});
-      // Side edges connecting front to back (every vertex)
-      GEM_V.forEach(function(v){segs3D.push([ox+v[0]*BW,oy+v[1]*BH,fz,ox+v[0]*BW,oy+v[1]*BH,bkz]);});
-      btnGlowDefs.forEach(function(gl){
-        var pts=[];
-        segs3D.forEach(function(s){pts.push(new T.Vector3(s[0],s[1],s[2]+gl.dz));pts.push(new T.Vector3(s[3],s[4],s[5]+gl.dz));});
-        var mat=new T.LineBasicMaterial({color:gl.color,transparent:true,opacity:0,blending:T.AdditiveBlending,depthWrite:false});
-        var mesh=new T.LineSegments(new T.BufferGeometry().setFromPoints(pts),mat);
-        mesh.position.set(item.wx,item.wy,item.wz);
-        btnGroup.add(mesh);
-        btnMats.push({mat:mat,base:gl.op,elemIdx:CHARS.length+bi});
+    // ---------- Shared glow sprite texture ----------
+    function radialTex(stops){
+      var c=document.createElement('canvas'); c.width=c.height=128;
+      var x=c.getContext('2d'); var g=x.createRadialGradient(64,64,0,64,64,64);
+      stops.forEach(function(s){ g.addColorStop(s[0],s[1]); });
+      x.fillStyle=g; x.fillRect(0,0,128,128);
+      var tx=new T.CanvasTexture(c); tx.minFilter=T.LinearFilter; tx.generateMipmaps=false; return tx;
+    }
+    var glowTex=radialTex([[0,'rgba(255,255,255,1)'],[0.18,'rgba(190,255,255,0.85)'],[0.45,'rgba(0,220,255,0.28)'],[1,'rgba(0,160,255,0)']]);
+
+    // ---------- Central emitter: volumetric cyan cone + light rays from the CRT ----------
+    function coneMaterial(rayFreqA,rayFreqB,power,strength){
+      return new T.ShaderMaterial({
+        uniforms:{uTime:{value:0},uOpacity:{value:0},uHot:{value:0}},
+        vertexShader:[
+          'varying vec2 vUv; varying vec3 vN; varying vec3 vV;',
+          'void main(){ vUv=uv; vec4 mv=modelViewMatrix*vec4(position,1.0);',
+          '  vN=normalize(normalMatrix*normal); vV=normalize(-mv.xyz); gl_Position=projectionMatrix*mv; }'
+        ].join('\n'),
+        fragmentShader:[
+          'uniform float uTime; uniform float uOpacity; uniform float uHot;',
+          'varying vec2 vUv; varying vec3 vN; varying vec3 vV;',
+          'void main(){',
+          '  float along=vUv.y;',
+          '  float fade=pow(1.0-along,'+power.toFixed(2)+');',
+          '  float ang=vUv.x*6.2831853;',
+          '  float r1=0.5+0.5*sin(ang*'+rayFreqA.toFixed(1)+'+uTime*0.6+along*2.0);',
+          '  float r2=0.5+0.5*sin(ang*'+rayFreqB.toFixed(1)+'-uTime*0.37-along*3.0);',
+          '  float rays=pow(r1*r2,1.6);',
+          '  float edge=pow(1.0-abs(dot(vN,vV)),0.8);',
+          '  float flick=0.92+0.08*sin(uTime*23.0)*sin(uTime*7.3);',
+          '  float a=uOpacity*fade*(0.18+0.82*rays)*(0.45+0.55*edge)*flick*'+strength.toFixed(2)+'*(1.0+0.5*uHot);',
+          '  vec3 col=mix(vec3(0.0,0.75,1.0),vec3(0.85,1.0,1.0),pow(1.0-along,5.0));',
+          '  gl_FragColor=vec4(col,clamp(a,0.0,1.0));',
+          '}'
+        ].join('\n'),
+        transparent:true, depthWrite:false, side:T.DoubleSide, blending:T.AdditiveBlending
       });
-      var frontSegs=[];
-      GEM_OUTLINE.forEach(function(e){var va=GEM_V[e[0]],vb=GEM_V[e[1]];frontSegs.push({x1:item.wx+ox+va[0]*BW,y1:item.wy+oy+va[1]*BH,z:item.wz+fz,x2:item.wx+ox+vb[0]*BW,y2:item.wy+oy+vb[1]*BH});});
-      btnBeamSegs.push(frontSegs);
-      btnCenters.push({x:item.wx,y:item.wy,z:item.wz+fz+0.05});
+    }
+    function coneGeo(rTop,rBottom){
+      var g=new T.CylinderGeometry(rTop,rBottom,1,96,24,true);
+      g.translate(0,0.5,0);
+      return g;
+    }
+    var emitter=new T.Group(); scene.add(emitter);
+    var coneOuter=new T.Mesh(coneGeo(4.2,0.55),coneMaterial(9,5,1.7,1.0));
+    var coneInner=new T.Mesh(coneGeo(1.7,0.32),coneMaterial(17,11,1.3,1.4));
+    emitter.add(coneOuter); emitter.add(coneInner);
+    var screenGlow=new T.Sprite(new T.SpriteMaterial({map:glowTex,color:0x9ff6ff,transparent:true,blending:T.AdditiveBlending,depthWrite:false,fog:false,opacity:0}));
+    scene.add(screenGlow);
+    var _yAxis=new T.Vector3(0,1,0);
+
+    // ---------- Navigation words: 20-layer letterform extrusions ----------
+    var NAV_ITEMS=[
+      {label:'Writing',     href:'/writing',     L:[-4.1, 2.3, 2.2], P:[-2.15,-0.30,2.4], pitch:520},
+      {label:'About',       href:'/about',       L:[-3.0,-0.6, 2.9], P:[-2.15,-2.35,3.0], pitch:440},
+      {label:'Now',         href:'/now',         L:[ 3.0,-0.6, 2.9], P:[ 2.15,-2.35,3.0], pitch:660},
+      {label:'Experiments', href:'/experiments', L:[ 4.1, 2.3, 2.2], P:[ 2.15,-0.30,2.4], pitch:780},
+    ];
+    var FONT_PX=128, PAD=44;
+    var FONT='900 '+FONT_PX+'px "Helvetica Neue", Helvetica, Arial, sans-serif';
+
+    function wordCanvas(label,mode){
+      var c=document.createElement('canvas'); var x=c.getContext('2d');
+      x.font=FONT;
+      var tw=Math.ceil(x.measureText(label).width);
+      c.width=tw+PAD*2; c.height=Math.ceil(FONT_PX*1.2)+PAD*2;
+      x=c.getContext('2d');
+      x.font=FONT; x.textAlign='center'; x.textBaseline='middle'; x.lineJoin='round';
+      var cx=c.width/2, cy=c.height/2+FONT_PX*0.04;
+      if(mode==='cap'){
+        x.shadowColor='rgba(0,190,255,0.95)'; x.shadowBlur=24;
+        x.fillStyle='rgba(110,205,255,0.55)'; x.fillText(label,cx,cy);
+        x.shadowBlur=8; x.lineWidth=3; x.strokeStyle='rgba(215,248,255,1)'; x.strokeText(label,cx,cy);
+        x.shadowBlur=0; x.fillStyle='rgba(225,245,255,0.35)'; x.fillText(label,cx,cy);
+      } else if(mode==='capHot'){
+        x.shadowColor='rgba(70,255,170,1)'; x.shadowBlur=42;
+        x.lineWidth=7; x.strokeStyle='rgba(110,255,180,1)'; x.strokeText(label,cx,cy); x.strokeText(label,cx,cy);
+        x.shadowBlur=16; x.fillStyle='rgba(190,255,220,0.7)'; x.fillText(label,cx,cy);
+        x.shadowBlur=6; x.lineWidth=2.5; x.strokeStyle='#f6fff8'; x.strokeText(label,cx,cy);
+      } else if(mode==='strata'){
+        x.shadowColor='rgba(0,170,255,0.9)'; x.shadowBlur=10;
+        x.lineWidth=3; x.strokeStyle='rgba(120,215,255,0.95)'; x.strokeText(label,cx,cy);
+      } else if(mode==='strataHot'){
+        x.shadowColor='rgba(40,255,150,1)'; x.shadowBlur=20;
+        x.lineWidth=4.5; x.strokeStyle='rgba(150,255,200,1)'; x.strokeText(label,cx,cy); x.strokeText(label,cx,cy);
+      } else { // hit mask: the letterforms plus a tight tolerance ring
+        x.fillStyle='#000'; x.strokeStyle='#000'; x.lineWidth=14;
+        x.fillText(label,cx,cy); x.strokeText(label,cx,cy);
+      }
+      return c;
+    }
+    function toTex(c){ var tx=new T.CanvasTexture(c); tx.minFilter=T.LinearFilter; tx.generateMipmaps=false; return tx; }
+
+    var unitCyl=new T.CylinderGeometry(1,1,1,10,1,true); unitCyl.translate(0,0.5,0);
+    var holoNav=document.getElementById('holo-nav');
+
+    var words=NAV_ITEMS.map(function(item,bi){
+      var capC=wordCanvas(item.label,'cap');
+      var maskC=wordCanvas(item.label,'mask');
+      var tex={cap:toTex(capC),capHot:toTex(wordCanvas(item.label,'capHot')),strata:toTex(wordCanvas(item.label,'strata')),strataHot:toTex(wordCanvas(item.label,'strataHot'))};
+      var mask={w:maskC.width,h:maskC.height,data:maskC.getContext('2d').getImageData(0,0,maskC.width,maskC.height).data};
+      var geo=new T.PlaneGeometry(capC.width/FONT_PX,capC.height/FONT_PX);
+      var slices=[];
+      for(var s=0;s<SLICES;s++){
+        var isCap=(s===SLICES-1);
+        var mat=new T.MeshBasicMaterial({map:isCap?tex.cap:tex.strata,transparent:true,opacity:0,blending:T.AdditiveBlending,depthWrite:false,fog:false});
+        var mesh=new T.Mesh(geo,mat); mesh.renderOrder=2+s;
+        scene.add(mesh); slices.push(mesh);
+      }
+      // Carrier laser tether: hot core + soft sheath + travelling pulses
+      var core=new T.Mesh(unitCyl,new T.MeshBasicMaterial({color:0xe0ffff,transparent:true,opacity:0,blending:T.AdditiveBlending,depthWrite:false,fog:false}));
+      var sheath=new T.Mesh(unitCyl,new T.MeshBasicMaterial({color:0x00c8ff,transparent:true,opacity:0,blending:T.AdditiveBlending,depthWrite:false,fog:false}));
+      scene.add(core); scene.add(sheath);
+      var pulses=[];
+      for(var p=0;p<3;p++){
+        var sp=new T.Sprite(new T.SpriteMaterial({map:glowTex,color:0xb0ffff,transparent:true,opacity:0,blending:T.AdditiveBlending,depthWrite:false,fog:false}));
+        scene.add(sp); pulses.push(sp);
+      }
+      // Real link for keyboard and screen readers
+      var a=document.createElement('a'); a.href=item.href; a.textContent=item.label;
+      a.addEventListener('focus',function(){ focusIdx=bi; });
+      a.addEventListener('blur',function(){ if(focusIdx===bi) focusIdx=-1; });
+      a.addEventListener('click',function(ev){ if(!activated) return; ev.preventDefault(); go(bi); });
+      holoNav.appendChild(a);
+      return {item:item,bi:bi,tex:tex,mask:mask,slices:slices,core:core,sheath:sheath,pulses:pulses,
+              hover:0,hot:false,front:new T.Vector3(),cap:new T.Vector3(),
+              phase:Math.random()*Math.PI*2,tiltX:0,tiltY:0};
     });
 
-    // Pill gem buttons
-    var holoNav=document.getElementById('holo-nav');
-    var gemEls=NAV_ITEMS.map(function(item,bi){
-      var el=document.createElement('a');
-      el.className='gem-btn';
-      el.textContent=item.label;
-      el.href=item.href;
-      el.addEventListener('click',function(e){
-        if(!activated) return;
-        e.preventDefault();
-        var dest=item.href;
-        var tv=tvPos();
-        var xPct=(tv.x/window.innerWidth*100).toFixed(2)+'%';
-        var yPct=(tv.y/window.innerHeight*100).toFixed(2)+'%';
-        var photo=document.getElementById('zoom-photo');
-        var illus=document.getElementById('zoom-illustrated');
-        var irisCanvas=document.getElementById('zoom-iris');
-        var layer=document.getElementById('zoom-layer');
-        irisCanvas.width=window.innerWidth; irisCanvas.height=window.innerHeight;
-        var ictx=irisCanvas.getContext('2d');
-        photo.style.transformOrigin=xPct+' '+yPct;
-        illus.style.transformOrigin=xPct+' '+yPct;
-        layer.classList.add('active');
-        var irisStart=performance.now(),irisDuration=2200;
-        var tvx=tv.x,tvy=tv.y;
-        var maxR=Math.sqrt(Math.max(tvx,window.innerWidth-tvx)*Math.max(tvx,window.innerWidth-tvx)+Math.max(tvy,window.innerHeight-tvy)*Math.max(tvy,window.innerHeight-tvy))*1.05;
-        photo.style.transition='none';
-        photo.style.filter='saturate(0.05) brightness(1.15)';
-        illus.style.transition='none';
-        illus.style.clipPath='circle(0px at '+tvx+'px '+tvy+'px)';
-        function drawIris(now){
-          var p=Math.min(1,(now-irisStart)/irisDuration);
-          var ep=1-Math.pow(1-p,2.5);
-          var waveR=maxR*ep;
-          ictx.clearRect(0,0,irisCanvas.width,irisCanvas.height);
-          var ringW=Math.max(30,90*(1-ep*0.7));
-          var innerR=Math.max(0,waveR-ringW),outerR=waveR+ringW*0.3;
-          if(waveR>0&&innerR<maxR){
-            var imgData=ictx.createImageData(irisCanvas.width,irisCanvas.height);
-            var d=imgData.data;
-            for(var ii=0;ii<d.length;ii+=4){
-              var px=(ii/4)%irisCanvas.width,py=Math.floor((ii/4)/irisCanvas.width);
-              var dx=px-tvx,dy=py-tvy,dist=Math.sqrt(dx*dx+dy*dy);
-              if(dist>=innerR&&dist<=outerR){
-                var noise=Math.random()*200+55;
-                var edgeFade=Math.min(1,(dist-innerR)/20)*Math.min(1,(outerR-dist)/15);
-                var a=edgeFade*255*(0.55+0.45*Math.random());
-                d[ii]=noise*0.65;d[ii+1]=noise;d[ii+2]=noise*0.82;d[ii+3]=a;
-              }
-            }
-            ictx.putImageData(imgData,0,0);
-            var grd=ictx.createRadialGradient(tvx,tvy,Math.max(0,waveR-8),tvx,tvy,waveR+20);
-            grd.addColorStop(0,'rgba(0,255,180,0)');grd.addColorStop(0.5,'rgba(120,255,210,0.6)');grd.addColorStop(1,'rgba(0,255,180,0)');
-            ictx.beginPath();ictx.arc(tvx,tvy,waveR+20,0,Math.PI*2);ictx.fillStyle=grd;ictx.fill();
-          }
-          illus.style.clipPath='circle('+waveR+'px at '+tvx+'px '+tvy+'px)';
-          if(p<1) requestAnimationFrame(drawIris);
-          else{ictx.clearRect(0,0,irisCanvas.width,irisCanvas.height);illus.style.clipPath='none';illus.style.transition='transform 2.2s cubic-bezier(0.4,0,0.2,1)';}
+    function maskHit(mask,uv,r){
+      var px=Math.round(uv.x*mask.w), py=Math.round((1-uv.y)*mask.h);
+      for(var dy=-r;dy<=r;dy+=Math.max(1,r)){
+        for(var dx=-r;dx<=r;dx+=Math.max(1,r)){
+          var xx=px+dx, yy=py+dy;
+          if(xx<0||yy<0||xx>=mask.w||yy>=mask.h) continue;
+          if(mask.data[(yy*mask.w+xx)*4+3]>40) return true;
         }
-        requestAnimationFrame(drawIris);
-        setTimeout(function(){layer.classList.add('cartoonize');},400);
-        setTimeout(function(){layer.classList.add('zooming');},2600);
-        setTimeout(function(){window.location.href=dest;},4400);
-      });
-      holoNav.appendChild(el);
-      return el;
-    });
-    // Pulse helpers
+      }
+      return false;
+    }
+
+    // ---------- Web Audio chirps (synthesized, no files) ----------
+    var actx=null;
+    function audioInit(){
+      try{
+        if(!actx){ var AC=window.AudioContext||window.webkitAudioContext; if(AC) actx=new AC(); }
+        if(actx&&actx.state==='suspended') actx.resume();
+      }catch(err){ actx=null; }
+    }
+    function chirp(base,kind){
+      if(!actx) return;
+      try{
+        var now=actx.currentTime;
+        var o1=actx.createOscillator(), o2=actx.createOscillator();
+        var g2=actx.createGain(), f=actx.createBiquadFilter(), g=actx.createGain();
+        o1.type='sine'; o2.type='square'; f.type='lowpass'; f.Q.value=6;
+        g2.gain.value=0.22;
+        var dur;
+        if(kind==='launch'){
+          dur=0.75;
+          o1.frequency.setValueAtTime(160,now); o1.frequency.exponentialRampToValueAtTime(1500,now+0.5);
+          o2.frequency.setValueAtTime(80,now);  o2.frequency.exponentialRampToValueAtTime(760,now+0.5);
+          f.frequency.setValueAtTime(400,now);  f.frequency.exponentialRampToValueAtTime(5200,now+0.45);
+          g.gain.setValueAtTime(0.0001,now); g.gain.exponentialRampToValueAtTime(0.14,now+0.03); g.gain.exponentialRampToValueAtTime(0.0001,now+dur);
+        } else {
+          dur=0.2;
+          o1.frequency.setValueAtTime(base,now); o1.frequency.exponentialRampToValueAtTime(base*2.6,now+0.08); o1.frequency.exponentialRampToValueAtTime(base*1.9,now+0.17);
+          o2.frequency.setValueAtTime(base*0.5,now); o2.frequency.exponentialRampToValueAtTime(base*1.3,now+0.08);
+          f.frequency.setValueAtTime(base*3,now); f.frequency.exponentialRampToValueAtTime(base*7,now+0.07);
+          g.gain.setValueAtTime(0.0001,now); g.gain.exponentialRampToValueAtTime(0.085,now+0.012); g.gain.exponentialRampToValueAtTime(0.0001,now+dur);
+        }
+        o1.connect(f); o2.connect(g2); g2.connect(f); f.connect(g); g.connect(actx.destination);
+        o1.start(now); o2.start(now); o1.stop(now+dur+0.05); o2.stop(now+dur+0.05);
+      }catch(err){}
+    }
+
+    // ---------- Pulse helpers ----------
     var NUM_ELEMS=CHARS.length+NAV_ITEMS.length,elemPhases=[],elemSpeeds=[];
-    for(var i=0;i<NUM_ELEMS;i++){elemPhases.push(Math.random()*Math.PI*2);elemSpeeds.push(1.3+Math.random()*1.5);}
+    for(var i2=0;i2<NUM_ELEMS;i2++){elemPhases.push(Math.random()*Math.PI*2);elemSpeeds.push(1.3+Math.random()*1.5);}
     function elemPulse(idx,t){return 0.52+0.48*Math.sin(t*elemSpeeds[idx]+elemPhases[idx]);}
 
-    // Helpers
+    // ---------- Screen and world helpers ----------
     function tvPos(){
-      // object-fit:cover + object-position:center 40% on a 2000x1200 image
-      // TV screen center is at ~53% x, ~40% y of natural image
+      // object-fit:cover + object-position:center 40% on a 2000x1200 image.
+      // TV screen center sits at ~51.5% x, ~40% y of the natural image.
       var imgW=2000,imgH=1200,tvNx=0.515,tvNy=0.400;
       var vw=window.innerWidth,vh=window.innerHeight;
       var scale=Math.max(vw/imgW,vh/imgH);
       var rendW=imgW*scale,rendH=imgH*scale;
-      // object-position: center 40% — horizontal center, vertical 40% of overflow
       var ox=(vw-rendW)/2;
-      var overflowY=rendH-vh;
-      var oy=-(overflowY*0.40);
+      var oy=-((rendH-vh)*0.40);
       return{x:ox+tvNx*rendW, y:oy+tvNy*rendH};
     }
     var _v3=new T.Vector3();
     function w2s(wx,wy,wz){_v3.set(wx,wy,wz);_v3.project(camera);return{x:(_v3.x*0.5+0.5)*window.innerWidth,y:(-_v3.y*0.5+0.5)*window.innerHeight};}
+    // The TV lives in the (screen-fixed) photo, so its world anchor is found by
+    // casting a ray through its pixel and stopping at the CRT glass depth.
+    var tvWorld=new T.Vector3(), _dir=new T.Vector3();
+    function unprojectTV(out){
+      var tv=tvPos();
+      _dir.set(tv.x/window.innerWidth*2-1, -(tv.y/window.innerHeight*2-1), 0.5).unproject(camera).sub(camera.position).normalize();
+      var k=(TV_Z-camera.position.z)/_dir.z;
+      return out.copy(camera.position).addScaledVector(_dir,k);
+    }
 
-    // Beams
+    // ---------- Amber title beams (2D canvas) ----------
     var bc=document.getElementById('beam-canvas'),bctx=bc.getContext('2d');
     function resizeBC(){bc.width=window.innerWidth;bc.height=window.innerHeight;} resizeBC();
-    // Draw one wide volumetric cone beam from TV to a target point
     function volBeam(tv,tx,ty,eff,r,g,b){
       var dx=tx-tv.x,dy=ty-tv.y;
       var len=Math.sqrt(dx*dx+dy*dy); if(len<1) return;
-      var nx=-dy/len,ny=dx/len;
-      // Half-width at tip = 2px, at end = spread proportional to distance
-      var spread=len*0.38;
-      var p1x=tx+nx*spread,p1y=ty+ny*spread;
-      var p2x=tx-nx*spread,p2y=ty-ny*spread;
-      // Radial gradient from TV origin outward
+      var nx=-dy/len,ny=dx/len,spread=len*0.38;
       var gr=bctx.createRadialGradient(tv.x,tv.y,0,tv.x,tv.y,len);
       gr.addColorStop(0,'rgba(255,255,255,'+(eff*0.85)+')');
       gr.addColorStop(0.08,'rgba('+(Math.min(r+60,255))+','+(Math.min(g+60,255))+','+b+','+(eff*0.55)+')');
       gr.addColorStop(0.45,'rgba('+r+','+g+','+b+','+(eff*0.22)+')');
       gr.addColorStop(1,'rgba('+r+','+g+','+b+',0)');
-      bctx.save();
-      bctx.globalCompositeOperation='lighter';
-      bctx.beginPath();bctx.moveTo(tv.x,tv.y);bctx.lineTo(p1x,p1y);bctx.lineTo(p2x,p2y);bctx.closePath();
-      bctx.fillStyle=gr;bctx.fill();
-      bctx.restore();
+      bctx.save(); bctx.globalCompositeOperation='lighter';
+      bctx.beginPath(); bctx.moveTo(tv.x,tv.y); bctx.lineTo(tx+nx*spread,ty+ny*spread); bctx.lineTo(tx-nx*spread,ty-ny*spread); bctx.closePath();
+      bctx.fillStyle=gr; bctx.fill(); bctx.restore();
     }
     function drawBeams(introOp,t){
       bctx.clearRect(0,0,bc.width,bc.height); if(introOp<=0.001) return;
-      var tv=tvPos(),yOff=0;
-      var isPort=window.innerHeight>window.innerWidth;
+      var tv=tvPos();
       CHARS.forEach(function(ch,ci){
-        var segs=charStrokeWorld[ci];if(!segs||!segs.length) return;
+        var segs=charStrokeWorld[ci]; if(!segs||!segs.length) return;
         var eff=introOp*elemPulse(ci,t);
         segs.forEach(function(s){
-          var p=w2s((s.x1+s.x2)/2,(s.y1+s.y2)/2+yOff,s.z);
-          // Warm amber for glyphs
-          volBeam(tv,p.x,p.y,eff*0.55,255,180,60);
+          var p=w2s(tGroup.position.x+s.x1,tGroup.position.y+s.y1,tGroup.position.z);
+          volBeam(tv,p.x,p.y,eff*0.22,255,180,60);
         });
       });
-      NAV_ITEMS.forEach(function(item,bi){
-        var eff=introOp*elemPulse(CHARS.length+bi,t);
-        var lx,ly;
-        if(isPort){
-          // On mobile use the gem element's actual screen position
-          lx=parseFloat(gemEls[bi].style.left);
-          ly=parseFloat(gemEls[bi].style.top);
-        } else {
-          var by=btnGroup.position.y;
-          var segs=btnBeamSegs[bi];if(!segs||!segs.length) return;
-          var p=w2s(btnCenters[bi].x,btnCenters[bi].y+by,btnCenters[bi].z);
-          lx=p.x; ly=p.y;
-        }
-        if(!isNaN(lx)&&!isNaN(ly)){
-          // Cool teal/cyan for nav
-          volBeam(tv,lx,ly,eff*0.75,40,220,255);
-        }
-      });
-      // White-hot origin burst
       var grd=bctx.createRadialGradient(tv.x,tv.y,0,tv.x,tv.y,32);
-      grd.addColorStop(0,'rgba(255,255,255,'+(introOp*1.0)+')');
+      grd.addColorStop(0,'rgba(255,255,255,'+introOp+')');
       grd.addColorStop(0.3,'rgba(180,255,240,'+(introOp*0.7)+')');
       grd.addColorStop(0.7,'rgba(0,255,200,'+(introOp*0.25)+')');
       grd.addColorStop(1,'rgba(0,255,200,0)');
-      bctx.save();bctx.globalCompositeOperation='lighter';
-      bctx.beginPath();bctx.arc(tv.x,tv.y,32,0,Math.PI*2);bctx.fillStyle=grd;bctx.fill();
-      bctx.restore();
+      bctx.save(); bctx.globalCompositeOperation='lighter';
+      bctx.beginPath(); bctx.arc(tv.x,tv.y,32,0,Math.PI*2); bctx.fillStyle=grd; bctx.fill(); bctx.restore();
     }
 
-    // "Watch me" — positioned above TV screen
-    var watchEl=document.getElementById('watch-me');
-    function positionWatchMe(){
+    // ---------- Existing burst + zoom transition ----------
+    function zoomTransition(dest){
       var tv=tvPos();
-      watchEl.style.left=tv.x+'px';
-      watchEl.style.top=tv.y+'px';
+      var xPct=(tv.x/window.innerWidth*100).toFixed(2)+'%';
+      var yPct=(tv.y/window.innerHeight*100).toFixed(2)+'%';
+      var photo=document.getElementById('zoom-photo');
+      var illus=document.getElementById('zoom-illustrated');
+      var irisCanvas=document.getElementById('zoom-iris');
+      var layer=document.getElementById('zoom-layer');
+      irisCanvas.width=window.innerWidth; irisCanvas.height=window.innerHeight;
+      var ictx=irisCanvas.getContext('2d');
+      photo.style.transformOrigin=xPct+' '+yPct;
+      illus.style.transformOrigin=xPct+' '+yPct;
+      layer.classList.add('active');
+      var irisStart=performance.now(),irisDuration=2200;
+      var tvx=tv.x,tvy=tv.y;
+      var maxR=Math.sqrt(Math.max(tvx,window.innerWidth-tvx)*Math.max(tvx,window.innerWidth-tvx)+Math.max(tvy,window.innerHeight-tvy)*Math.max(tvy,window.innerHeight-tvy))*1.05;
+      photo.style.transition='none';
+      photo.style.filter='saturate(0.05) brightness(1.15)';
+      illus.style.transition='none';
+      illus.style.clipPath='circle(0px at '+tvx+'px '+tvy+'px)';
+      function drawIris(now){
+        var p=Math.min(1,(now-irisStart)/irisDuration);
+        var ep=1-Math.pow(1-p,2.5);
+        var waveR=maxR*ep;
+        ictx.clearRect(0,0,irisCanvas.width,irisCanvas.height);
+        var ringW=Math.max(30,90*(1-ep*0.7));
+        var innerR=Math.max(0,waveR-ringW),outerR=waveR+ringW*0.3;
+        if(waveR>0&&innerR<maxR){
+          var imgData=ictx.createImageData(irisCanvas.width,irisCanvas.height);
+          var d=imgData.data;
+          for(var ii=0;ii<d.length;ii+=4){
+            var px=(ii/4)%irisCanvas.width,py=Math.floor((ii/4)/irisCanvas.width);
+            var dx=px-tvx,dy=py-tvy,dist=Math.sqrt(dx*dx+dy*dy);
+            if(dist>=innerR&&dist<=outerR){
+              var noise=Math.random()*200+55;
+              var edgeFade=Math.min(1,(dist-innerR)/20)*Math.min(1,(outerR-dist)/15);
+              var al=edgeFade*255*(0.55+0.45*Math.random());
+              d[ii]=noise*0.65;d[ii+1]=noise;d[ii+2]=noise*0.82;d[ii+3]=al;
+            }
+          }
+          ictx.putImageData(imgData,0,0);
+          var grd=ictx.createRadialGradient(tvx,tvy,Math.max(0,waveR-8),tvx,tvy,waveR+20);
+          grd.addColorStop(0,'rgba(0,255,180,0)');grd.addColorStop(0.5,'rgba(120,255,210,0.6)');grd.addColorStop(1,'rgba(0,255,180,0)');
+          ictx.beginPath();ictx.arc(tvx,tvy,waveR+20,0,Math.PI*2);ictx.fillStyle=grd;ictx.fill();
+        }
+        illus.style.clipPath='circle('+waveR+'px at '+tvx+'px '+tvy+'px)';
+        if(p<1) requestAnimationFrame(drawIris);
+        else{ictx.clearRect(0,0,irisCanvas.width,irisCanvas.height);illus.style.clipPath='none';illus.style.transition='transform 2.2s cubic-bezier(0.4,0,0.2,1)';}
+      }
+      requestAnimationFrame(drawIris);
+      setTimeout(function(){layer.classList.add('cartoonize');},400);
+      setTimeout(function(){layer.classList.add('zooming');},2600);
+      setTimeout(function(){window.location.href=dest;},4400);
     }
+
+    // ---------- Click: fly the camera down the word corridor, then burst ----------
+    var flying=null;
+    var FLY_DUR=1.6, BURST_AT=1050;
+    function go(wi){
+      if(!activated||flying) return;
+      var w=words[wi];
+      audioInit(); chirp(w.item.pitch,'launch');
+      var tv=tvWorld.clone();
+      var dir=w.cap.clone().sub(tv).normalize();
+      flying={wi:wi,start:clock.getElapsedTime(),
+        fromPos:camera.position.clone(),fromLook:lookCur.clone(),
+        toPos:w.cap.clone().addScaledVector(dir,2.0),toLook:tv.clone(),tv:tv};
+      document.body.style.cursor='';
+      setTimeout(function(){ zoomTransition(w.item.href); }, BURST_AT);
+    }
+
+    // ---------- "Tune in" ----------
+    var watchEl=document.getElementById('watch-me');
+    function positionWatchMe(){ var tv=tvPos(); watchEl.style.left=tv.x+'px'; watchEl.style.top=tv.y+'px'; }
     positionWatchMe();
 
-    watchEl.addEventListener('click',function(){
+    watchEl.addEventListener('click',function(ev){
       if(activated) return;
+      ev.stopPropagation();
       activated=true;
-      // Lazy-load zoom images now that user has interacted
-      (function() {
-        var zp = document.getElementById('zoom-photo');
-        var zi = document.getElementById('zoom-illustrated');
-        var zps = document.getElementById('zoom-photo-src');
-        var zis = document.getElementById('zoom-illus-src');
-        if (zp && zp.dataset.src) {
-          if (zps) zps.srcset = zp.dataset.webp || '';
-          zp.src = zp.dataset.src;
-        }
-        if (zi && zi.dataset.src) {
-          if (zis) zis.srcset = zi.dataset.webp || '';
-          zi.src = zi.dataset.src;
-        }
-      })();
+      audioInit();
+      var zp=document.getElementById('zoom-photo'), zi=document.getElementById('zoom-illustrated');
+      var zps=document.getElementById('zoom-photo-src'), zis=document.getElementById('zoom-illus-src');
+      if(zp&&zp.dataset.src){ if(zps) zps.srcset=zp.dataset.webp||''; zp.src=zp.dataset.src; }
+      if(zi&&zi.dataset.src){ if(zis) zis.srcset=zi.dataset.webp||''; zi.src=zi.dataset.src; }
       watchEl.classList.add('hidden');
-      var bb=document.getElementById('bottom-brand');
-      bb.style.opacity='0';
+      document.getElementById('bottom-brand').style.opacity='0';
       document.getElementById('raw-photo').classList.add('fade-out');
       document.getElementById('beam-canvas').classList.add('visible');
       document.getElementById('ui').classList.add('visible');
     });
 
-    // Mouse parallax
+    // ---------- Pointer: parallax + hover picking ----------
     var mx=0,my=0,smx=0,smy=0;
-    document.addEventListener('mousemove',function(e){mx=(e.clientX/window.innerWidth-0.5)*2;my=(e.clientY/window.innerHeight-0.5)*2;});
+    var pointerX=-1,pointerY=-1,pointerIn=false;
+    var hoverIdx=-1, focusIdx=-1;
+    var ray=new T.Raycaster(), _ndc=new T.Vector2();
+    window.addEventListener('pointermove',function(e){
+      mx=(e.clientX/window.innerWidth-0.5)*2; my=(e.clientY/window.innerHeight-0.5)*2;
+      pointerX=e.clientX; pointerY=e.clientY; pointerIn=(e.pointerType!=='touch');
+    },{passive:true});
+    document.addEventListener('mouseleave',function(){ pointerIn=false; });
+    function pickWord(cx,cy){
+      _ndc.set(cx/window.innerWidth*2-1, -(cy/window.innerHeight*2-1));
+      ray.setFromCamera(_ndc,camera);
+      var best=-1,bestD=1e9;
+      words.forEach(function(w,wi){
+        var hits=ray.intersectObject(w.slices[SLICES-1],false);
+        if(!hits.length||!hits[0].uv) return;
+        // Tight letterform test to enter, a little slack to stay hovered
+        var ok=maskHit(w.mask,hits[0].uv,wi===hoverIdx?16:0);
+        if(ok&&hits[0].distance<bestD){best=wi;bestD=hits[0].distance;}
+      });
+      return best;
+    }
+    document.addEventListener('click',function(e){
+      if(!activated||flying) return;
+      scene.updateMatrixWorld();
+      var wi=pickWord(e.clientX,e.clientY);
+      if(wi>=0){ e.preventDefault(); if(hoverIdx!==wi) chirp(words[wi].item.pitch,'hover'); go(wi); }
+    });
+
     window.addEventListener('resize',function(){
       var p=window.innerHeight>window.innerWidth;
-      camera.fov=p?82:55; camera.aspect=window.innerWidth/window.innerHeight;
+      baseFov=p?82:55; camera.fov=baseFov; camera.aspect=window.innerWidth/window.innerHeight;
       camera.updateProjectionMatrix(); camZ=p?14.5:10; camera.position.z=camZ;
       renderer.setSize(window.innerWidth,window.innerHeight); resizeBC();
       if(bgMesh) bgMesh.material.uniforms.uViewport.value.set(window.innerWidth,window.innerHeight);
       positionWatchMe();
     });
+    // Coming back via the browser back button: start fresh instead of a frozen transition
+    window.addEventListener('pageshow',function(e){ if(e.persisted) window.location.reload(); });
 
-    // Animate
+    // ---------- Animate ----------
     var clock=new T.Clock();
+    var _camBase=new T.Vector3(), _seg=new T.Vector3(), _segN=new T.Vector3(), _capPos=new T.Vector3();
+    var _cold=new T.Color(), _deep=new T.Color(0x2a5cff), _near=new T.Color(0x9fe6ff), _hotDeep=new T.Color(0x1aff9a), _hotNear=new T.Color(0xeafff2);
+    function easeInOutCubic(p){ return p<0.5?4*p*p*p:1-Math.pow(-2*p+2,3)/2; }
+
     function animate(){
       requestAnimationFrame(animate);
       var t=clock.getElapsedTime();
-      smx+=(mx-smx)*0.06; smy+=(my-smy)*0.06;
-      cGroup.rotation.y=smx*0.32; cGroup.rotation.x=-smy*0.20;
-      camera.position.x=smx*3.0; camera.position.y=2-smy*1.5; camera.lookAt(0,1,0);
       var isPort=window.innerHeight>window.innerWidth;
-      tGroup.position.y=(isPort?5.2:3.4)+Math.sin(t*0.4)*0.06;
-      btnGroup.position.y=Math.sin(t*0.35+1.2)*0.04;
-      btnGroup.rotation.x=-0.16+Math.sin(t*0.27)*0.03;
-      btnGroup.rotation.y=Math.sin(t*0.21+0.5)*0.05;
+      smx+=(mx-smx)*0.06; smy+=(my-smy)*0.06;
 
+      // Camera: parallax tilt, or corridor flight after a click
+      if(flying){
+        var fp=clamp01((t-flying.start)/FLY_DUR), fe=easeInOutCubic(fp);
+        camera.position.lerpVectors(flying.fromPos,flying.toPos,fe);
+        lookCur.lerpVectors(flying.fromLook,flying.toLook,fe);
+        camera.fov=baseFov+14*fe; camera.updateProjectionMatrix();
+      } else {
+        camera.position.x=smx*3.0; camera.position.y=2-smy*1.5; camera.position.z=camZ;
+        lookCur.set(0,1,0);
+      }
+      camera.lookAt(lookCur);
+      camera.updateMatrixWorld();
+      if(flying) tvWorld.copy(flying.tv); else unprojectTV(tvWorld);
+
+      // Canopy + title + dunes
+      cGroup.rotation.y=t*0.045+smx*0.32; cGroup.rotation.x=-smy*0.20;
+      tGroup.position.y=(isPort?5.2:3.4)+Math.sin(t*0.4)*0.06;
+      updateTerrain(t);
+
+      var introOp=0,introFade=0;
       if(activated){
         if(!activatedAt) activatedAt=t;
         var sinceAct=t-activatedAt;
-        var introFade=Math.min(1.0, sinceAct/INTRO_DUR);
-        var introOp=Math.min(1.0, sinceAct/1.0);
-        // Crossfade shader bg in over 1.2s
-        if(bgMesh) bgMesh.material.uniforms.uOpacity.value=Math.min(1.0, sinceAct/1.2);
-        glyphMats.forEach(function(obj){obj.mat.opacity=obj.base*introFade*elemPulse(obj.elemIdx,t);});
-        btnMats.forEach(function(obj){obj.mat.opacity=isPort?0:obj.base*introFade*elemPulse(obj.elemIdx,t);});
-        NAV_ITEMS.forEach(function(item,bi){
-          var sc=w2s(item.wx, item.wy+btnGroup.position.y, item.wz);
-          var ep=elemPulse(CHARS.length+bi,t);
-          if(isPort){
-            // Portrait: lay out in 2x2 grid — top row: Mind Grapes | Experiments, bottom row: About | Now
-            var col=bi%2, row=Math.floor(bi/2);
-            // bi order: 0=MindGrapes, 1=About, 2=Now, 3=Experiments
-            // remap to 2x2: top-left=MG(0), top-right=Exp(3), bot-left=About(1), bot-right=Now(2)
-            var remapX=[0,0,1,1][bi], remapY=[0,1,1,0][bi];
-            var gx=window.innerWidth*(0.22+remapX*0.56);
-            var baseY=window.innerHeight*0.60;
-            var gy=baseY+(remapY===0?-window.innerHeight*0.07:window.innerHeight*0.07);
-            gemEls[bi].style.left=gx+'px';
-            gemEls[bi].style.top=gy+'px';
-          } else {
-            gemEls[bi].style.left=sc.x+'px';
-            gemEls[bi].style.top=sc.y+'px';
-          }
-          gemEls[bi].style.opacity=introOp*(isPort?0.92:0.65+0.35*ep)+'';
-          var g=Math.round(ep*255);
-          gemEls[bi].style.boxShadow='0 0 '+Math.round(6+ep*8)+'px rgba(0,'+g+',180,0.55), 0 0 '+Math.round(16+ep*20)+'px rgba(0,'+g+',180,0.28), inset 0 0 8px rgba(0,255,200,0.08)';
-        });
-        drawBeams(introOp,t);
-      } else {
-        glyphMats.forEach(function(obj){obj.mat.opacity=0;});
-        btnMats.forEach(function(obj){obj.mat.opacity=0;});
-        bctx.clearRect(0,0,bc.width,bc.height);
+        introFade=Math.min(1.0,sinceAct/INTRO_DUR);
+        introOp=Math.min(1.0,sinceAct/1.0);
+        if(bgMesh) bgMesh.material.uniforms.uOpacity.value=Math.min(1.0,sinceAct/1.2);
+      }
+      glyphMats.forEach(function(obj){obj.mat.opacity=activated?obj.base*introFade*elemPulse(obj.elemIdx,t):0;});
+      terrMat.opacity=0.6*introFade;
+      canopyLines.material.opacity=(isPort?0.12:0.45);
+      canopyNodes.material.opacity=(isPort?0.3:1.0);
+
+      // Emitter cone aimed from the CRT glass toward the viewer
+      _camBase.set(0,2,camZ);
+      _seg.subVectors(_camBase,tvWorld); var camDist=_seg.length(); _segN.copy(_seg).normalize();
+      emitter.position.copy(tvWorld);
+      emitter.quaternion.setFromUnitVectors(_yAxis,_segN);
+      coneOuter.scale.set(1,camDist*0.62,1);
+      coneInner.scale.set(1,camDist*0.5,1);
+      var anyHot=0; words.forEach(function(w){ anyHot=Math.max(anyHot,w.hover); });
+      [coneOuter,coneInner].forEach(function(cm){ cm.material.uniforms.uTime.value=t; cm.material.uniforms.uOpacity.value=introOp; cm.material.uniforms.uHot.value=anyHot; });
+      screenGlow.position.copy(tvWorld);
+      var sg=2.6+0.25*Math.sin(t*3.1)+0.8*anyHot; screenGlow.scale.set(sg*1.3,sg,1);
+      screenGlow.material.opacity=introOp*(0.75+0.15*Math.sin(t*17.0));
+
+      // Hover target: pointer pick, else keyboard focus
+      if(activated&&!flying){
+        scene.updateMatrixWorld();
+        var ph=pointerIn?pickWord(pointerX,pointerY):-1;
+        if(ph<0&&focusIdx>=0) ph=focusIdx;
+        if(ph!==hoverIdx){
+          if(ph>=0) chirp(words[ph].item.pitch,'hover');
+          hoverIdx=ph;
+          document.body.style.cursor=ph>=0?'pointer':'';
+        }
       }
 
-      cGroup.children.forEach(function(c){if(c.material) c.material.opacity=(isPort?0.12:0.45)*1;});
+      var sizeMul=isPort?0.48:0.66;
+      words.forEach(function(w,wi){
+        var targetH=flying?(flying.wi===wi?1:0):(hoverIdx===wi?1:0);
+        w.hover+=(targetH-w.hover)*0.12;
+        var h=w.hover;
+        var hot=h>0.35;
+        var vis=activated?introFade*(flying&&flying.wi!==wi?0.35:1):0;
+
+        // Front cap position with parallax drift (deeper nodes drift less)
+        var base=isPort?w.item.P:w.item.L;
+        w.front.set(base[0]+smx*0.35, base[1]-smy*0.22+Math.sin(t*0.6+w.phase)*0.05, base[2]);
+        w.tiltX+=((-smy*0.22)-w.tiltX)*0.07;
+        w.tiltY+=((smx*0.30)-w.tiltY)*0.07;
+
+        // Projection ray from TV glass to the front cap; hover pushes the cap forward
+        _seg.subVectors(w.front,tvWorld); var len=_seg.length(); _segN.copy(_seg).normalize();
+        w.cap.copy(w.front).addScaledVector(_segN,0.6*h);
+        // Accordion: idle strata bunch up behind the cap, hover fans them out down the ray
+        var expo=lerp(0.5,1.1,h);
+        var pulse=elemPulse(CHARS.length+wi,t);
+        for(var s=0;s<SLICES;s++){
+          var m=w.slices[s];
+          var tt=s/(SLICES-1);
+          var u=Math.pow(tt,expo);
+          if(s>0&&s<SLICES-1) u=clamp01(u+h*0.018*Math.sin(t*7.0-s*0.6));
+          // slicePosition = frontPos + (tvScreenCenter - frontPos) * (1 - u)
+          m.position.copy(w.cap).addScaledVector(_capPos.subVectors(tvWorld,w.cap),1-u);
+          var sc=(0.08+0.92*u)*sizeMul*(1+0.08*h);
+          m.scale.set(sc,sc,1);
+          m.rotation.set(w.tiltX,w.tiltY,0);
+          var isCap=(s===SLICES-1);
+          var map=isCap?(hot?w.tex.capHot:w.tex.cap):(hot?w.tex.strataHot:w.tex.strata);
+          if(m.material.map!==map) m.material.map=map;
+          if(isCap){
+            m.material.color.setRGB(1,1,1);
+            m.material.opacity=vis*Math.min(1,(0.82+0.18*pulse)*(1+0.3*h));
+          } else {
+            _cold.copy(_deep).lerp(_near,u);
+            if(h>0.01) _cold.lerp(_hotDeep.clone().lerp(_hotNear,u*u),h*0.85);
+            m.material.color.copy(_cold).multiplyScalar(1+0.5*h);
+            m.material.opacity=vis*Math.min(1,(0.07+0.4*Math.pow(u,1.5))*(0.8+0.2*pulse)*(1+1.4*h));
+          }
+        }
+
+        // Carrier laser tether from the TV glass to the cap
+        _seg.subVectors(w.cap,tvWorld); len=_seg.length(); _segN.copy(_seg).normalize();
+        var tvis=activated?introOp:0;
+        [w.core,w.sheath].forEach(function(mesh,k){
+          mesh.position.copy(tvWorld);
+          mesh.quaternion.setFromUnitVectors(_yAxis,_segN);
+          var r=k===0?0.011*(1+1.2*h):0.05*(1+0.9*h);
+          mesh.scale.set(r,len,r);
+        });
+        var flick=0.9+0.1*Math.sin(t*31.0+wi);
+        w.core.material.opacity=tvis*(0.4+0.6*h)*flick;
+        w.sheath.material.opacity=tvis*(0.1+0.32*h);
+        w.sheath.material.color.setHex(hot?0x30ffb0:0x00c8ff);
+        w.pulses.forEach(function(sp,k){
+          var pp=(t*0.32*(1+1.6*h)+k/3+w.phase)%1;
+          sp.position.copy(tvWorld).addScaledVector(_seg,pp);
+          var ss=0.16*(1+h)*(0.6+0.4*pp); sp.scale.set(ss,ss,1);
+          sp.material.opacity=tvis*Math.sin(pp*Math.PI)*(0.55+0.45*h);
+        });
+      });
+
+      if(activated) drawBeams(introOp,t); else bctx.clearRect(0,0,bc.width,bc.height);
       renderer.render(scene,camera);
     }
     animate();
