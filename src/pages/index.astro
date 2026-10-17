@@ -541,40 +541,42 @@ IN</span>
       bctx.beginPath(); bctx.arc(tv.x,tv.y,32,0,Math.PI*2); bctx.fillStyle=grd; bctx.fill(); bctx.restore();
     }
 
-    // ---------- Existing burst + zoom transition ----------
-    function zoomTransition(dest){
-      var tv=tvPos();
-      var xPct=(tv.x/window.innerWidth*100).toFixed(2)+'%';
-      var yPct=(tv.y/window.innerHeight*100).toFixed(2)+'%';
+    // ---------- Burst + zoom, played over the live 3D scene ----------
+    // The static ring opens from wherever the TV currently sits on screen and reveals
+    // the illustrated couch image, which is shifted so its TV lines up with the ring.
+    function zoomTransition(dest,ox,oy){
+      var vw=window.innerWidth, vh=window.innerHeight;
       var photo=document.getElementById('zoom-photo');
       var illus=document.getElementById('zoom-illustrated');
       var irisCanvas=document.getElementById('zoom-iris');
       var layer=document.getElementById('zoom-layer');
-      irisCanvas.width=window.innerWidth; irisCanvas.height=window.innerHeight;
+      irisCanvas.width=vw; irisCanvas.height=vh;
       var ictx=irisCanvas.getContext('2d');
-      photo.style.transformOrigin=xPct+' '+yPct;
-      illus.style.transformOrigin=xPct+' '+yPct;
-      layer.classList.add('active');
-      var irisStart=performance.now(),irisDuration=2200;
-      var tvx=tv.x,tvy=tv.y;
-      var maxR=Math.sqrt(Math.max(tvx,window.innerWidth-tvx)*Math.max(tvx,window.innerWidth-tvx)+Math.max(tvy,window.innerHeight-tvy)*Math.max(tvy,window.innerHeight-tvy))*1.05;
-      photo.style.transition='none';
-      photo.style.filter='saturate(0.05) brightness(1.15)';
+      photo.style.display='none';
+      // Align the illustration TV (tvPos) with the ring origin, scaled up just enough to cover the gap
+      var tv=tvPos(), dx=ox-tv.x, dy=oy-tv.y;
+      var cover=1.04+Math.max(Math.abs(dx)/Math.max(1,Math.min(tv.x,vw-tv.x)),Math.abs(dy)/Math.max(1,Math.min(tv.y,vh-tv.y)));
+      var base='translate('+dx.toFixed(1)+'px,'+dy.toFixed(1)+'px) ';
+      illus.style.transformOrigin=tv.x.toFixed(1)+'px '+tv.y.toFixed(1)+'px';
       illus.style.transition='none';
-      illus.style.clipPath='circle(0px at '+tvx+'px '+tvy+'px)';
+      illus.style.transform=base+'scale('+cover.toFixed(3)+')';
+      illus.style.clipPath='circle(0px at '+ox+'px '+oy+'px)';
+      layer.classList.add('active');
+      var irisStart=performance.now(),irisDuration=1700;
+      var maxR=Math.sqrt(Math.pow(Math.max(ox,vw-ox),2)+Math.pow(Math.max(oy,vh-oy),2))*1.05;
       function drawIris(now){
         var p=Math.min(1,(now-irisStart)/irisDuration);
         var ep=1-Math.pow(1-p,2.5);
         var waveR=maxR*ep;
-        ictx.clearRect(0,0,irisCanvas.width,irisCanvas.height);
+        ictx.clearRect(0,0,vw,vh);
         var ringW=Math.max(30,90*(1-ep*0.7));
         var innerR=Math.max(0,waveR-ringW),outerR=waveR+ringW*0.3;
         if(waveR>0&&innerR<maxR){
-          var imgData=ictx.createImageData(irisCanvas.width,irisCanvas.height);
+          var imgData=ictx.createImageData(vw,vh);
           var d=imgData.data;
           for(var ii=0;ii<d.length;ii+=4){
-            var px=(ii/4)%irisCanvas.width,py=Math.floor((ii/4)/irisCanvas.width);
-            var dx=px-tvx,dy=py-tvy,dist=Math.sqrt(dx*dx+dy*dy);
+            var px=(ii/4)%vw,py=Math.floor((ii/4)/vw);
+            var ddx=px-ox,ddy=py-oy,dist=Math.sqrt(ddx*ddx+ddy*ddy);
             if(dist>=innerR&&dist<=outerR){
               var noise=Math.random()*200+55;
               var edgeFade=Math.min(1,(dist-innerR)/20)*Math.min(1,(outerR-dist)/15);
@@ -583,34 +585,44 @@ IN</span>
             }
           }
           ictx.putImageData(imgData,0,0);
-          var grd=ictx.createRadialGradient(tvx,tvy,Math.max(0,waveR-8),tvx,tvy,waveR+20);
+          var grd=ictx.createRadialGradient(ox,oy,Math.max(0,waveR-8),ox,oy,waveR+20);
           grd.addColorStop(0,'rgba(0,255,180,0)');grd.addColorStop(0.5,'rgba(120,255,210,0.6)');grd.addColorStop(1,'rgba(0,255,180,0)');
-          ictx.beginPath();ictx.arc(tvx,tvy,waveR+20,0,Math.PI*2);ictx.fillStyle=grd;ictx.fill();
+          ictx.beginPath();ictx.arc(ox,oy,waveR+20,0,Math.PI*2);ictx.fillStyle=grd;ictx.fill();
         }
-        illus.style.clipPath='circle('+waveR+'px at '+tvx+'px '+tvy+'px)';
+        illus.style.clipPath='circle('+waveR+'px at '+ox+'px '+oy+'px)';
         if(p<1) requestAnimationFrame(drawIris);
-        else{ictx.clearRect(0,0,irisCanvas.width,irisCanvas.height);illus.style.clipPath='none';illus.style.transition='transform 2.2s cubic-bezier(0.4,0,0.2,1)';}
+        else{ictx.clearRect(0,0,vw,vh);illus.style.clipPath='none';}
       }
       requestAnimationFrame(drawIris);
-      setTimeout(function(){layer.classList.add('cartoonize');},400);
-      setTimeout(function(){layer.classList.add('zooming');},2600);
-      setTimeout(function(){window.location.href=dest;},4400);
+      setTimeout(function(){layer.classList.add('cartoonize');},300);
+      // Zoom into the illustrated TV, accelerating, then fade to black
+      setTimeout(function(){
+        illus.style.transition='transform 1.7s cubic-bezier(0.55,0,0.85,0.35)';
+        illus.style.transform=base+'scale(24)';
+        layer.classList.add('zooming');
+      },1500);
+      setTimeout(function(){window.location.href=dest;},3200);
     }
 
-    // ---------- Click: fly the camera down the word corridor, then burst ----------
+    // ---------- Click: curve past the word and dive into the TV ----------
     var flying=null;
-    var FLY_DUR=1.6, BURST_AT=1050;
+    var FLY_DUR=1.9, BURST_AT=700;
     function go(wi){
       if(!activated||flying) return;
       var w=words[wi];
       audioInit(); chirp(w.item.pitch,'launch');
       var tv=tvWorld.clone();
-      var dir=w.cap.clone().sub(tv).normalize();
-      flying={wi:wi,start:clock.getElapsedTime(),
-        fromPos:camera.position.clone(),fromLook:lookCur.clone(),
-        toPos:w.cap.clone().addScaledVector(dir,2.0),toLook:tv.clone(),tv:tv};
+      var dir=w.cap.clone().sub(tv).normalize();   // TV toward word
+      flying={wi:wi,start:clock.getElapsedTime(),e:0,
+        p0:camera.position.clone(),
+        p1:w.cap.clone().addScaledVector(dir,1.6),  // bend the path out past the word
+        p2:tv.clone().addScaledVector(dir,0.9),     // end just in front of the glass
+        fromLook:lookCur.clone(),tv:tv};
       document.body.style.cursor='';
-      setTimeout(function(){ zoomTransition(w.item.href); }, BURST_AT);
+      setTimeout(function(){
+        var o=w2s(flying.tv.x,flying.tv.y,flying.tv.z);
+        zoomTransition(w.item.href,Math.round(o.x),Math.round(o.y));
+      }, BURST_AT);
     }
 
     // ---------- "Tune in" ----------
@@ -625,7 +637,6 @@ IN</span>
       audioInit();
       var zp=document.getElementById('zoom-photo'), zi=document.getElementById('zoom-illustrated');
       var zps=document.getElementById('zoom-photo-src'), zis=document.getElementById('zoom-illus-src');
-      if(zp&&zp.dataset.src){ if(zps) zps.srcset=zp.dataset.webp||''; zp.src=zp.dataset.src; }
       if(zi&&zi.dataset.src){ if(zis) zis.srcset=zi.dataset.webp||''; zi.src=zi.dataset.src; }
       watchEl.classList.add('hidden');
       document.getElementById('bottom-brand').style.opacity='0';
@@ -689,10 +700,16 @@ IN</span>
 
       // Camera: parallax tilt, or corridor flight after a click
       if(flying){
-        var fp=clamp01((t-flying.start)/FLY_DUR), fe=easeInOutCubic(fp);
-        camera.position.lerpVectors(flying.fromPos,flying.toPos,fe);
-        lookCur.lerpVectors(flying.fromLook,flying.toLook,fe);
-        camera.fov=baseFov+14*fe; camera.updateProjectionMatrix();
+        // Accelerating ease that is still moving at the end, so it flows into the zoom
+        var fp=clamp01((t-flying.start)/FLY_DUR), fe=fp*fp*(2.2-1.2*fp), fi=1-fe;
+        flying.e=fe;
+        camera.position.set(0,0,0)
+          .addScaledVector(flying.p0,fi*fi)
+          .addScaledVector(flying.p1,2*fi*fe)
+          .addScaledVector(flying.p2,fe*fe);
+        // Lock onto the TV early so the ring opens near screen center
+        lookCur.lerpVectors(flying.fromLook,flying.tv,easeInOutCubic(clamp01(fp/0.4)));
+        camera.fov=baseFov+18*fe; camera.updateProjectionMatrix();
       } else {
         camera.position.x=smx*3.0; camera.position.y=2-smy*1.5; camera.position.z=camZ;
         lookCur.set(0,1,0);
@@ -727,10 +744,10 @@ IN</span>
       coneOuter.scale.set(1,camDist*0.62,1);
       coneInner.scale.set(1,camDist*0.5,1);
       var anyHot=0; words.forEach(function(w){ anyHot=Math.max(anyHot,w.hover); });
-      [coneOuter,coneInner].forEach(function(cm){ cm.material.uniforms.uTime.value=t; cm.material.uniforms.uOpacity.value=introOp; cm.material.uniforms.uHot.value=anyHot; });
+      [coneOuter,coneInner].forEach(function(cm){ cm.material.uniforms.uTime.value=t; cm.material.uniforms.uOpacity.value=introOp; cm.material.uniforms.uHot.value=flying?1:anyHot; });
       screenGlow.position.copy(tvWorld);
-      var sg=2.6+0.25*Math.sin(t*3.1)+0.8*anyHot; screenGlow.scale.set(sg*1.3,sg,1);
-      screenGlow.material.opacity=introOp*(0.75+0.15*Math.sin(t*17.0));
+      var sg=(2.6+0.25*Math.sin(t*3.1)+0.8*anyHot)*(flying?1+3*flying.e:1); screenGlow.scale.set(sg*1.3,sg,1);
+      screenGlow.material.opacity=flying?1:introOp*(0.75+0.15*Math.sin(t*17.0));
 
       // Hover target: pointer pick, else keyboard focus
       if(activated&&!flying){
@@ -750,7 +767,7 @@ IN</span>
         w.hover+=(targetH-w.hover)*0.12;
         var h=w.hover;
         var hot=h>0.35;
-        var vis=activated?introFade*(flying&&flying.wi!==wi?0.35:1):0;
+        var vis=activated?introFade*(flying&&flying.wi!==wi?Math.max(0,1-flying.e*1.6):1):0;
 
         // Front cap position with parallax drift (deeper nodes drift less)
         var base=isPort?w.item.P:w.item.L;
