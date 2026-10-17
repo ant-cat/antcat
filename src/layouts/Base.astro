@@ -4,7 +4,8 @@ interface Props {
   description?: string;
 }
 const { title, description = "Built this for me, but you can read it too." } = Astro.props;
-const currentPath = Astro.url.pathname;
+// Drop a trailing slash so /now/ (how the built site serves it) matches /now
+const currentPath = Astro.url.pathname.replace(/\/+$/, '') || '/';
 const navLinks = [
   { href: '/experiments', label: 'Experiments', active: currentPath.startsWith('/experiments') },
   { href: '/writing', label: 'Writing', active: currentPath.startsWith('/writing') },
