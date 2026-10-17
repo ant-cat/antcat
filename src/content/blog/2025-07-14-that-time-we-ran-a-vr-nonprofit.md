@@ -16,10 +16,10 @@ We had the goal of bringing together art and music in a jazzy (improv) kinda way
 
 Anthony Anurca was our amazing host who let us use his magical house for the event, as well as lead the music side of the event. Anthony is the basoonist for the Jacksonville Symphony and is known for his experimental synth tunes - as I said, magical.
 
-The artists were Tiffany Manning, who is known for her wonderful portrait and fine art photography, and her abstract paintings that exude love. Elena Øhlander, a fantastic visual artist and muralist. For the night, both traded their usual tools for VR headsets and painted in 3D while Anthony played. All improvised and combined together. It was wonderful!
+The artists were Tiffany Manning, who is known for her wonderful portrait and fine art photography, and her abstract paintings that exude love. Elena Øhlander is a fantastic visual artist and muralist. For the night, both traded their usual tools for VR headsets and painted in 3D while Anthony played. All improvised and combined together. It was wonderful!
 
 **Musician**: [Anthony Anurca](https://www.jaxsymphony.org/musicians/anthony-anurca/) 
-**Artists**: [Tiffany Manning](http://www.tiffanymanning.com/), [Elena Øhlander](https://www.aaaarts.com/en/artists/elenaohlander/)
+**Artists**: [Tiffany Manning](https://www.tiffanymanning.com/), [Elena Øhlander](https://www.aaaarts.com/en/artists/elenaohlander/)
 **Album**: [https://photos.app.goo.gl/vfz1SQYeVcternVT9](https://photos.app.goo.gl/vfz1SQYeVcternVT9) 
 **Favorite** **video**: [https://photos.app.goo.gl/3i7Josp5zY4cxYuv5](https://photos.app.goo.gl/3i7Josp5zY4cxYuv5)[ ](https://photos.app.goo.gl/3i7Josp5zY4cxYuv5 )
 
