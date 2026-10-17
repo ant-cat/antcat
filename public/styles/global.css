@@ -321,6 +321,65 @@ body { overflow-x: clip; }
   color: var(--text2);
 }
 
+/* ── STICKY NAV BAR (appears after scrolling past the header or hero) ── */
+.nav-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 90;
+  background: var(--bg);
+  background: color-mix(in srgb, var(--bg) 84%, transparent);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border);
+  transform: translateY(-100%);
+  opacity: 0;
+  transition: transform 0.25s ease, opacity 0.25s ease;
+}
+.nav-bar.is-visible { transform: none; opacity: 1; }
+.nav-bar-inner {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 10px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.nav-bar .site-brand { font-size: 1.1rem; white-space: nowrap; }
+.nav-bar .site-nav { flex-wrap: nowrap; gap: 18px; }
+@media (max-width: 560px) {
+  .nav-bar-inner { padding: 10px 16px; }
+  .nav-bar .site-nav { gap: 12px; }
+  .nav-bar .site-nav a { font-size: 0.78rem; }
+}
+@media (max-width: 360px) {
+  .nav-bar .site-brand { display: none; }
+  .nav-bar-inner { justify-content: center; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .nav-bar { transition: none; }
+}
+
+/* Footer section links */
+.footer-nav {
+  flex-basis: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  padding-bottom: 14px;
+}
+.footer-nav a {
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--text2);
+  text-decoration: none;
+  letter-spacing: 0.02em;
+  transition: color 0.15s;
+}
+.footer-nav a:hover, .footer-nav a.active { color: var(--text); }
+
 /* ── FOOTER ── */
 .site-footer {
   max-width: 860px;
