@@ -363,10 +363,11 @@ IN</span>
 
     // ---------- Navigation words: 20-layer letterform extrusions ----------
     var NAV_ITEMS=[
-      {label:'Writing',     href:'/writing',     L:[-4.1, 2.3, 2.2], P:[-2.15,-0.30,2.4]},
-      {label:'About',       href:'/about',       L:[-3.0,-0.6, 2.9], P:[-2.15,-2.35,3.0]},
-      {label:'Now',         href:'/now',         L:[ 3.0,-0.6, 2.9], P:[ 2.15,-2.35,3.0]},
-      {label:'Experiments', href:'/experiments', L:[ 4.1, 2.3, 2.2], P:[ 2.15,-0.30,2.4]},
+      // Positions come from layout(): an X around the TV, upper pair and lower pair
+      {label:'Writing',     href:'/writing',     upper:true},
+      {label:'About',       href:'/about',       upper:false},
+      {label:'Now',         href:'/now',         upper:false},
+      {label:'Experiments', href:'/experiments', upper:true},
     ];
     var FONT_PX=128, PAD=44;
     var FONT='900 '+FONT_PX+'px "Helvetica Neue", Helvetica, Arial, sans-serif';
@@ -426,6 +427,7 @@ IN</span>
       holoNav.appendChild(a);
       return {item:item,bi:bi,tex:tex,mask:mask,slices:slices,
               hover:0,hot:false,front:new T.Vector3(),cap:new T.Vector3(),
+              base:new T.Vector3(),ppu:1,textW:(capC.width-PAD*2)/FONT_PX,
               phase:Math.random()*Math.PI*2,tiltX:0,tiltY:0};
     });
 
@@ -637,9 +639,50 @@ IN</span>
       renderer.setSize(window.innerWidth,window.innerHeight); resizeBC();
       if(bgMesh) bgMesh.material.uniforms.uViewport.value.set(window.innerWidth,window.innerHeight);
       positionWatchMe();
+      layout();
     });
     // Coming back via the browser back button: start fresh instead of a frozen transition
     window.addEventListener('pageshow',function(e){ if(e.persisted) window.location.reload(); });
+
+    // ---------- Responsive layout ----------
+    // Words are placed by screen fraction relative to the TV, then sized so the
+    // longest one fits its share of the width. Wide windows (k=0) keep the desktop
+    // composition; tall windows (k=1) lift the upper pair and the title above the TV.
+    var restCam=new T.PerspectiveCamera(), _tmp=new T.Vector3();
+    var layoutMul=0.66, titleY=3.4;
+    function screenToWorldAtZ(px,py,z,cam,out){
+      _dir.set(px/window.innerWidth*2-1, -(py/window.innerHeight*2-1), 0.5).unproject(cam).sub(cam.position).normalize();
+      return out.copy(cam.position).addScaledVector(_dir,(z-cam.position.z)/_dir.z);
+    }
+    function restX(v){ _v3.copy(v).project(restCam); return (_v3.x*0.5+0.5)*window.innerWidth; }
+    function layout(){
+      var W=window.innerWidth, H=window.innerHeight;
+      var k=clamp01((1.5-W/H)/(1.5-0.6));
+      restCam.fov=camera.fov; restCam.aspect=W/H; restCam.near=0.1; restCam.far=120;
+      restCam.position.set(0,2,camZ); restCam.lookAt(0,1,0);
+      restCam.updateProjectionMatrix(); restCam.updateMatrixWorld();
+      var tv=tvPos();
+      var upDy=lerp(-0.03,-0.13,k), lowDy=lerp(0.36,0.21,k);
+      var xs=[lerp(0.21,0.27,k), lerp(0.29,0.31,k), lerp(0.71,0.69,k), lerp(0.79,0.73,k)];
+      var maxFrac=lerp(0.30,0.44,k), margin=Math.max(12,W*0.025);
+      var mul=10, maxH=lerp(0.065,0.05,k)*H;   // letter height cap, in px
+      words.forEach(function(w,bi){
+        var up=w.item.upper;
+        screenToWorldAtZ(xs[bi]*W, tv.y+(up?upDy:lowDy)*H, up?2.2:2.9, restCam, w.base);
+        var x0=restX(w.base); _tmp.copy(w.base); _tmp.x+=1;
+        w.ppu=Math.abs(restX(_tmp)-x0);
+        mul=Math.min(mul, maxFrac*W/(w.textW*w.ppu), maxH/(0.75*w.ppu));
+      });
+      layoutMul=mul;
+      // Nudge any word that would cross the window edge back inside
+      words.forEach(function(w){
+        var half=w.textW*mul*w.ppu*0.5, cx=restX(w.base);
+        var target=Math.min(W-margin-half, Math.max(margin+half, cx));
+        w.base.x+=(target-cx)/w.ppu;
+      });
+      titleY=screenToWorldAtZ(W*0.5, tv.y+lerp(-0.12,-0.23,k)*H, 0, restCam, _tmp).y;
+    }
+    layout();
 
     // ---------- Animate ----------
     var clock=new T.Clock();
@@ -668,7 +711,7 @@ IN</span>
 
       // Canopy + title + dunes
       cGroup.rotation.y=t*0.045+smx*0.32; cGroup.rotation.x=-smy*0.20;
-      tGroup.position.y=(isPort?5.2:3.4)+Math.sin(t*0.4)*0.06;
+      tGroup.position.y=titleY+Math.sin(t*0.4)*0.06;
       updateTerrain(t);
 
       var introOp=0,introFade=0;
@@ -708,7 +751,7 @@ IN</span>
         }
       }
 
-      var sizeMul=isPort?0.48:0.66;
+      var sizeMul=layoutMul;
       words.forEach(function(w,wi){
         var targetH=flying?(flying.wi===wi?1:0):(hoverIdx===wi?1:0);
         w.hover+=(targetH-w.hover)*0.12;
@@ -717,8 +760,7 @@ IN</span>
         var vis=activated?introFade*(flying&&flying.wi!==wi?Math.max(0,1-flying.e*1.6):1):0;
 
         // Front cap position with parallax drift (deeper nodes drift less)
-        var base=isPort?w.item.P:w.item.L;
-        w.front.set(base[0]+smx*0.35, base[1]-smy*0.22+Math.sin(t*0.6+w.phase)*0.05, base[2]);
+        w.front.set(w.base.x+smx*0.35, w.base.y-smy*0.22+Math.sin(t*0.6+w.phase)*0.05, w.base.z);
         w.tiltX+=((-smy*0.22)-w.tiltX)*0.07;
         w.tiltY+=((smx*0.30)-w.tiltY)*0.07;
 
