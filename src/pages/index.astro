@@ -379,22 +379,23 @@ IN</span>
       x=c.getContext('2d');
       x.font=FONT; x.textAlign='center'; x.textBaseline='middle'; x.lineJoin='round';
       var cx=c.width/2, cy=c.height/2+FONT_PX*0.04;
+      // Idle: Tune In phosphor green. Hover: cyan-blue.
       if(mode==='cap'){
-        x.shadowColor='rgba(0,190,255,0.95)'; x.shadowBlur=24;
-        x.fillStyle='rgba(110,205,255,0.55)'; x.fillText(label,cx,cy);
-        x.shadowBlur=8; x.lineWidth=3; x.strokeStyle='rgba(215,248,255,1)'; x.strokeText(label,cx,cy);
-        x.shadowBlur=0; x.fillStyle='rgba(225,245,255,0.35)'; x.fillText(label,cx,cy);
+        x.shadowColor='rgba(40,220,40,0.95)'; x.shadowBlur=24;
+        x.fillStyle='rgba(120,255,110,0.5)'; x.fillText(label,cx,cy);
+        x.shadowBlur=8; x.lineWidth=3; x.strokeStyle='rgba(223,255,219,1)'; x.strokeText(label,cx,cy);
+        x.shadowBlur=0; x.fillStyle='rgba(182,255,176,0.35)'; x.fillText(label,cx,cy);
       } else if(mode==='capHot'){
-        x.shadowColor='rgba(70,255,170,1)'; x.shadowBlur=42;
-        x.lineWidth=7; x.strokeStyle='rgba(110,255,180,1)'; x.strokeText(label,cx,cy); x.strokeText(label,cx,cy);
-        x.shadowBlur=16; x.fillStyle='rgba(190,255,220,0.7)'; x.fillText(label,cx,cy);
-        x.shadowBlur=6; x.lineWidth=2.5; x.strokeStyle='#f6fff8'; x.strokeText(label,cx,cy);
+        x.shadowColor='rgba(0,190,255,1)'; x.shadowBlur=34;
+        x.fillStyle='rgba(110,205,255,0.6)'; x.fillText(label,cx,cy);
+        x.shadowBlur=10; x.lineWidth=3.5; x.strokeStyle='rgba(215,248,255,1)'; x.strokeText(label,cx,cy);
+        x.shadowBlur=0; x.fillStyle='rgba(225,245,255,0.4)'; x.fillText(label,cx,cy);
       } else if(mode==='strata'){
-        x.shadowColor='rgba(0,170,255,0.9)'; x.shadowBlur=10;
-        x.lineWidth=3; x.strokeStyle='rgba(120,215,255,0.95)'; x.strokeText(label,cx,cy);
+        x.shadowColor='rgba(40,200,40,0.9)'; x.shadowBlur=10;
+        x.lineWidth=3; x.strokeStyle='rgba(140,255,130,0.95)'; x.strokeText(label,cx,cy);
       } else if(mode==='strataHot'){
-        x.shadowColor='rgba(40,255,150,1)'; x.shadowBlur=20;
-        x.lineWidth=4.5; x.strokeStyle='rgba(150,255,200,1)'; x.strokeText(label,cx,cy); x.strokeText(label,cx,cy);
+        x.shadowColor='rgba(0,170,255,1)'; x.shadowBlur=18;
+        x.lineWidth=4; x.strokeStyle='rgba(120,215,255,1)'; x.strokeText(label,cx,cy); x.strokeText(label,cx,cy);
       } else { // hit mask: the letterforms plus a tight tolerance ring
         x.fillStyle='#000'; x.strokeStyle='#000'; x.lineWidth=14;
         x.fillText(label,cx,cy); x.strokeText(label,cx,cy);
@@ -644,7 +645,7 @@ IN</span>
     // ---------- Animate ----------
     var clock=new T.Clock();
     var _camBase=new T.Vector3(), _seg=new T.Vector3(), _segN=new T.Vector3(), _capPos=new T.Vector3();
-    var _cold=new T.Color(), _deep=new T.Color(0x2a5cff), _near=new T.Color(0x9fe6ff), _hotDeep=new T.Color(0x1aff9a), _hotNear=new T.Color(0xeafff2);
+    var _cold=new T.Color(), _deep=new T.Color(0x1f9a2a), _near=new T.Color(0xc8ffc0), _hotDeep=new T.Color(0x2a5cff), _hotNear=new T.Color(0xd8f4ff);
 
     function animate(){
       requestAnimationFrame(animate);
