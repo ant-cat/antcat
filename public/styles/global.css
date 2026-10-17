@@ -235,7 +235,7 @@ a:hover { text-decoration: underline; }
   align-items: center;
 }
 .article-body {
-  max-width: 660px;
+  max-width: 740px;
   font-size: 1rem;
   line-height: 1.75;
   color: var(--text2);
@@ -258,7 +258,7 @@ a:hover { text-decoration: underline; }
 .article-body li { margin-bottom: 0.3em; }
 .article-body hr { border: none; border-top: 1px solid var(--border); margin: 2em 0; }
 
-/* Images & embeds: break out of the 660px text column to the full 860px page width (Medium-style) */
+/* Images & embeds: break out of the 740px text column to the full 860px page width (Medium-style) */
 .article-body img { display: block; max-width: 100%; height: auto; border-radius: 6px; }
 .article-body p:has(> img),
 .article-body iframe {
