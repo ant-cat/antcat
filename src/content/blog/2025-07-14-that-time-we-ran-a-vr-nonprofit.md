@@ -2,8 +2,8 @@
 title: "That Time We Ran a VR Nonprofit"
 date: 2025-07-14
 slug: "that-time-we-ran-a-vr-nonprofit"
-categories: ["Uncategorized"]
-tags: []
+categories: ["Story", "Events"]
+tags: ["VR", "Nonprofit", "Art", "music", "Friends", "Jacksonville", "TEDx"]
 ---
 
 This post is so we don't forget
