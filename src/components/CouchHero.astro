@@ -7,7 +7,7 @@ const { subtitle = '' } = Astro.props;
 ---
 <div class="ch-outer" id="ch-outer" data-subtitle={subtitle}>
   <div class="ch-sticky" id="ch-sticky">
-    <div class="ch-scene" id="ch-scene">
+    <div class="ch-scene is-loading" id="ch-scene">
 
       <!-- Background -->
       <picture style="display:contents">
@@ -112,6 +112,11 @@ const { subtitle = '' } = Astro.props;
   height: 100%;
   display: block;
 }
+
+/* Hold the background and characters back until all of them are ready, then fade in together */
+.ch-bg, .ch-canvas { transition: opacity 0.45s ease; }
+.ch-scene.is-loading .ch-bg,
+.ch-scene.is-loading .ch-canvas { opacity: 0; }
 
 /* ── TEXT OVERLAY (desktop) ── */
 .ch-content--overlay {
@@ -546,6 +551,50 @@ const { subtitle = '' } = Astro.props;
     if (s !== lastScroll) { lastScroll = s; update(); }
     requestAnimationFrame(tick);
   }
+
+  /* ── FIRST PAINT: background + every character's first pose, all at once ── */
+  // Each first pose is fetched right away (the rest of the frames still load later).
+  // The scene stays hidden until the background and all four poses are decoded,
+  // then everything fades in together. A timeout reveals it anyway if something stalls.
+  (function() {
+    var scene = document.getElementById('ch-scene');
+    if (!scene) return;
+    var bg = scene.querySelector('.ch-bg');
+    var pending = CHARS.length + 1;
+    var revealed = false;
+    var firsts = {};
+    function reveal() {
+      if (revealed) return;
+      revealed = true;
+      CHARS.forEach(function(ch) {
+        var img = firsts[ch.id];
+        if (img && img.complete && img.naturalWidth) {
+          if (!loaded[ch.id][0] || !loaded[ch.id][0].naturalWidth) loaded[ch.id][0] = img;
+          if (currentFrames[ch.id] < 0) {
+            var ctx = contexts[ch.id];
+            if (ctx) { ctx.clearRect(0, 0, 768, 768); ctx.drawImage(img, 0, 0, 768, 768); currentFrames[ch.id] = 0; }
+          }
+        }
+      });
+      scene.classList.remove('is-loading');
+    }
+    function done() { pending--; if (pending <= 0) reveal(); }
+    function whenDecoded(img) {
+      if (img.decode) img.decode().then(done, done); else done();
+    }
+    CHARS.forEach(function(ch) {
+      var img = new Image();
+      img.fetchPriority = 'high';
+      img.onload = function() { whenDecoded(img); };
+      img.onerror = done;
+      img.src = ch.dir + (ch.frames ? ch.frames[0] : ch.prefix + '000.webp');
+      firsts[ch.id] = img;
+    });
+    if (bg && bg.complete && bg.naturalWidth) whenDecoded(bg);
+    else if (bg) { bg.addEventListener('load', function() { whenDecoded(bg); }); bg.addEventListener('error', done); }
+    else done();
+    setTimeout(reveal, 3000);
+  })();
 
   /* ── INIT ── */
   if (isMobile) {
