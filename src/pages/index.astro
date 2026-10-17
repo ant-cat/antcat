@@ -1,7 +1,7 @@
 ---
 // ant.cat: hero v11. Raw photo first, "Tune in" activates the holo-UI.
 // v11: CRT emitter cone, desert wireframe dunes, 20-layer word extrusions that
-// retrace into the TV screen, hover physics with Web Audio chirps, corridor fly-in.
+// retrace into the TV screen, hover physics, burst into the TV on click.
 ---
 <!doctype html>
 <html lang="en">
@@ -363,10 +363,10 @@ IN</span>
 
     // ---------- Navigation words: 20-layer letterform extrusions ----------
     var NAV_ITEMS=[
-      {label:'Writing',     href:'/writing',     L:[-4.1, 2.3, 2.2], P:[-2.15,-0.30,2.4], pitch:520},
-      {label:'About',       href:'/about',       L:[-3.0,-0.6, 2.9], P:[-2.15,-2.35,3.0], pitch:440},
-      {label:'Now',         href:'/now',         L:[ 3.0,-0.6, 2.9], P:[ 2.15,-2.35,3.0], pitch:660},
-      {label:'Experiments', href:'/experiments', L:[ 4.1, 2.3, 2.2], P:[ 2.15,-0.30,2.4], pitch:780},
+      {label:'Writing',     href:'/writing',     L:[-4.1, 2.3, 2.2], P:[-2.15,-0.30,2.4]},
+      {label:'About',       href:'/about',       L:[-3.0,-0.6, 2.9], P:[-2.15,-2.35,3.0]},
+      {label:'Now',         href:'/now',         L:[ 3.0,-0.6, 2.9], P:[ 2.15,-2.35,3.0]},
+      {label:'Experiments', href:'/experiments', L:[ 4.1, 2.3, 2.2], P:[ 2.15,-0.30,2.4]},
     ];
     var FONT_PX=128, PAD=44;
     var FONT='900 '+FONT_PX+'px "Helvetica Neue", Helvetica, Arial, sans-serif';
@@ -439,41 +439,6 @@ IN</span>
         }
       }
       return false;
-    }
-
-    // ---------- Web Audio chirps (synthesized, no files) ----------
-    var actx=null;
-    function audioInit(){
-      try{
-        if(!actx){ var AC=window.AudioContext||window.webkitAudioContext; if(AC) actx=new AC(); }
-        if(actx&&actx.state==='suspended') actx.resume();
-      }catch(err){ actx=null; }
-    }
-    function chirp(base,kind){
-      if(!actx) return;
-      try{
-        var now=actx.currentTime;
-        var o1=actx.createOscillator(), o2=actx.createOscillator();
-        var g2=actx.createGain(), f=actx.createBiquadFilter(), g=actx.createGain();
-        o1.type='sine'; o2.type='square'; f.type='lowpass'; f.Q.value=6;
-        g2.gain.value=0.22;
-        var dur;
-        if(kind==='launch'){
-          dur=0.75;
-          o1.frequency.setValueAtTime(160,now); o1.frequency.exponentialRampToValueAtTime(1500,now+0.5);
-          o2.frequency.setValueAtTime(80,now);  o2.frequency.exponentialRampToValueAtTime(760,now+0.5);
-          f.frequency.setValueAtTime(400,now);  f.frequency.exponentialRampToValueAtTime(5200,now+0.45);
-          g.gain.setValueAtTime(0.0001,now); g.gain.exponentialRampToValueAtTime(0.14,now+0.03); g.gain.exponentialRampToValueAtTime(0.0001,now+dur);
-        } else {
-          dur=0.2;
-          o1.frequency.setValueAtTime(base,now); o1.frequency.exponentialRampToValueAtTime(base*2.6,now+0.08); o1.frequency.exponentialRampToValueAtTime(base*1.9,now+0.17);
-          o2.frequency.setValueAtTime(base*0.5,now); o2.frequency.exponentialRampToValueAtTime(base*1.3,now+0.08);
-          f.frequency.setValueAtTime(base*3,now); f.frequency.exponentialRampToValueAtTime(base*7,now+0.07);
-          g.gain.setValueAtTime(0.0001,now); g.gain.exponentialRampToValueAtTime(0.085,now+0.012); g.gain.exponentialRampToValueAtTime(0.0001,now+dur);
-        }
-        o1.connect(f); o2.connect(g2); g2.connect(f); f.connect(g); g.connect(actx.destination);
-        o1.start(now); o2.start(now); o1.stop(now+dur+0.05); o2.stop(now+dur+0.05);
-      }catch(err){}
     }
 
     // ---------- Pulse helpers ----------
@@ -604,25 +569,16 @@ IN</span>
       setTimeout(function(){window.location.href=dest;},3200);
     }
 
-    // ---------- Click: curve past the word and dive into the TV ----------
+    // ---------- Click: hold the camera and open the ring from the TV ----------
     var flying=null;
-    var FLY_DUR=1.9, BURST_AT=700;
     function go(wi){
       if(!activated||flying) return;
       var w=words[wi];
-      audioInit(); chirp(w.item.pitch,'launch');
-      var tv=tvWorld.clone();
-      var dir=w.cap.clone().sub(tv).normalize();   // TV toward word
       flying={wi:wi,start:clock.getElapsedTime(),e:0,
-        p0:camera.position.clone(),
-        p1:w.cap.clone().addScaledVector(dir,1.6),  // bend the path out past the word
-        p2:tv.clone().addScaledVector(dir,0.9),     // end just in front of the glass
-        fromLook:lookCur.clone(),tv:tv};
+        pos:camera.position.clone(),look:lookCur.clone(),tv:tvWorld.clone()};
       document.body.style.cursor='';
-      setTimeout(function(){
-        var o=w2s(flying.tv.x,flying.tv.y,flying.tv.z);
-        zoomTransition(w.item.href,Math.round(o.x),Math.round(o.y));
-      }, BURST_AT);
+      var o=w2s(flying.tv.x,flying.tv.y,flying.tv.z);
+      zoomTransition(w.item.href,Math.round(o.x),Math.round(o.y));
     }
 
     // ---------- "Tune in" ----------
@@ -634,7 +590,6 @@ IN</span>
       if(activated) return;
       ev.stopPropagation();
       activated=true;
-      audioInit();
       var zp=document.getElementById('zoom-photo'), zi=document.getElementById('zoom-illustrated');
       var zps=document.getElementById('zoom-photo-src'), zis=document.getElementById('zoom-illus-src');
       if(zi&&zi.dataset.src){ if(zis) zis.srcset=zi.dataset.webp||''; zi.src=zi.dataset.src; }
@@ -672,7 +627,7 @@ IN</span>
       if(!activated||flying) return;
       scene.updateMatrixWorld();
       var wi=pickWord(e.clientX,e.clientY);
-      if(wi>=0){ e.preventDefault(); if(hoverIdx!==wi) chirp(words[wi].item.pitch,'hover'); go(wi); }
+      if(wi>=0){ e.preventDefault(); go(wi); }
     });
 
     window.addEventListener('resize',function(){
@@ -690,7 +645,6 @@ IN</span>
     var clock=new T.Clock();
     var _camBase=new T.Vector3(), _seg=new T.Vector3(), _segN=new T.Vector3(), _capPos=new T.Vector3();
     var _cold=new T.Color(), _deep=new T.Color(0x2a5cff), _near=new T.Color(0x9fe6ff), _hotDeep=new T.Color(0x1aff9a), _hotNear=new T.Color(0xeafff2);
-    function easeInOutCubic(p){ return p<0.5?4*p*p*p:1-Math.pow(-2*p+2,3)/2; }
 
     function animate(){
       requestAnimationFrame(animate);
@@ -698,18 +652,12 @@ IN</span>
       var isPort=window.innerHeight>window.innerWidth;
       smx+=(mx-smx)*0.06; smy+=(my-smy)*0.06;
 
-      // Camera: parallax tilt, or corridor flight after a click
+      // Camera: parallax tilt, frozen after a click
       if(flying){
-        // Accelerating ease that is still moving at the end, so it flows into the zoom
-        var fp=clamp01((t-flying.start)/FLY_DUR), fe=fp*fp*(2.2-1.2*fp), fi=1-fe;
-        flying.e=fe;
-        camera.position.set(0,0,0)
-          .addScaledVector(flying.p0,fi*fi)
-          .addScaledVector(flying.p1,2*fi*fe)
-          .addScaledVector(flying.p2,fe*fe);
-        // Lock onto the TV early so the ring opens near screen center
-        lookCur.lerpVectors(flying.fromLook,flying.tv,easeInOutCubic(clamp01(fp/0.4)));
-        camera.fov=baseFov+18*fe; camera.updateProjectionMatrix();
+        // Camera holds still so the TV stays under the ring origin
+        flying.e=clamp01((t-flying.start)/1.0);
+        camera.position.copy(flying.pos);
+        lookCur.copy(flying.look);
       } else {
         camera.position.x=smx*3.0; camera.position.y=2-smy*1.5; camera.position.z=camZ;
         lookCur.set(0,1,0);
@@ -744,10 +692,10 @@ IN</span>
       coneOuter.scale.set(1,camDist*0.62,1);
       coneInner.scale.set(1,camDist*0.5,1);
       var anyHot=0; words.forEach(function(w){ anyHot=Math.max(anyHot,w.hover); });
-      [coneOuter,coneInner].forEach(function(cm){ cm.material.uniforms.uTime.value=t; cm.material.uniforms.uOpacity.value=introOp; cm.material.uniforms.uHot.value=flying?1:anyHot; });
+      [coneOuter,coneInner].forEach(function(cm){ cm.material.uniforms.uTime.value=t; cm.material.uniforms.uOpacity.value=introOp; cm.material.uniforms.uHot.value=anyHot; });
       screenGlow.position.copy(tvWorld);
-      var sg=(2.6+0.25*Math.sin(t*3.1)+0.8*anyHot)*(flying?1+3*flying.e:1); screenGlow.scale.set(sg*1.3,sg,1);
-      screenGlow.material.opacity=flying?1:introOp*(0.75+0.15*Math.sin(t*17.0));
+      var sg=(2.6+0.25*Math.sin(t*3.1)+0.8*anyHot); screenGlow.scale.set(sg*1.3,sg,1);
+      screenGlow.material.opacity=introOp*(0.75+0.15*Math.sin(t*17.0));
 
       // Hover target: pointer pick, else keyboard focus
       if(activated&&!flying){
@@ -755,7 +703,6 @@ IN</span>
         var ph=pointerIn?pickWord(pointerX,pointerY):-1;
         if(ph<0&&focusIdx>=0) ph=focusIdx;
         if(ph!==hoverIdx){
-          if(ph>=0) chirp(words[ph].item.pitch,'hover');
           hoverIdx=ph;
           document.body.style.cursor=ph>=0?'pointer':'';
         }
