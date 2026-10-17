@@ -61,6 +61,7 @@ const server = http.createServer((req, res) => {
   res.writeHead(404); res.end();
 });
 
-server.listen(PORT, () => {
+// Bind to localhost only so nobody else on the network can write to your posts
+server.listen(PORT, '127.0.0.1', () => {
   console.log(`[edit server] listening on http://localhost:${PORT}`);
 });
