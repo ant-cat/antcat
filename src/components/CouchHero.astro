@@ -588,15 +588,19 @@ const { subtitle = '' } = Astro.props;
         if (img && img.complete && img.naturalWidth) {
           if (!loaded[ch.id][0] || !loaded[ch.id][0].naturalWidth) loaded[ch.id][0] = img;
           var ctx = contexts[ch.id];
-          if (ctx && currentFrames[ch.id] < 0) { ctx.clearRect(0, 0, 768, 768); ctx.drawImage(img, 0, 0, 768, 768); currentFrames[ch.id] = 0; }
+          if (ctx && currentFrames[ch.id] <= 0) { ctx.clearRect(0, 0, 768, 768); ctx.drawImage(img, 0, 0, 768, 768); currentFrames[ch.id] = 0; }
         }
       });
       showBg();
       scene.classList.remove('chars-loading');
     }
     function charDone() { charsLeft--; if (charsLeft <= 0) showChars(); }
+    // decode() can stall (background tabs, some mobile browsers), so never wait on it more than 250ms
     function whenDecoded(img, cb) {
-      if (img.decode) img.decode().then(cb, cb); else cb();
+      var called = false;
+      function once() { if (!called) { called = true; cb(); } }
+      if (img.decode) img.decode().then(once, once);
+      setTimeout(once, 250);
     }
     CHARS.forEach(function(ch) {
       var img = new Image();
