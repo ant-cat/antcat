@@ -22,6 +22,19 @@
     }
     #raw-photo.fade-out { opacity: 0; pointer-events: none; }
 
+    /* Soft phosphor glow on the two eye sculptures in the photo (before Tune In) */
+    .eye-glow {
+      position: fixed; z-index: 2; pointer-events: none;
+      transform: translate(-50%, -50%); border-radius: 50%;
+      background: radial-gradient(closest-side, rgba(170,255,160,0) 52%, rgba(170,255,160,0.55) 70%, rgba(110,255,110,0.18) 85%, rgba(90,255,90,0) 100%);
+      mix-blend-mode: screen;
+      animation: eyeGlow 3.6s ease-in-out infinite;
+      transition: opacity 1.2s ease;
+    }
+    .eye-glow.b { animation-delay: -1.7s; }
+    .eye-glow.off { opacity: 0 !important; animation: none; }
+    @keyframes eyeGlow { 0%, 100% { opacity: 0.45; } 50% { opacity: 0.95; } }
+
     /* Three.js canvas */
     #c { display: block; width: 100%; height: 100%; position: fixed; inset: 0; z-index: 0; touch-action: none; }
 
@@ -151,6 +164,8 @@
     <source srcset="/images/hero.webp" type="image/webp" />
     <img id="raw-photo" src="/images/hero.png" alt="" fetchpriority="high" />
   </picture>
+  <div class="eye-glow" id="eye-glow-a"></div>
+  <div class="eye-glow b" id="eye-glow-b"></div>
   <canvas id="c"></canvas>
   <nav id="holo-nav" aria-label="Main"></nav>
   <canvas id="beam-canvas"></canvas>
@@ -354,11 +369,64 @@ IN</span>
       return g;
     }
     var emitter=new T.Group(); scene.add(emitter);
-    var coneOuter=new T.Mesh(coneGeo(4.2,0.55),coneMaterial(9,5,1.7,1.0));
-    var coneInner=new T.Mesh(coneGeo(1.7,0.32),coneMaterial(17,11,1.3,1.4));
+    var coneOuter=new T.Mesh(coneGeo(4.2,0.12),coneMaterial(9,5,1.7,1.0));
+    var coneInner=new T.Mesh(coneGeo(1.7,0.08),coneMaterial(17,11,1.3,1.4));
     emitter.add(coneOuter); emitter.add(coneInner);
     var screenGlow=new T.Sprite(new T.SpriteMaterial({map:glowTex,color:0x9ff6ff,transparent:true,blending:T.AdditiveBlending,depthWrite:false,fog:false,opacity:0}));
     scene.add(screenGlow);
+
+    // ---------- Focal eye: the desert eye sculpture, rebuilt as a hologram at the TV ----------
+    var TAU=Math.PI*2;
+    function ellPt(a,r,sx,sy){ return [Math.cos(a)*r*sx, Math.sin(a)*r*sy]; }
+    function eyeCanvas(part){
+      var S=512, c=document.createElement('canvas'); c.width=c.height=S;
+      var x=c.getContext('2d'); x.translate(S/2,S/2);
+      x.lineJoin='round'; x.lineCap='round';
+      x.shadowColor='rgba(80,225,255,1)'; x.shadowBlur=16;
+      if(part==='rays'){
+        // Flame petals around an oval, like the sun rays on the sculpture
+        var n=18, rIn=138, rOut=196;
+        x.beginPath();
+        for(var i=0;i<n;i++){
+          var a=i/n*TAU, am=(i+0.5)/n*TAU, a2=(i+1)/n*TAU;
+          var p0=ellPt(a,rIn,1.3,0.82), tip=ellPt(am+0.2,rOut,1.25,0.98), p1=ellPt(a2,rIn,1.3,0.82);
+          var c0=ellPt(am-0.1,(rIn+rOut)*0.52,1.3,0.9), c1=ellPt(a2+0.06,(rIn+rOut)*0.5,1.3,0.88);
+          if(i===0) x.moveTo(p0[0],p0[1]);
+          x.quadraticCurveTo(c0[0],c0[1],tip[0],tip[1]);
+          x.quadraticCurveTo(c1[0],c1[1],p1[0],p1[1]);
+        }
+        x.closePath();
+        x.fillStyle='rgba(60,190,255,0.12)'; x.fill();
+        x.strokeStyle='rgba(150,235,255,0.95)'; x.lineWidth=5; x.stroke();
+      } else if(part==='lid'){
+        // Almond eye shape
+        var w=168, h=84;
+        x.beginPath(); x.moveTo(-w,0);
+        x.quadraticCurveTo(0,-h*2,w,0); x.quadraticCurveTo(0,h*2,-w,0); x.closePath();
+        x.fillStyle='rgba(170,240,255,0.16)'; x.fill();
+        x.strokeStyle='rgba(225,252,255,1)'; x.lineWidth=6; x.stroke();
+      } else {
+        // Spiral iris with a bright pupil
+        x.beginPath(); x.arc(0,0,70,0,TAU);
+        x.fillStyle='rgba(30,150,255,0.28)'; x.fill();
+        x.strokeStyle='rgba(170,240,255,1)'; x.lineWidth=5; x.stroke();
+        x.beginPath();
+        for(var k=0;k<=360;k++){
+          var tt=k/360, ang=tt*TAU*3.2, rr=14+tt*50;
+          var px=Math.cos(ang)*rr, py=Math.sin(ang)*rr;
+          if(k===0) x.moveTo(px,py); else x.lineTo(px,py);
+        }
+        x.strokeStyle='rgba(120,220,255,0.9)'; x.lineWidth=3.5; x.stroke();
+        x.beginPath(); x.arc(0,0,13,0,TAU); x.fillStyle='rgba(240,255,255,1)'; x.fill();
+      }
+      var tx=new T.CanvasTexture(c); tx.minFilter=T.LinearFilter; tx.generateMipmaps=false; return tx;
+    }
+    function eyeSprite(part){
+      var sp=new T.Sprite(new T.SpriteMaterial({map:eyeCanvas(part),transparent:true,opacity:0,blending:T.AdditiveBlending,depthWrite:false,depthTest:false,fog:false}));
+      sp.renderOrder=60; scene.add(sp); return sp;
+    }
+    var eyeRays=eyeSprite('rays'), eyeLid=eyeSprite('lid'), eyeIris=eyeSprite('iris');
+    var EYE_SIZE=2.9, nextBlink=3.5, blinkStart=-1;
     var _yAxis=new T.Vector3(0,1,0);
 
     // ---------- Navigation words: 20-layer letterform extrusions ----------
@@ -449,17 +517,18 @@ IN</span>
     function elemPulse(idx,t){return 0.52+0.48*Math.sin(t*elemSpeeds[idx]+elemPhases[idx]);}
 
     // ---------- Screen and world helpers ----------
-    function tvPos(){
-      // object-fit:cover + object-position:center 40% on a 2000x1200 image.
-      // TV screen center sits at ~51.5% x, ~40% y of the natural image.
-      var imgW=2000,imgH=1200,tvNx=0.515,tvNy=0.400;
+    // Where a point of the 2000x1200 hero photo lands on screen
+    // (object-fit:cover + object-position:center 40%)
+    function photoPoint(px,py){
+      var imgW=2000,imgH=1200;
       var vw=window.innerWidth,vh=window.innerHeight;
       var scale=Math.max(vw/imgW,vh/imgH);
-      var rendW=imgW*scale,rendH=imgH*scale;
-      var ox=(vw-rendW)/2;
-      var oy=-((rendH-vh)*0.40);
-      return{x:ox+tvNx*rendW, y:oy+tvNy*rendH};
+      var ox=(vw-imgW*scale)/2;
+      var oy=-((imgH*scale-vh)*0.40);
+      return{x:ox+px*scale, y:oy+py*scale, scale:scale};
     }
+    // TV screen center sits at ~51.5% x, ~40% y of the photo
+    function tvPos(){ return photoPoint(1030,480); }
     var _v3=new T.Vector3();
     function w2s(wx,wy,wz){_v3.set(wx,wy,wz);_v3.project(camera);return{x:(_v3.x*0.5+0.5)*window.innerWidth,y:(-_v3.y*0.5+0.5)*window.innerHeight};}
     // The TV lives in the (screen-fixed) photo, so its world anchor is found by
@@ -499,13 +568,12 @@ IN</span>
           volBeam(tv,p.x,p.y,eff*0.22,255,180,60);
         });
       });
-      var grd=bctx.createRadialGradient(tv.x,tv.y,0,tv.x,tv.y,32);
-      grd.addColorStop(0,'rgba(255,255,255,'+introOp+')');
-      grd.addColorStop(0.3,'rgba(180,255,240,'+(introOp*0.7)+')');
-      grd.addColorStop(0.7,'rgba(0,255,200,'+(introOp*0.25)+')');
+      // Soft halo only: the focal eye sits on top of this
+      var grd=bctx.createRadialGradient(tv.x,tv.y,0,tv.x,tv.y,60);
+      grd.addColorStop(0,'rgba(180,255,240,'+(introOp*0.22)+')');
       grd.addColorStop(1,'rgba(0,255,200,0)');
       bctx.save(); bctx.globalCompositeOperation='lighter';
-      bctx.beginPath(); bctx.arc(tv.x,tv.y,32,0,Math.PI*2); bctx.fillStyle=grd; bctx.fill(); bctx.restore();
+      bctx.beginPath(); bctx.arc(tv.x,tv.y,60,0,Math.PI*2); bctx.fillStyle=grd; bctx.fill(); bctx.restore();
     }
 
     // ---------- Burst + zoom, played over the live 3D scene ----------
@@ -585,7 +653,18 @@ IN</span>
 
     // ---------- "Tune in" ----------
     var watchEl=document.getElementById('watch-me');
-    function positionWatchMe(){ var tv=tvPos(); watchEl.style.left=tv.x+'px'; watchEl.style.top=tv.y+'px'; }
+    function positionWatchMe(){ var tv=tvPos(); watchEl.style.left=tv.x+'px'; watchEl.style.top=tv.y+'px'; positionEyeGlows(); }
+    // Eye sculptures in the photo: center and glow size, in photo pixels
+    var EYE_GLOWS=[{id:'eye-glow-a',x:1638,y:82,d:200},{id:'eye-glow-b',x:1771,y:130,d:160}];
+    function positionEyeGlows(){
+      EYE_GLOWS.forEach(function(e){
+        var el=document.getElementById(e.id); if(!el) return;
+        var p=photoPoint(e.x,e.y), d=e.d*p.scale;
+        el.style.left=p.x+'px'; el.style.top=p.y+'px';
+        el.style.width=d+'px'; el.style.height=(d*0.8)+'px';
+        el.style.display=(p.x<-d||p.x>window.innerWidth+d)?'none':'block';
+      });
+    }
     positionWatchMe();
 
     watchEl.addEventListener('click',function(ev){
@@ -598,6 +677,7 @@ IN</span>
       watchEl.classList.add('hidden');
       document.getElementById('bottom-brand').style.opacity='0';
       document.getElementById('raw-photo').classList.add('fade-out');
+      EYE_GLOWS.forEach(function(e){ var el=document.getElementById(e.id); if(el) el.classList.add('off'); });
       document.getElementById('beam-canvas').classList.add('visible');
       document.getElementById('ui').classList.add('visible');
     });
@@ -737,8 +817,28 @@ IN</span>
       var anyHot=0; words.forEach(function(w){ anyHot=Math.max(anyHot,w.hover); });
       [coneOuter,coneInner].forEach(function(cm){ cm.material.uniforms.uTime.value=t; cm.material.uniforms.uOpacity.value=introOp; cm.material.uniforms.uHot.value=anyHot; });
       screenGlow.position.copy(tvWorld);
-      var sg=(2.6+0.25*Math.sin(t*3.1)+0.8*anyHot); screenGlow.scale.set(sg*1.3,sg,1);
-      screenGlow.material.opacity=introOp*(0.75+0.15*Math.sin(t*17.0));
+      var sg=(1.7+0.15*Math.sin(t*3.1)+0.5*anyHot); screenGlow.scale.set(sg*1.3,sg,1);
+      screenGlow.material.opacity=introOp*(0.4+0.08*Math.sin(t*17.0));
+
+      // Focal eye: rays turn slowly, the iris follows the pointer, and it blinks now and then
+      if(t>nextBlink && blinkStart<0){ blinkStart=t; }
+      var lidOpen=1;
+      if(blinkStart>=0){
+        var bp=(t-blinkStart)/0.22;
+        if(bp>=1){ blinkStart=-1; nextBlink=t+3+Math.random()*4; }
+        else lidOpen=1-0.92*Math.sin(Math.PI*bp);
+      }
+      var eyeWide=1+0.1*anyHot, es=EYE_SIZE*(1+0.03*Math.sin(t*1.7));
+      [eyeRays,eyeLid,eyeIris].forEach(function(sp){ sp.position.copy(tvWorld); });
+      eyeRays.scale.set(es,es,1);
+      eyeRays.material.rotation=t*0.08;
+      eyeLid.scale.set(es*eyeWide, es*eyeWide*lidOpen, 1);
+      var irisS=es*(1-0.08*anyHot);
+      eyeIris.scale.set(irisS, irisS*lidOpen, 1);
+      eyeIris.position.x+=smx*es*0.11; eyeIris.position.y-=smy*es*0.05;
+      eyeIris.material.rotation=-t*0.25;
+      var eo=introOp*(0.85+0.15*Math.sin(t*2.3));
+      eyeRays.material.opacity=eo*0.8; eyeLid.material.opacity=eo; eyeIris.material.opacity=eo*(lidOpen>0.3?1:lidOpen/0.3);
 
       // Hover target: pointer pick, else keyboard focus
       if(activated&&!flying){
