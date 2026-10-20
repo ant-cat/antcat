@@ -362,28 +362,12 @@ IN</span>
 
     // ---------- Focal eye: the desert eye sculpture, rebuilt as a hologram at the TV ----------
     var TAU=Math.PI*2;
-    function ellPt(a,r,sx,sy){ return [Math.cos(a)*r*sx, Math.sin(a)*r*sy]; }
     function eyeCanvas(part){
       var S=512, c=document.createElement('canvas'); c.width=c.height=S;
       var x=c.getContext('2d'); x.translate(S/2,S/2);
       x.lineJoin='round'; x.lineCap='round';
       x.shadowColor='rgba(80,225,255,1)'; x.shadowBlur=16;
-      if(part==='rays'){
-        // Flame petals around an oval, like the sun rays on the sculpture
-        var n=18, rIn=138, rOut=196;
-        x.beginPath();
-        for(var i=0;i<n;i++){
-          var a=i/n*TAU, am=(i+0.5)/n*TAU, a2=(i+1)/n*TAU;
-          var p0=ellPt(a,rIn,1.3,0.82), tip=ellPt(am+0.2,rOut,1.25,0.98), p1=ellPt(a2,rIn,1.3,0.82);
-          var c0=ellPt(am-0.1,(rIn+rOut)*0.52,1.3,0.9), c1=ellPt(a2+0.06,(rIn+rOut)*0.5,1.3,0.88);
-          if(i===0) x.moveTo(p0[0],p0[1]);
-          x.quadraticCurveTo(c0[0],c0[1],tip[0],tip[1]);
-          x.quadraticCurveTo(c1[0],c1[1],p1[0],p1[1]);
-        }
-        x.closePath();
-        x.fillStyle='rgba(60,190,255,0.12)'; x.fill();
-        x.strokeStyle='rgba(150,235,255,0.95)'; x.lineWidth=5; x.stroke();
-      } else if(part==='lid'){
+      if(part==='lid'){
         // Almond eye shape
         var w=168, h=84;
         x.beginPath(); x.moveTo(-w,0);
@@ -410,7 +394,58 @@ IN</span>
       var sp=new T.Sprite(new T.SpriteMaterial({map:eyeCanvas(part),transparent:true,opacity:0,blending:T.AdditiveBlending,depthWrite:false,depthTest:false,fog:false}));
       sp.renderOrder=60; scene.add(sp); return sp;
     }
-    var eyeRays=eyeSprite('rays'), eyeLid=eyeSprite('lid'), eyeIris=eyeSprite('iris');
+    var eyeLid=eyeSprite('lid'), eyeIris=eyeSprite('iris');
+
+    // Sun rays: separate flame tongues around the eye, like the sculpture.
+    // Redrawn every other frame so each flame sways and flickers on its own.
+    var RAYS_PX=384, raysCanvas=document.createElement('canvas');
+    raysCanvas.width=raysCanvas.height=RAYS_PX;
+    var raysCtx=raysCanvas.getContext('2d');
+    var raysTex=new T.CanvasTexture(raysCanvas); raysTex.minFilter=T.LinearFilter; raysTex.generateMipmaps=false;
+    var eyeRays=new T.Sprite(new T.SpriteMaterial({map:raysTex,transparent:true,opacity:0,blending:T.AdditiveBlending,depthWrite:false,depthTest:false,fog:false}));
+    eyeRays.renderOrder=59; scene.add(eyeRays);
+    var RAY_N=17, raySeeds=[];
+    for(var ri=0;ri<RAY_N;ri++) raySeeds.push({ph:Math.random()*TAU, sp:1.6+Math.random()*1.2, len:0.9+Math.random()*0.2});
+    function flamePath(x,bx,by,dx,dy,len,hw,wave,bend){
+      // Flame tongue along direction (dx,dy): wide at the base, wavy edges, curled tip
+      var nx=-dy, ny=dx, SEG=14, L=[], R=[];
+      for(var k=0;k<=SEG;k++){
+        var u=k/SEG;
+        var off=wave*Math.sin(u*Math.PI*1.7)*u + bend*u*u;
+        var w=hw*Math.pow(1-u,0.75);
+        var cx=bx+dx*len*u+nx*off, cy=by+dy*len*u+ny*off;
+        L.push([cx+nx*w,cy+ny*w]); R.push([cx-nx*w,cy-ny*w]);
+      }
+      x.moveTo(L[0][0],L[0][1]);
+      for(var a=1;a<L.length;a++) x.lineTo(L[a][0],L[a][1]);
+      for(var b=R.length-1;b>=0;b--) x.lineTo(R[b][0],R[b][1]);
+      x.closePath();
+    }
+    var lastRaysDraw=-1;
+    function drawRays(t){
+      var x=raysCtx, S=RAYS_PX/512;
+      x.setTransform(1,0,0,1,0,0); x.clearRect(0,0,RAYS_PX,RAYS_PX);
+      x.setTransform(S,0,0,S,RAYS_PX/2,RAYS_PX/2);
+      x.lineJoin='round'; x.lineCap='round';
+      x.beginPath();
+      for(var i=0;i<RAY_N;i++){
+        var sd=raySeeds[i], a=i/RAY_N*TAU+0.09;
+        var bx=Math.cos(a)*166, by=Math.sin(a)*96;          // base sits on an oval around the eye
+        var ox=Math.cos(a)/166, oy=Math.sin(a)/96, on=Math.sqrt(ox*ox+oy*oy);
+        var dx=ox/on, dy=oy/on;                              // outward normal of the oval
+        var ph=t*sd.sp+sd.ph;
+        var len=80*sd.len*(1+0.1*Math.sin(ph*1.3));
+        var wave=9+4*Math.sin(ph*0.7);
+        var bend=12*Math.sin(ph*0.5+i);
+        flamePath(x,bx,by,dx,dy,len,24,wave*Math.sin(ph),bend);
+      }
+      x.fillStyle='rgba(60,190,255,0.12)'; x.fill();
+      x.strokeStyle='rgba(60,190,255,0.16)'; x.lineWidth=14; x.stroke();
+      x.strokeStyle='rgba(110,220,255,0.35)'; x.lineWidth=7; x.stroke();
+      x.strokeStyle='rgba(200,245,255,0.95)'; x.lineWidth=3; x.stroke();
+      raysTex.needsUpdate=true;
+    }
+    drawRays(0);
     var EYE_SIZE=2.9, nextBlink=3.5, blinkStart=-1;
     var _yAxis=new T.Vector3(0,1,0);
 
@@ -804,7 +839,7 @@ IN</span>
       var eyeWide=1+0.1*anyHot, es=EYE_SIZE*(1+0.03*Math.sin(t*1.7));
       [eyeRays,eyeLid,eyeIris].forEach(function(sp){ sp.position.copy(tvWorld); });
       eyeRays.scale.set(es,es,1);
-      eyeRays.material.rotation=t*0.08;
+      if(introOp>0 && t-lastRaysDraw>1/30){ drawRays(t); lastRaysDraw=t; }
       eyeLid.scale.set(es*eyeWide, es*eyeWide*lidOpen, 1);
       var irisS=es*(1-0.08*anyHot);
       eyeIris.scale.set(irisS, irisS*lidOpen, 1);
