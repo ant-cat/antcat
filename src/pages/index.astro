@@ -366,27 +366,27 @@ IN</span>
       var S=512, c=document.createElement('canvas'); c.width=c.height=S;
       var x=c.getContext('2d'); x.translate(S/2,S/2);
       x.lineJoin='round'; x.lineCap='round';
-      x.shadowColor='rgba(80,225,255,1)'; x.shadowBlur=16;
+      x.shadowColor='rgba(80,225,255,0.7)'; x.shadowBlur=10;
       if(part==='lid'){
         // Almond eye shape
         var w=168, h=84;
         x.beginPath(); x.moveTo(-w,0);
         x.quadraticCurveTo(0,-h*2,w,0); x.quadraticCurveTo(0,h*2,-w,0); x.closePath();
-        x.fillStyle='rgba(170,240,255,0.16)'; x.fill();
-        x.strokeStyle='rgba(225,252,255,1)'; x.lineWidth=6; x.stroke();
+        x.fillStyle='rgba(170,240,255,0.06)'; x.fill();
+        x.strokeStyle='rgba(225,252,255,0.8)'; x.lineWidth=2.2; x.stroke();
       } else {
         // Spiral iris with a bright pupil
         x.beginPath(); x.arc(0,0,70,0,TAU);
-        x.fillStyle='rgba(30,150,255,0.28)'; x.fill();
-        x.strokeStyle='rgba(170,240,255,1)'; x.lineWidth=5; x.stroke();
+        x.fillStyle='rgba(30,150,255,0.12)'; x.fill();
+        x.strokeStyle='rgba(170,240,255,0.75)'; x.lineWidth=2; x.stroke();
         x.beginPath();
         for(var k=0;k<=360;k++){
           var tt=k/360, ang=tt*TAU*3.2, rr=14+tt*50;
           var px=Math.cos(ang)*rr, py=Math.sin(ang)*rr;
           if(k===0) x.moveTo(px,py); else x.lineTo(px,py);
         }
-        x.strokeStyle='rgba(120,220,255,0.9)'; x.lineWidth=3.5; x.stroke();
-        x.beginPath(); x.arc(0,0,13,0,TAU); x.fillStyle='rgba(240,255,255,1)'; x.fill();
+        x.strokeStyle='rgba(120,220,255,0.6)'; x.lineWidth=1.4; x.stroke();
+        x.beginPath(); x.arc(0,0,9,0,TAU); x.fillStyle='rgba(240,255,255,0.85)'; x.fill();
       }
       var tx=new T.CanvasTexture(c); tx.minFilter=T.LinearFilter; tx.generateMipmaps=false; return tx;
     }
@@ -439,10 +439,10 @@ IN</span>
         var bend=12*Math.sin(ph*0.5+i);
         flamePath(x,bx,by,dx,dy,len,24,wave*Math.sin(ph),bend);
       }
-      x.fillStyle='rgba(60,190,255,0.12)'; x.fill();
-      x.strokeStyle='rgba(60,190,255,0.16)'; x.lineWidth=14; x.stroke();
-      x.strokeStyle='rgba(110,220,255,0.35)'; x.lineWidth=7; x.stroke();
-      x.strokeStyle='rgba(200,245,255,0.95)'; x.lineWidth=3; x.stroke();
+      x.fillStyle='rgba(60,190,255,0.05)'; x.fill();
+      x.strokeStyle='rgba(60,190,255,0.08)'; x.lineWidth=9; x.stroke();
+      x.strokeStyle='rgba(110,220,255,0.18)'; x.lineWidth=4; x.stroke();
+      x.strokeStyle='rgba(200,245,255,0.7)'; x.lineWidth=1.6; x.stroke();
       raysTex.needsUpdate=true;
     }
     drawRays(0);
@@ -846,7 +846,7 @@ IN</span>
       eyeIris.position.x+=smx*es*0.11; eyeIris.position.y-=smy*es*0.05;
       eyeIris.material.rotation=-t*0.25;
       var eo=introOp*(0.85+0.15*Math.sin(t*2.3));
-      eyeRays.material.opacity=eo*0.8; eyeLid.material.opacity=eo; eyeIris.material.opacity=eo*(lidOpen>0.3?1:lidOpen/0.3);
+      eyeRays.material.opacity=eo*0.75; eyeLid.material.opacity=eo; eyeIris.material.opacity=eo*(lidOpen>0.3?1:lidOpen/0.3);
 
       // Hover target: pointer pick, else keyboard focus
       if(activated&&!flying){
