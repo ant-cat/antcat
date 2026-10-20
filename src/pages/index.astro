@@ -22,19 +22,6 @@
     }
     #raw-photo.fade-out { opacity: 0; pointer-events: none; }
 
-    /* Deep blue glow on the two eye sculptures in the photo (before Tune In).
-       Each is a cutout of the sculpture laid exactly over the photo, so the glow
-       hugs the flame rays; pulsing its opacity pulses only the glow. */
-    .eye-glow {
-      position: fixed; z-index: 2; pointer-events: none;
-      filter: drop-shadow(0 0 2px rgba(40,90,255,0.95)) drop-shadow(0 0 8px rgba(20,60,230,0.9)) drop-shadow(0 0 20px rgba(10,30,190,0.7));
-      animation: eyeGlow 3.6s ease-in-out infinite;
-      transition: opacity 1.2s ease;
-    }
-    .eye-glow.b { animation-delay: -1.7s; }
-    .eye-glow.off { opacity: 0 !important; animation: none; }
-    @keyframes eyeGlow { 0%, 100% { opacity: 0.55; } 50% { opacity: 1; } }
-
     /* Three.js canvas */
     #c { display: block; width: 100%; height: 100%; position: fixed; inset: 0; z-index: 0; touch-action: none; }
 
@@ -164,8 +151,6 @@
     <source srcset="/images/hero.webp" type="image/webp" />
     <img id="raw-photo" src="/images/hero.png" alt="" fetchpriority="high" />
   </picture>
-  <img class="eye-glow" id="eye-glow-a" src="/images/eyes/eye-a.webp" alt="" aria-hidden="true" />
-  <img class="eye-glow b" id="eye-glow-b" src="/images/eyes/eye-b.webp" alt="" aria-hidden="true" />
   <canvas id="c"></canvas>
   <nav id="holo-nav" aria-label="Main"></nav>
   <canvas id="beam-canvas"></canvas>
@@ -653,18 +638,7 @@ IN</span>
 
     // ---------- "Tune in" ----------
     var watchEl=document.getElementById('watch-me');
-    function positionWatchMe(){ var tv=tvPos(); watchEl.style.left=tv.x+'px'; watchEl.style.top=tv.y+'px'; positionEyeGlows(); }
-    // Eye sculpture cutouts: their box in photo pixels (x, y, width, height)
-    var EYE_GLOWS=[{id:'eye-glow-a',x:1574,y:22,w:130,h:120},{id:'eye-glow-b',x:1722,y:82,w:100,h:98}];
-    function positionEyeGlows(){
-      EYE_GLOWS.forEach(function(e){
-        var el=document.getElementById(e.id); if(!el) return;
-        var p=photoPoint(e.x,e.y), w=e.w*p.scale, h=e.h*p.scale;
-        el.style.left=p.x+'px'; el.style.top=p.y+'px';
-        el.style.width=w+'px'; el.style.height=h+'px';
-        el.style.display=(p.x+w<0||p.x>window.innerWidth||p.y+h<0)?'none':'block';
-      });
-    }
+    function positionWatchMe(){ var tv=tvPos(); watchEl.style.left=tv.x+'px'; watchEl.style.top=tv.y+'px'; }
     positionWatchMe();
 
     watchEl.addEventListener('click',function(ev){
@@ -677,7 +651,6 @@ IN</span>
       watchEl.classList.add('hidden');
       document.getElementById('bottom-brand').style.opacity='0';
       document.getElementById('raw-photo').classList.add('fade-out');
-      EYE_GLOWS.forEach(function(e){ var el=document.getElementById(e.id); if(el) el.classList.add('off'); });
       document.getElementById('beam-canvas').classList.add('visible');
       document.getElementById('ui').classList.add('visible');
     });
