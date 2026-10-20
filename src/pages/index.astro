@@ -801,7 +801,7 @@ IN</span>
       if(activated){ if(!activatedAt) activatedAt=t; sinceAct=t-activatedAt; }
       // Emergence after Tune In: each piece grows out of the TV on its own beat
       function emerge(delay,dur){ if(!activated) return 0; var p=clamp01((sinceAct-delay)/dur); return 1-Math.pow(1-p,3); }
-      var eEye=emerge(0,0.6), eCone=emerge(0.1,0.9), eCanopy=emerge(0.3,1.6), eTitle=emerge(0.7,1.2);
+      var eEye=emerge(0,0.45), eCone=emerge(0.07,0.65), eCanopy=emerge(0.2,1.15), eTitle=emerge(0.5,0.85);
 
       // Canopy + title + dunes
       cGroup.rotation.y=t*0.045+smx*0.32; cGroup.rotation.x=-smy*0.20;
@@ -872,7 +872,7 @@ IN</span>
         var h=w.hover;
         var hot=h>0.35;
         // Each word shoots out of the TV along its own ray, one after another
-        var eW=emerge(0.35+0.14*wi,1.1);
+        var eW=emerge(0.25+0.1*wi,0.8);
         var vis=activated?clamp01(eW*2.2)*(flying&&flying.wi!==wi?Math.max(0,1-flying.e*1.6):1):0;
 
         // Front cap position with parallax drift (deeper nodes drift less)
