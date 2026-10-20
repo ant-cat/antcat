@@ -584,7 +584,7 @@ IN</span>
         var segs=charStrokeWorld[ci]; if(!segs||!segs.length) return;
         var eff=introOp*elemPulse(ci,t);
         segs.forEach(function(s){
-          var p=w2s(tGroup.position.x+s.x1,tGroup.position.y+s.y1,tGroup.position.z);
+          var ts=tGroup.scale.x, p=w2s(tGroup.position.x+s.x1*ts,tGroup.position.y+s.y1*ts,tGroup.position.z);
           volBeam(tv,p.x,p.y,eff*0.22,255,180,60);
         });
       });
@@ -797,31 +797,37 @@ IN</span>
       camera.updateMatrixWorld();
       if(flying) tvWorld.copy(flying.tv); else unprojectTV(tvWorld);
 
+      var introOp=0,introFade=0,sinceAct=0;
+      if(activated){ if(!activatedAt) activatedAt=t; sinceAct=t-activatedAt; }
+      // Emergence after Tune In: each piece grows out of the TV on its own beat
+      function emerge(delay,dur){ if(!activated) return 0; var p=clamp01((sinceAct-delay)/dur); return 1-Math.pow(1-p,3); }
+      var eEye=emerge(0,0.6), eCone=emerge(0.1,0.9), eCanopy=emerge(0.3,1.6), eTitle=emerge(0.7,1.2);
+
       // Canopy + title + dunes
       cGroup.rotation.y=t*0.045+smx*0.32; cGroup.rotation.x=-smy*0.20;
-      tGroup.position.y=titleY+Math.sin(t*0.4)*0.06;
+      cGroup.scale.setScalar(0.05+0.95*eCanopy);
+      cGroup.position.set(lerp(tvWorld.x,0,eCanopy), lerp(tvWorld.y,-2,eCanopy), lerp(tvWorld.z,0,eCanopy));
+      tGroup.scale.setScalar(0.06+0.94*eTitle);
+      tGroup.position.set(lerp(tvWorld.x,0,eTitle), lerp(tvWorld.y,titleY+Math.sin(t*0.4)*0.06,eTitle), lerp(tvWorld.z,0,eTitle));
       updateTerrain(t);
 
-      var introOp=0,introFade=0;
       if(activated){
-        if(!activatedAt) activatedAt=t;
-        var sinceAct=t-activatedAt;
         introFade=Math.min(1.0,sinceAct/INTRO_DUR);
         introOp=Math.min(1.0,sinceAct/1.0);
         if(bgMesh) bgMesh.material.uniforms.uOpacity.value=Math.min(1.0,sinceAct/1.2);
       }
-      glyphMats.forEach(function(obj){obj.mat.opacity=activated?obj.base*introFade*elemPulse(obj.elemIdx,t):0;});
+      glyphMats.forEach(function(obj){obj.mat.opacity=activated?obj.base*clamp01(eTitle*1.6)*elemPulse(obj.elemIdx,t):0;});
       terrMat.opacity=0.6*introFade;
-      canopyLines.material.opacity=(isPort?0.12:0.45);
-      canopyNodes.material.opacity=(isPort?0.3:1.0);
+      canopyLines.material.opacity=(isPort?0.12:0.45)*clamp01(eCanopy*1.4);
+      canopyNodes.material.opacity=(isPort?0.3:1.0)*clamp01(eCanopy*1.4);
 
       // Emitter cone aimed from the CRT glass toward the viewer
       _camBase.set(0,2,camZ);
       _seg.subVectors(_camBase,tvWorld); var camDist=_seg.length(); _segN.copy(_seg).normalize();
       emitter.position.copy(tvWorld);
       emitter.quaternion.setFromUnitVectors(_yAxis,_segN);
-      coneOuter.scale.set(1,camDist*0.62,1);
-      coneInner.scale.set(1,camDist*0.5,1);
+      coneOuter.scale.set(0.2+0.8*eCone,camDist*0.62*Math.max(0.001,eCone),0.2+0.8*eCone);
+      coneInner.scale.set(0.2+0.8*eCone,camDist*0.5*Math.max(0.001,eCone),0.2+0.8*eCone);
       var anyHot=0; words.forEach(function(w){ anyHot=Math.max(anyHot,w.hover); });
       [coneOuter,coneInner].forEach(function(cm){ cm.material.uniforms.uTime.value=t; cm.material.uniforms.uOpacity.value=introOp; cm.material.uniforms.uHot.value=anyHot; });
       screenGlow.position.copy(tvWorld);
@@ -836,7 +842,7 @@ IN</span>
         if(bp>=1){ blinkStart=-1; nextBlink=t+3+Math.random()*4; }
         else lidOpen=1-0.92*Math.sin(Math.PI*bp);
       }
-      var eyeWide=1+0.1*anyHot, es=EYE_SIZE*(1+0.03*Math.sin(t*1.7));
+      var eyeWide=1+0.1*anyHot, es=EYE_SIZE*(1+0.03*Math.sin(t*1.7))*Math.max(0.001,eEye*(1+0.12*Math.sin(Math.PI*eEye)));
       [eyeRays,eyeLid,eyeIris].forEach(function(sp){ sp.position.copy(tvWorld); });
       eyeRays.scale.set(es,es,1);
       if(introOp>0 && t-lastRaysDraw>1/30){ drawRays(t); lastRaysDraw=t; }
@@ -865,10 +871,13 @@ IN</span>
         w.hover+=(targetH-w.hover)*0.12;
         var h=w.hover;
         var hot=h>0.35;
-        var vis=activated?introFade*(flying&&flying.wi!==wi?Math.max(0,1-flying.e*1.6):1):0;
+        // Each word shoots out of the TV along its own ray, one after another
+        var eW=emerge(0.35+0.14*wi,1.1);
+        var vis=activated?clamp01(eW*2.2)*(flying&&flying.wi!==wi?Math.max(0,1-flying.e*1.6):1):0;
 
         // Front cap position with parallax drift (deeper nodes drift less)
         w.front.set(w.base.x+smx*0.35, w.base.y-smy*0.22+Math.sin(t*0.6+w.phase)*0.05, w.base.z);
+        w.front.set(lerp(tvWorld.x,w.front.x,eW), lerp(tvWorld.y,w.front.y,eW), lerp(tvWorld.z,w.front.z,eW));
         w.tiltX+=((-smy*0.22)-w.tiltX)*0.07;
         w.tiltY+=((smx*0.30)-w.tiltY)*0.07;
 
@@ -885,7 +894,7 @@ IN</span>
           if(s>0&&s<SLICES-1) u=clamp01(u+h*0.018*Math.sin(t*7.0-s*0.6));
           // slicePosition = frontPos + (tvScreenCenter - frontPos) * (1 - u)
           m.position.copy(w.cap).addScaledVector(_capPos.subVectors(tvWorld,w.cap),1-u);
-          var sc=(0.08+0.92*u)*sizeMul*(1+0.08*h);
+          var sc=(0.08+0.92*u)*sizeMul*(1+0.08*h)*(0.12+0.88*eW);
           m.scale.set(sc,sc,1);
           m.rotation.set(w.tiltX,w.tiltY,0);
           var isCap=(s===SLICES-1);
