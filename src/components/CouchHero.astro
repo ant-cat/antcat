@@ -5,9 +5,14 @@ interface Props {
 }
 const { subtitle = '' } = Astro.props;
 ---
+<!-- Start fetching the first pose of every character as early as possible -->
+<link rel="preload" as="image" href="/images/blue-shirt-animation/frames/frame_000.webp" fetchpriority="high" />
+<link rel="preload" as="image" href="/images/white-shirt-animation/frames/frame-000.webp" fetchpriority="high" />
+<link rel="preload" as="image" href="/images/purple-shirt-animation/frames/frame-000.webp" fetchpriority="high" />
+<link rel="preload" as="image" href="/images/yellow-shirt-animation/frames/frame-000.webp" fetchpriority="high" />
 <div class="ch-outer" id="ch-outer" data-subtitle={subtitle}>
   <div class="ch-sticky" id="ch-sticky">
-    <div class="ch-scene is-loading" id="ch-scene">
+    <div class="ch-scene is-loading chars-loading" id="ch-scene">
 
       <!-- Background -->
       <picture style="display:contents">
@@ -116,7 +121,7 @@ const { subtitle = '' } = Astro.props;
 /* Hold the background and characters back until all of them are ready, then fade in together */
 .ch-bg, .ch-canvas { transition: opacity 0.45s ease; }
 .ch-scene.is-loading .ch-bg,
-.ch-scene.is-loading .ch-canvas { opacity: 0; }
+.ch-scene.chars-loading .ch-canvas { opacity: 0; }
 
 /* ── TEXT OVERLAY (desktop) ── */
 .ch-content--overlay {
@@ -242,7 +247,7 @@ const { subtitle = '' } = Astro.props;
   /* Mobile autoplay config */
   var MOBILE_FPS        = 12;   // frames per second for looping chars
   var MOBILE_FLYOFF_DUR = 5200; // ms for blue shirt fly-off (once)
-  var MOBILE_FLYOFF_DELAY = 1400; // ms to hold the seated pose after the scene appears
+  var MOBILE_FLYOFF_DELAY = 2500; // ms to hold the seated pose after the scene appears
 
   var CHARS = [
     {
@@ -474,18 +479,12 @@ const { subtitle = '' } = Astro.props;
             // Blue shirt: fly-off once then hold
             if (!flyOffDone) {
               if (!flyOffStarted) {
-                // Wait until the scene is visible, give people a beat to see him seated,
-                // and make sure his frames are loaded so the flight plays smoothly.
+                // Wait until the characters are visible, then give people a beat to see him seated.
                 var sceneEl = document.getElementById('ch-scene');
-                var shown = !sceneEl || !sceneEl.classList.contains('is-loading');
+                var shown = !sceneEl || !sceneEl.classList.contains('chars-loading');
                 if (shown && !revealAt) revealAt = now;
-                var framesReady = true;
-                for (var fi = 0; fi <= ch.maxFrame; fi++) {
-                  var fimg = imgs[fi];
-                  if (!fimg || !fimg.complete || !fimg.naturalWidth) { framesReady = false; break; }
-                }
                 var waited = revealAt ? now - revealAt : 0;
-                if (!(revealAt && waited >= MOBILE_FLYOFF_DELAY && (framesReady || waited >= 6000))) {
+                if (!(revealAt && waited >= MOBILE_FLYOFF_DELAY)) {
                   requestAnimationFrame(loop); return;
                 }
                 flyOffStarted = true;
@@ -570,46 +569,50 @@ const { subtitle = '' } = Astro.props;
 
   /* ── FIRST PAINT: background + every character's first pose, all at once ── */
   // Each first pose is fetched right away (the rest of the frames still load later).
-  // The scene stays hidden until the background and all four poses are decoded,
-  // then everything fades in together. A timeout reveals it anyway if something stalls.
+  // The four characters only ever appear together: their canvases stay hidden until
+  // every first pose is decoded. The background waits for them too, unless that
+  // takes long, in which case the background shows on its own and the characters
+  // still arrive as one group.
   (function() {
     var scene = document.getElementById('ch-scene');
     if (!scene) return;
     var bg = scene.querySelector('.ch-bg');
-    var pending = CHARS.length + 1;
-    var revealed = false;
+    var charsLeft = CHARS.length, bgReady = false, charsShown = false;
     var firsts = {};
-    function reveal() {
-      if (revealed) return;
-      revealed = true;
+    function showBg() { scene.classList.remove('is-loading'); }
+    function showChars() {
+      if (charsShown) return;
+      charsShown = true;
       CHARS.forEach(function(ch) {
         var img = firsts[ch.id];
         if (img && img.complete && img.naturalWidth) {
           if (!loaded[ch.id][0] || !loaded[ch.id][0].naturalWidth) loaded[ch.id][0] = img;
-          if (currentFrames[ch.id] < 0) {
-            var ctx = contexts[ch.id];
-            if (ctx) { ctx.clearRect(0, 0, 768, 768); ctx.drawImage(img, 0, 0, 768, 768); currentFrames[ch.id] = 0; }
-          }
+          var ctx = contexts[ch.id];
+          if (ctx && currentFrames[ch.id] < 0) { ctx.clearRect(0, 0, 768, 768); ctx.drawImage(img, 0, 0, 768, 768); currentFrames[ch.id] = 0; }
         }
       });
-      scene.classList.remove('is-loading');
+      showBg();
+      scene.classList.remove('chars-loading');
     }
-    function done() { pending--; if (pending <= 0) reveal(); }
-    function whenDecoded(img) {
-      if (img.decode) img.decode().then(done, done); else done();
+    function charDone() { charsLeft--; if (charsLeft <= 0) showChars(); }
+    function whenDecoded(img, cb) {
+      if (img.decode) img.decode().then(cb, cb); else cb();
     }
     CHARS.forEach(function(ch) {
       var img = new Image();
       img.fetchPriority = 'high';
-      img.onload = function() { whenDecoded(img); };
-      img.onerror = done;
+      img.onload = function() { whenDecoded(img, charDone); };
+      img.onerror = charDone;
       img.src = ch.dir + (ch.frames ? ch.frames[0] : ch.prefix + '000.webp');
       firsts[ch.id] = img;
     });
-    if (bg && bg.complete && bg.naturalWidth) whenDecoded(bg);
-    else if (bg) { bg.addEventListener('load', function() { whenDecoded(bg); }); bg.addEventListener('error', done); }
-    else done();
-    setTimeout(reveal, 3000);
+    function bgDone() { bgReady = true; }
+    if (bg && bg.complete && bg.naturalWidth) whenDecoded(bg, bgDone);
+    else if (bg) { bg.addEventListener('load', function() { whenDecoded(bg, bgDone); }); bg.addEventListener('error', bgDone); }
+    // Slow connection: show the background after 3s; characters still come in together
+    setTimeout(showBg, 3000);
+    // Last resort if a character image never arrives
+    setTimeout(showChars, 10000);
   })();
 
   /* ── INIT ── */
@@ -643,7 +646,10 @@ const { subtitle = '' } = Astro.props;
             }
           }
           var chCapture = ch;
-          if (document.readyState === 'complete') {
+          if (ch.flyOff) {
+            // The fly-away starts 2.5s after the scene appears, so fetch its frames right away
+            loadRestFrames(chCapture);
+          } else if (document.readyState === 'complete') {
             setTimeout(function() { loadRestFrames(chCapture); }, 500);
           } else {
             window.addEventListener('load', function() {
