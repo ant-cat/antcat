@@ -240,8 +240,9 @@ const { subtitle = '' } = Astro.props;
   var ANIM_END   = 0.68;
 
   /* Mobile autoplay config */
-  var MOBILE_FPS        = 18;   // frames per second for looping chars
-  var MOBILE_FLYOFF_DUR = 2200; // ms for blue shirt fly-off (once)
+  var MOBILE_FPS        = 12;   // frames per second for looping chars
+  var MOBILE_FLYOFF_DUR = 5200; // ms for blue shirt fly-off (once)
+  var MOBILE_FLYOFF_DELAY = 1400; // ms to hold the seated pose after the scene appears
 
   var CHARS = [
     {
@@ -453,6 +454,7 @@ const { subtitle = '' } = Astro.props;
   var flyOffDone    = false;
   var flyOffStart   = null;
 
+  var revealAt = 0;
   function startMobileCharLoop(ch) {
     var frameCounter = 0;
     var lastTick     = null;
@@ -472,6 +474,20 @@ const { subtitle = '' } = Astro.props;
             // Blue shirt: fly-off once then hold
             if (!flyOffDone) {
               if (!flyOffStarted) {
+                // Wait until the scene is visible, give people a beat to see him seated,
+                // and make sure his frames are loaded so the flight plays smoothly.
+                var sceneEl = document.getElementById('ch-scene');
+                var shown = !sceneEl || !sceneEl.classList.contains('is-loading');
+                if (shown && !revealAt) revealAt = now;
+                var framesReady = true;
+                for (var fi = 0; fi <= ch.maxFrame; fi++) {
+                  var fimg = imgs[fi];
+                  if (!fimg || !fimg.complete || !fimg.naturalWidth) { framesReady = false; break; }
+                }
+                var waited = revealAt ? now - revealAt : 0;
+                if (!(revealAt && waited >= MOBILE_FLYOFF_DELAY && (framesReady || waited >= 6000))) {
+                  requestAnimationFrame(loop); return;
+                }
                 flyOffStarted = true;
                 flyOffStart   = now;
               }
