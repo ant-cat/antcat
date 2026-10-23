@@ -257,6 +257,11 @@ a:hover { text-decoration: underline; }
 .article-body ul, .article-body ol { padding-left: 1.4em; margin-bottom: 1.4em; }
 .article-body li { margin-bottom: 0.3em; }
 .article-body hr { border: none; border-top: 1px solid var(--border); margin: 2em 0; }
+.article-body table { width: 100%; border-collapse: collapse; margin: 1.4em 0 1.8em; font-size: 0.9rem; line-height: 1.5; }
+.article-body th { text-align: left; font-family: var(--mono); font-size: 0.68rem; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text3); padding: 0 12px 8px 0; border-bottom: 1px solid var(--border); }
+.article-body td { padding: 10px 12px 10px 0; border-bottom: 1px solid var(--border); vertical-align: top; }
+.article-body td:first-child { color: var(--text); font-weight: 600; white-space: nowrap; }
+@media (max-width: 560px) { .article-body td:first-child { white-space: normal; } }
 
 /* Images & embeds: break out of the 740px text column to the full 860px page width (Medium-style) */
 .article-body img { display: block; max-width: 100%; height: auto; border-radius: 6px; }
