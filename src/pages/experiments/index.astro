@@ -5,7 +5,7 @@ const experiments = [
   {
     id: 'EXP-000',
     title: 'BeAmaze',
-    status: 'building',
+    status: 'learned',
     color: 'teal',
     date: 'Apr 2026',
     description: 'Pick any skill and get a plan you can follow. AI builds the lessons, pairs each one with a YouTube video and a short quiz, and a dashboard tracks your progress, streak and scores. My very first experiment with Claude.',
@@ -85,8 +85,8 @@ const accentMap: Record<string, string> = {
             <div style="font-family:var(--mono);font-size:0.62rem;color:var(--text3);letter-spacing:0.08em;margin-bottom:8px">{exp.id}</div>
             <div style="font-family:var(--serif);font-size:1.25rem;font-weight:400;color:var(--text);line-height:1.2">{exp.title}</div>
           </div>
-          <span style={`font-family:var(--mono);font-size:0.6rem;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;padding:3px 8px;border-radius:20px;white-space:nowrap;flex-shrink:0;background:var(--accent-lt);color:var(--accent)`}>
-            {exp.status === 'live' ? '● Live' : '○ Building'}
+          <span style={`font-family:var(--mono);font-size:0.6rem;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;padding:3px 8px;border-radius:20px;white-space:nowrap;flex-shrink:0;${exp.status === 'learned' ? 'background:var(--bg2);color:var(--text2)' : 'background:var(--accent-lt);color:var(--accent)'}`}>
+            {exp.status === 'live' ? '● Live' : exp.status === 'learned' ? '✓ Learned' : '○ Building'}
           </span>
         </div>
 
