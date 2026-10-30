@@ -23,6 +23,10 @@
   height: clamp(252px, 40vw, 750px); /* 40% taller */
   overflow: hidden;
   margin-top: 64px;
+  /* Feather the scene into the page at the top and bottom, so it blends with
+     whatever tint the page has instead of meeting it at a hard edge */
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 22%, #000 78%, transparent 100%);
+          mask-image: linear-gradient(to bottom, transparent 0%, #000 22%, #000 78%, transparent 100%);
 }
 
 .cf-bg {
@@ -42,14 +46,8 @@
   pointer-events: none;
 }
 
-/* Soft fade from page background into the scene */
-.cf-fade-top {
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 48px;
-  background: linear-gradient(to bottom, var(--bg, #0d1117), transparent);
-  pointer-events: none;
-}
+/* Fades now come from the mask on .cf-outer */
+.cf-fade-top { display: none; }
 
 /* Full-page overlay canvas for the tumble phase */
 .cf-overlay {
