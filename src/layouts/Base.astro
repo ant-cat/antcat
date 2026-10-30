@@ -28,7 +28,7 @@ const navLinks = [
 <body>
   <div id="reading-progress"></div>
   <header class="site-header">
-    <a href="/" class="site-brand">ant.cat <em>lab</em></a>
+    <a href="/" class="site-brand">ant.cat</a>
     <nav class="site-nav">
       {navLinks.map((l) => <a href={l.href} class={l.active ? 'active' : ''}>{l.label}</a>)}
     </nav>
@@ -37,7 +37,7 @@ const navLinks = [
   <!-- Slim bar that slides in once the header (or couch hero) is scrolled past -->
   <div class="nav-bar" id="nav-bar" inert>
     <div class="nav-bar-inner">
-      <a href="/" class="site-brand">ant.cat <em>lab</em></a>
+      <a href="/" class="site-brand">ant.cat</a>
       <nav class="site-nav" aria-label="Sections">
         {navLinks.map((l) => <a href={l.href} class={l.active ? 'active' : ''}>{l.label}</a>)}
       </nav>
