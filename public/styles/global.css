@@ -35,9 +35,15 @@
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-html { scroll-behavior: smooth; }
+html {
+  scroll-behavior: smooth;
+  background: var(--bg);
+  /* Stop the page from being pulled far past the footer on iPhone (rubber-band overscroll) */
+  overscroll-behavior-y: none;
+}
 
 body {
+  overscroll-behavior-y: none;
   font-family: var(--sans);
   font-size: 16px;
   line-height: 1.6;
@@ -389,7 +395,7 @@ body { overflow-x: clip; }
 .site-footer {
   max-width: 860px;
   margin: 0 auto;
-  padding-block: 20px 40px;
+  padding-block: 20px max(32px, calc(env(safe-area-inset-bottom) + 16px));
   border-top: 1px solid var(--border);
   display: flex;
   justify-content: space-between;
