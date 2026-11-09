@@ -34,6 +34,82 @@ const cats = post.data.categories.filter((c: string) => c !== 'Uncategorized');
     <Content />
   </div>
 
+  <dialog class="lightbox" id="lightbox" aria-label="Image viewer">
+    <button type="button" class="lightbox-prev" aria-label="Previous image">&#8249;</button>
+    <figure class="lightbox-stage">
+      <img class="lightbox-img" alt="" />
+      <figcaption class="lightbox-meta"><span class="lightbox-count"></span><span class="lightbox-caption"></span></figcaption>
+    </figure>
+    <button type="button" class="lightbox-next" aria-label="Next image">&#8250;</button>
+    <button type="button" class="lightbox-close" aria-label="Close image viewer">&#215;</button>
+  </dialog>
+
+  <script is:inline>
+    (function() {
+      var box = document.getElementById('lightbox');
+      var strips = document.querySelectorAll('.article-body .filmstrip');
+      if (!box || !strips.length || !box.showModal) return;
+      var bigImg = box.querySelector('.lightbox-img');
+      var countEl = box.querySelector('.lightbox-count');
+      var capEl = box.querySelector('.lightbox-caption');
+      var group = [];
+      var index = 0;
+
+      function show(i) {
+        index = (i + group.length) % group.length;
+        var t = group[index];
+        bigImg.src = t.currentSrc || t.src;
+        bigImg.alt = t.alt;
+        capEl.textContent = t.alt;
+        countEl.textContent = group.length > 1 ? (index + 1) + ' / ' + group.length : '';
+      }
+
+      function open(imgs, i) {
+        group = imgs;
+        box.classList.toggle('is-single', imgs.length < 2);
+        show(i);
+        box.showModal();
+      }
+
+      strips.forEach(function(strip) {
+        var imgs = Array.prototype.slice.call(strip.querySelectorAll('img'));
+        imgs.forEach(function(img, i) {
+          img.setAttribute('tabindex', '0');
+          img.setAttribute('role', 'button');
+          img.setAttribute('aria-label', 'Open image ' + (i + 1) + ' of ' + imgs.length + ': ' + img.alt);
+          img.addEventListener('click', function() { open(imgs, i); });
+          img.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(imgs, i); }
+          });
+        });
+      });
+
+      box.querySelector('.lightbox-prev').addEventListener('click', function() { show(index - 1); });
+      box.querySelector('.lightbox-next').addEventListener('click', function() { show(index + 1); });
+      box.querySelector('.lightbox-close').addEventListener('click', function() { box.close(); });
+
+      box.addEventListener('keydown', function(e) {
+        if (e.key === 'ArrowLeft') show(index - 1);
+        if (e.key === 'ArrowRight') show(index + 1);
+      });
+
+      // Click on the dark area (not the image or a button) closes it
+      box.addEventListener('click', function(e) {
+        if (e.target === box || e.target.classList.contains('lightbox-stage')) box.close();
+      });
+
+      // Swipe left or right on phones
+      var startX = null;
+      box.addEventListener('touchstart', function(e) { startX = e.touches[0].clientX; }, { passive: true });
+      box.addEventListener('touchend', function(e) {
+        if (startX === null || group.length < 2) return;
+        var dx = e.changedTouches[0].clientX - startX;
+        if (Math.abs(dx) > 50) show(dx < 0 ? index + 1 : index - 1);
+        startX = null;
+      });
+    })();
+  </script>
+
   {isDev && (
     <>
       <div id="edit-bar">

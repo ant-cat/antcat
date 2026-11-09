@@ -417,3 +417,113 @@ body { overflow-x: clip; }
   .post-item { grid-template-columns: 1fr; gap: 2px; }
   .post-date { font-size: 0.65rem; }
 }
+
+/* ── FILMSTRIP + LIGHTBOX ──
+   In a post, wrap a group of images (one per line, no blank lines between them) like this:
+     <div class="filmstrip">
+
+     ![Alt one](/images/post/01.webp)
+     ![Alt two](/images/post/02.webp)
+     *Optional caption*
+
+     </div>
+   Thumbnails sit in a row; tapping one opens the lightbox (script in src/pages/writing/[slug].astro). */
+.article-body .filmstrip > p {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 2.4em 0;
+}
+.article-body .filmstrip > p > img {
+  flex: 1 1 0;
+  min-width: 0;
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  cursor: zoom-in;
+  transition: transform 0.15s ease, border-color 0.15s ease;
+}
+.article-body .filmstrip > p > img:hover { transform: translateY(-2px); border-color: var(--accent); }
+.article-body .filmstrip > p > img:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.article-body .filmstrip > p > em { flex-basis: 100%; grid-column: 1 / -1; margin-top: 0.25em; }
+
+.lightbox {
+  width: 100vw;
+  height: 100dvh;
+  max-width: none;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: rgba(8, 10, 16, 0.97);
+  color: #EDE9E0;
+}
+.lightbox::backdrop { background: transparent; }
+.lightbox[open] { display: flex; animation: lb-fade 0.18s ease; }
+.lightbox-stage {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 56px 16px 24px;
+}
+.lightbox-img {
+  display: block;
+  max-width: min(1200px, 100%);
+  max-height: calc(100dvh - 150px);
+  width: auto;
+  height: auto;
+  border-radius: 6px;
+  background: #fff;
+}
+.lightbox-meta {
+  max-width: 720px;
+  text-align: center;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: #9AA3B8;
+}
+.lightbox-count { font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.08em; margin-right: 10px; color: #EDE9E0; }
+.lightbox button {
+  appearance: none;
+  border: 1px solid rgba(237, 233, 224, 0.25);
+  background: rgba(237, 233, 224, 0.08);
+  color: #EDE9E0;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  font-size: 1.3rem;
+  line-height: 1;
+  cursor: pointer;
+  align-self: center;
+  flex: 0 0 auto;
+}
+.lightbox button:hover { background: rgba(237, 233, 224, 0.18); }
+.lightbox button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.lightbox-prev { margin-left: 16px; }
+.lightbox-next { margin-right: 16px; }
+.lightbox-close { position: absolute; top: 12px; right: 12px; }
+.lightbox.is-single .lightbox-prev,
+.lightbox.is-single .lightbox-next { visibility: hidden; }
+@keyframes lb-fade { from { opacity: 0; } to { opacity: 1; } }
+
+@media (max-width: 560px) {
+  .article-body .filmstrip > p { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+  .lightbox-prev, .lightbox-next { position: absolute; bottom: 16px; }
+  .lightbox-prev { left: 16px; margin: 0; }
+  .lightbox-next { right: 16px; margin: 0; }
+  .lightbox-stage { padding: 56px 12px 76px; }
+  .lightbox-img { max-height: calc(100dvh - 200px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lightbox[open] { animation: none; }
+  .article-body .filmstrip > p > img { transition: none; }
+  .article-body .filmstrip > p > img:hover { transform: none; }
+}
