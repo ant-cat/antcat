@@ -2,6 +2,31 @@
 // ant.cat: hero v11. Raw photo first, "Tune in" activates the holo-UI.
 // v11: CRT emitter cone, desert wireframe dunes, 20-layer word extrusions that
 // retrace into the TV screen, hover physics, burst into the TV on click.
+// v12: tune out (Esc or the eye), edge-safe hover, reduced motion, pointer-aware
+// eye and beams, channel OSD with static, hover teasers pulled from the site.
+import { getCollection } from 'astro:content';
+import fs from 'node:fs';
+
+const readSrc = (p: string) => { try { return fs.readFileSync(p, 'utf8'); } catch (e) { return ''; } };
+const plain = (t: string) => t.replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
+
+// Teasers shown under each menu word. Each one is read from the page it points to.
+const posts = (await getCollection('blog')).sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+const expSrc = readSrc('src/pages/experiments/index.astro');
+const expAll = [...expSrc.matchAll(/id: .(EXP-\d+).,\s*title: .([^\n]+?).,\s*status: .(\w+)./g)];
+const lastExp = expAll[expAll.length - 1];
+const nowSrc = readSrc('src/pages/now.astro');
+const nowPara = nowSrc.match(/<p>([\s\S]*?)<\/p>/);
+const nowLine = nowPara ? plain(nowPara[1]).split(/\.\.\.|[.!?:] /)[0] : '';
+const nowUpdated = (nowSrc.match(/const updated = "([^"]+)"/) || [])[1];
+const aboutTitle = (readSrc('src/pages/about.astro').match(/<h1 class="page-title">([\s\S]*?)<\/h1>/) || [])[1];
+
+const teasers = {
+  '/writing': posts.length ? 'Latest: ' + posts[0].data.title : 'Twenty years of posts',
+  '/experiments': lastExp ? lastExp[1] + ': ' + lastExp[2] + ' (' + lastExp[3] + ')' : 'Small things, built in public',
+  '/about': aboutTitle ? plain(aboutTitle) : 'Who is behind this',
+  '/now': nowLine || (nowUpdated ? 'Updated ' + nowUpdated : 'What I am up to'),
+};
 ---
 <!doctype html>
 <html lang="en">
@@ -86,7 +111,13 @@
       font-family: 'Courier New', monospace;
       font-size: clamp(0.75rem,1.5vw,1rem);
       letter-spacing: 0.25em; color: rgba(180,220,255,0.55);
-      text-transform: uppercase; margin-bottom: 2.5rem;
+      text-transform: uppercase; margin-bottom: 0.55rem;
+    }
+    #tune-hint {
+      font-family: 'Courier New', monospace;
+      font-size: clamp(0.56rem,1vw,0.7rem);
+      letter-spacing: 0.18em; text-transform: uppercase;
+      color: rgba(180,220,255,0.42); margin-bottom: 2rem;
     }
     #brand em { font-style: normal; color: rgba(0,255,200,0.6); }
 
@@ -122,6 +153,43 @@
       white-space: nowrap;
     }
 
+    /* Teasers: one line under each word, placed every frame from the 3D word position */
+    #tease-layer { position: fixed; inset: 0; z-index: 9; pointer-events: none; overflow: hidden; }
+    .tease {
+      position: absolute; left: 0; top: 0; opacity: 0;
+      font-family: 'Courier New', monospace;
+      font-size: clamp(0.62rem, 1.05vw, 0.8rem);
+      letter-spacing: 0.05em; line-height: 1.35; text-align: center;
+      color: rgba(200,242,255,0.95);
+      text-shadow: 0 0 8px rgba(0,190,255,0.75), 0 1px 3px rgba(0,0,0,0.95), 0 0 2px rgba(0,0,0,0.9);
+      display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+      will-change: transform, opacity;
+    }
+    .tease.hot { color: #e2fff0; text-shadow: 0 0 8px rgba(60,255,160,0.8), 0 1px 3px rgba(0,0,0,0.95), 0 0 2px rgba(0,0,0,0.9); }
+
+    /* Channel readout (top right) and the static burst on a channel change */
+    #ch-osd {
+      position: fixed; z-index: 60; pointer-events: none;
+      top: max(4vh, env(safe-area-inset-top, 16px)); right: max(4vw, 20px);
+      font-family: 'Courier New', monospace; font-weight: 900;
+      font-size: clamp(1.1rem, 2.6vw, 1.9rem);
+      letter-spacing: 0.14em; text-align: right; text-transform: uppercase;
+      color: #b6ffb0;
+      text-shadow: 0 0 4px #b6ffb0, 0 0 14px rgba(80,255,80,0.9), 0 0 30px rgba(0,200,0,0.6);
+      opacity: 0; transition: opacity 0.18s ease;
+    }
+    #ch-osd.on { opacity: 1; }
+    #ch-osd small { display: block; font-size: 0.5em; letter-spacing: 0.2em; margin-top: 0.3em; }
+    #ch-static {
+      position: fixed; inset: 0; z-index: 55; width: 100%; height: 100%;
+      pointer-events: none; opacity: 0; image-rendering: pixelated; mix-blend-mode: screen;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      #watch-me { animation: none; }
+      #raw-photo { transition-duration: 0.4s; }
+    }
+
     /* Zoom transition layer */
     #zoom-layer { position: fixed; inset: 0; z-index: 50; pointer-events: none; overflow: hidden; opacity: 0; transition: opacity 0.05s; }
     #zoom-layer.active { pointer-events: all; opacity: 1; }
@@ -152,7 +220,8 @@
     <img id="raw-photo" src="/images/hero.png" alt="" fetchpriority="high" />
   </picture>
   <canvas id="c"></canvas>
-  <nav id="holo-nav" aria-label="Main"></nav>
+  <nav id="holo-nav" aria-label="Main" data-teasers={JSON.stringify(teasers)}></nav>
+  <div id="tease-layer" aria-hidden="true"></div>
   <canvas id="beam-canvas"></canvas>
   <span id="watch-me">TUNE
 IN</span>
@@ -162,7 +231,10 @@ IN</span>
   </div>
   <div id="ui">
     <div id="brand">ant.cat</div>
+    <div id="tune-hint">tap the eye to tune out</div>
   </div>
+  <div id="ch-osd" aria-hidden="true"><span id="ch-num"></span><small id="ch-name"></small></div>
+  <canvas id="ch-static" aria-hidden="true"></canvas>
   <div id="zoom-layer">
     <picture style="display:contents"><source id="zoom-photo-src" srcset="" type="image/webp" /><img id="zoom-photo" src="" data-webp="/images/hero.webp" data-src="/images/hero.png" alt="" /></picture>
     <picture style="display:contents"><source id="zoom-illus-src" srcset="" type="image/webp" /><img id="zoom-illustrated" src="" data-webp="/images/hero_couch_transition.webp" data-src="/images/hero_couch_transition.png" alt="" /></picture>
@@ -182,6 +254,13 @@ IN</span>
     var TV_Z = -6.0;            // depth of the CRT glass in world space
     var clamp01 = function(v){ return v < 0 ? 0 : (v > 1 ? 1 : v); };
     var lerp = function(a,b,k){ return a + (b - a) * k; };
+    // Reduced motion: hold the scene still and swap the big moves for fades
+    var rmq=window.matchMedia('(prefers-reduced-motion: reduce)'), reduce=rmq.matches;
+    var onRmq=function(e){ reduce=e.matches; };
+    if(rmq.addEventListener) rmq.addEventListener('change',onRmq); else if(rmq.addListener) rmq.addListener(onRmq);
+    var touchUI=window.matchMedia('(hover: none)').matches;
+    // Activation clock: runs forward while tuned in, rewinds on tune out
+    var actT=0, lastFrame=0;
 
     var renderer = new T.WebGLRenderer({ canvas: document.getElementById('c'), antialias: true, alpha: true });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
@@ -452,10 +531,11 @@ IN</span>
     // ---------- Navigation words: 20-layer letterform extrusions ----------
     var NAV_ITEMS=[
       // Positions come from layout(): an X around the TV, upper pair and lower pair
-      {label:'Writing',     href:'/writing',     upper:true},
-      {label:'About',       href:'/about',       upper:false},
-      {label:'Now',         href:'/now',         upper:false},
-      {label:'Experiments', href:'/experiments', upper:true},
+      // ch is the channel number shown in the corner readout (reading order on screen)
+      {label:'Writing',     href:'/writing',     upper:true,  ch:1},
+      {label:'About',       href:'/about',       upper:false, ch:3},
+      {label:'Now',         href:'/now',         upper:false, ch:4},
+      {label:'Experiments', href:'/experiments', upper:true,  ch:2},
     ];
     var FONT_PX=128, PAD=44;
     var FONT='900 '+FONT_PX+'px "Helvetica Neue", Helvetica, Arial, sans-serif';
@@ -492,7 +572,9 @@ IN</span>
     }
     function toTex(c){ var tx=new T.CanvasTexture(c); tx.minFilter=T.LinearFilter; tx.generateMipmaps=false; return tx; }
 
-        var holoNav=document.getElementById('holo-nav');
+    var holoNav=document.getElementById('holo-nav');
+    var teaseLayer=document.getElementById('tease-layer');
+    var TEASE={}; try{ TEASE=JSON.parse(holoNav.getAttribute('data-teasers')||'{}'); }catch(err){}
 
     var words=NAV_ITEMS.map(function(item,bi){
       var capC=wordCanvas(item.label,'cap');
@@ -513,10 +595,12 @@ IN</span>
       a.addEventListener('blur',function(){ if(focusIdx===bi) focusIdx=-1; });
       a.addEventListener('click',function(ev){ if(!activated) return; ev.preventDefault(); go(bi); });
       holoNav.appendChild(a);
+      var te=document.createElement('div'); te.className='tease'; te.textContent=TEASE[item.href]||'';
+      teaseLayer.appendChild(te);
       return {item:item,bi:bi,tex:tex,mask:mask,slices:slices,
               hover:0,hot:false,front:new T.Vector3(),cap:new T.Vector3(),
               base:new T.Vector3(),ppu:1,textW:(capC.width-PAD*2)/FONT_PX,
-              phase:Math.random()*Math.PI*2,tiltX:0,tiltY:0};
+              phase:Math.random()*Math.PI*2,tiltX:0,tiltY:0,near:0,tease:te,teaseHot:false};
     });
 
     function maskHit(mask,uv,r){
@@ -534,7 +618,7 @@ IN</span>
     // ---------- Pulse helpers ----------
     var NUM_ELEMS=CHARS.length+NAV_ITEMS.length,elemPhases=[],elemSpeeds=[];
     for(var i2=0;i2<NUM_ELEMS;i2++){elemPhases.push(Math.random()*Math.PI*2);elemSpeeds.push(1.3+Math.random()*1.5);}
-    function elemPulse(idx,t){return 0.52+0.48*Math.sin(t*elemSpeeds[idx]+elemPhases[idx]);}
+    function elemPulse(idx,t){if(reduce) return 0.85; return 0.52+0.48*Math.sin(t*elemSpeeds[idx]+elemPhases[idx]);}
 
     // ---------- Screen and world helpers ----------
     // Where a point of the 2000x1200 hero photo lands on screen
@@ -666,9 +750,47 @@ IN</span>
       var w=words[wi];
       flying={wi:wi,start:clock.getElapsedTime(),e:0,
         pos:camera.position.clone(),look:lookCur.clone(),tv:tvWorld.clone()};
-      document.body.style.cursor='';
-      var o=w2s(flying.tv.x,flying.tv.y,flying.tv.z);
-      zoomTransition(w.item.href,Math.round(o.x),Math.round(o.y));
+      document.body.style.cursor=''; curCur='';
+      setOsd(wi);
+      var o=w2s(flying.tv.x,flying.tv.y,flying.tv.z), ox=Math.round(o.x), oy=Math.round(o.y);
+      if(reduce){ fadeTo(w.item.href); return; }
+      // Channel change: a short burst of static, then the ring opens from the TV
+      staticBurst(300);
+      setTimeout(function(){ zoomTransition(w.item.href,ox,oy); },180);
+    }
+
+    // ---------- Channel readout + static ----------
+    var osd=document.getElementById('ch-osd'), osdNum=document.getElementById('ch-num'), osdName=document.getElementById('ch-name');
+    function setOsd(wi){
+      if(wi<0){ osd.classList.remove('on'); return; }
+      var it=NAV_ITEMS[wi];
+      osdNum.textContent='CH 0'+it.ch; osdName.textContent=it.label;
+      osd.classList.add('on');
+    }
+    var stc=document.getElementById('ch-static'), stx=stc.getContext('2d');
+    function staticBurst(ms){
+      var sw=160, sh=Math.max(60,Math.round(160*window.innerHeight/window.innerWidth));
+      stc.width=sw; stc.height=sh;
+      var img=stx.createImageData(sw,sh), d=img.data, s0=performance.now();
+      function frame(now){
+        var p=(now-s0)/ms;
+        if(p>=1){ stc.style.opacity='0'; return; }
+        for(var i=0;i<d.length;i+=4){ var n=Math.random()*255; d[i]=n*0.7; d[i+1]=n; d[i+2]=n*0.85; d[i+3]=255; }
+        stx.putImageData(img,0,0);
+        stc.style.opacity=(0.75*(p<0.65?1:(1-p)/0.35)).toFixed(3);
+        requestAnimationFrame(frame);
+      }
+      requestAnimationFrame(frame);
+    }
+    // Reduced motion: no ring, no zoom, just a quick fade to black
+    function fadeTo(dest){
+      var layer=document.getElementById('zoom-layer'), fade=document.getElementById('zoom-fade');
+      document.getElementById('zoom-photo').style.display='none';
+      document.getElementById('zoom-illustrated').style.display='none';
+      fade.style.transition='opacity 0.4s ease';
+      layer.classList.add('active');
+      requestAnimationFrame(function(){ fade.style.opacity='1'; });
+      setTimeout(function(){ window.location.href=dest; },520);
     }
 
     // ---------- "Tune in" ----------
@@ -690,15 +812,51 @@ IN</span>
       document.getElementById('ui').classList.add('visible');
     });
 
+    // ---------- "Tune out": Esc, or a click on the eye, rewinds back to the photo ----------
+    document.getElementById('tune-hint').textContent=touchUI?'tap the eye to tune out':'esc or click the eye to tune out';
+    function tuneOut(){
+      if(!activated||flying) return;
+      activated=false;
+      actT=Math.min(actT,1.5);
+      hoverIdx=-1; focusIdx=-1; eyeOver=false; setOsd(-1);
+      document.body.style.cursor=''; curCur='';
+      if(document.activeElement&&holoNav.contains(document.activeElement)) document.activeElement.blur();
+      watchEl.classList.remove('hidden');
+      document.getElementById('bottom-brand').style.opacity='';
+      document.getElementById('raw-photo').classList.remove('fade-out');
+      document.getElementById('beam-canvas').classList.remove('visible');
+      document.getElementById('ui').classList.remove('visible');
+    }
+    document.addEventListener('keydown',function(e){ if(e.key==='Escape') tuneOut(); });
+
     // ---------- Pointer: parallax + hover picking ----------
     var mx=0,my=0,smx=0,smy=0;
     var pointerX=-1,pointerY=-1,pointerIn=false;
     var hoverIdx=-1, focusIdx=-1;
+    var lastTouch=-1e9, gazeX=0, gazeY=0, eyeOver=false, eyeHov=0, curCur='';
     var ray=new T.Raycaster(), _ndc=new T.Vector2();
     window.addEventListener('pointermove',function(e){
       mx=(e.clientX/window.innerWidth-0.5)*2; my=(e.clientY/window.innerHeight-0.5)*2;
       pointerX=e.clientX; pointerY=e.clientY; pointerIn=(e.pointerType!=='touch');
+      if(e.pointerType==='touch') lastTouch=performance.now();
     },{passive:true});
+    // A tap counts too, so the eye glances at where a finger lands
+    window.addEventListener('pointerdown',function(e){
+      pointerX=e.clientX; pointerY=e.clientY;
+      if(e.pointerType==='touch') lastTouch=performance.now();
+    },{passive:true});
+    // Phone tilt drives the same parallax as the mouse (portrait only; fires where the
+    // browser shares motion without a prompt)
+    window.addEventListener('deviceorientation',function(e){
+      if(e.gamma==null||e.beta==null||pointerIn||window.innerHeight<window.innerWidth) return;
+      mx=Math.max(-1,Math.min(1,e.gamma/28)); my=Math.max(-1,Math.min(1,(e.beta-50)/28));
+    },{passive:true});
+    // The eye is the way back out: is this screen point on it?
+    function overEye(cx,cy){
+      var o=w2s(tvWorld.x,tvWorld.y,tvWorld.z), ed=w2s(tvWorld.x+EYE_SIZE*0.34,tvWorld.y,tvWorld.z);
+      var r=Math.max(26,Math.abs(ed.x-o.x)), dx=cx-o.x, dy=cy-o.y;
+      return dx*dx+dy*dy<r*r;
+    }
     document.addEventListener('mouseleave',function(){ pointerIn=false; });
     function pickWord(cx,cy){
       _ndc.set(cx/window.innerWidth*2-1, -(cy/window.innerHeight*2-1));
@@ -717,7 +875,8 @@ IN</span>
       if(!activated||flying) return;
       scene.updateMatrixWorld();
       var wi=pickWord(e.clientX,e.clientY);
-      if(wi>=0){ e.preventDefault(); go(wi); }
+      if(wi>=0){ e.preventDefault(); go(wi); return; }
+      if(actT>0.9&&overEye(e.clientX,e.clientY)) tuneOut();
     });
 
     window.addEventListener('resize',function(){
@@ -779,14 +938,16 @@ IN</span>
 
     function animate(){
       requestAnimationFrame(animate);
-      var t=clock.getElapsedTime();
+      var tr=clock.getElapsedTime(), dt=Math.min(0.1,tr-lastFrame); lastFrame=tr;
+      var t=reduce?0:tr;   // decorative motion reads t, so it holds still under reduced motion
+      if(activated) actT+=dt; else actT=Math.max(0,actT-dt*2.5);
       var isPort=window.innerHeight>window.innerWidth;
-      smx+=(mx-smx)*0.06; smy+=(my-smy)*0.06;
+      if(reduce){ smx=0; smy=0; } else { smx+=(mx-smx)*0.06; smy+=(my-smy)*0.06; }
 
       // Camera: parallax tilt, frozen after a click
       if(flying){
         // Camera holds still so the TV stays under the ring origin
-        flying.e=clamp01((t-flying.start)/1.0);
+        flying.e=clamp01((tr-flying.start)/1.0);
         camera.position.copy(flying.pos);
         lookCur.copy(flying.look);
       } else {
@@ -797,10 +958,11 @@ IN</span>
       camera.updateMatrixWorld();
       if(flying) tvWorld.copy(flying.tv); else unprojectTV(tvWorld);
 
-      var introOp=0,introFade=0,sinceAct=0;
-      if(activated){ if(!activatedAt) activatedAt=t; sinceAct=t-activatedAt; }
+      var sinceAct=actT, live=actT>0;
+      var introFade=Math.min(1.0,sinceAct/INTRO_DUR), introOp=Math.min(1.0,sinceAct/1.0);
+      var fadeK=reduce?introOp:1;   // reduced motion: pieces fade in place
       // Emergence after Tune In: each piece grows out of the TV on its own beat
-      function emerge(delay,dur){ if(!activated) return 0; var p=clamp01((sinceAct-delay)/dur); return 1-Math.pow(1-p,3); }
+      function emerge(delay,dur){ if(!live) return 0; if(reduce) return 1; var p=clamp01((sinceAct-delay)/dur); return 1-Math.pow(1-p,3); }
       var eEye=emerge(0,0.45), eCone=emerge(0.07,0.65), eCanopy=emerge(0.2,1.15), eTitle=emerge(0.5,0.85);
 
       // Canopy + title + dunes
@@ -811,15 +973,11 @@ IN</span>
       tGroup.position.set(lerp(tvWorld.x,0,eTitle), lerp(tvWorld.y,titleY+Math.sin(t*0.4)*0.06,eTitle), lerp(tvWorld.z,0,eTitle));
       updateTerrain(t);
 
-      if(activated){
-        introFade=Math.min(1.0,sinceAct/INTRO_DUR);
-        introOp=Math.min(1.0,sinceAct/1.0);
-        if(bgMesh) bgMesh.material.uniforms.uOpacity.value=Math.min(1.0,sinceAct/1.2);
-      }
-      glyphMats.forEach(function(obj){obj.mat.opacity=activated?obj.base*clamp01(eTitle*1.6)*elemPulse(obj.elemIdx,t):0;});
+      if(bgMesh) bgMesh.material.uniforms.uOpacity.value=Math.min(1.0,sinceAct/1.2);
+      glyphMats.forEach(function(obj){obj.mat.opacity=live?obj.base*clamp01(eTitle*1.6)*elemPulse(obj.elemIdx,t)*fadeK:0;});
       terrMat.opacity=0.6*introFade;
-      canopyLines.material.opacity=(isPort?0.12:0.45)*clamp01(eCanopy*1.4);
-      canopyNodes.material.opacity=(isPort?0.3:1.0)*clamp01(eCanopy*1.4);
+      canopyLines.material.opacity=(isPort?0.12:0.45)*clamp01(eCanopy*1.4)*fadeK;
+      canopyNodes.material.opacity=(isPort?0.3:1.0)*clamp01(eCanopy*1.4)*fadeK;
 
       // Emitter cone aimed from the CRT glass toward the viewer
       _camBase.set(0,2,camZ);
@@ -843,13 +1001,28 @@ IN</span>
         else lidOpen=1-0.92*Math.sin(Math.PI*bp);
       }
       var eyeWide=1+0.1*anyHot, es=EYE_SIZE*(1+0.03*Math.sin(t*1.7))*Math.max(0.001,eEye*(1+0.12*Math.sin(Math.PI*eEye)));
+      // Gaze: the iris locks onto the word you are on, else follows the pointer or last touch
+      var ptrOn=pointerX>=0&&(pointerIn||performance.now()-lastTouch<1800);
+      var tvS=w2s(tvWorld.x,tvWorld.y,tvWorld.z), gx=0, gy=0;
+      if(live&&hoverIdx>=0){
+        var hw=words[hoverIdx], hc=w2s(hw.cap.x,hw.cap.y,hw.cap.z);
+        gx=hc.x-tvS.x; gy=hc.y-tvS.y; var gl=Math.sqrt(gx*gx+gy*gy)||1; gx/=gl; gy/=gl;
+      } else if(live&&ptrOn){
+        var gr=0.42*Math.min(window.innerWidth,window.innerHeight);
+        gx=(pointerX-tvS.x)/gr; gy=(pointerY-tvS.y)/gr;
+        var gm=Math.sqrt(gx*gx+gy*gy); if(gm>1){ gx/=gm; gy/=gm; }
+        gx*=0.75; gy*=0.75;
+      }
+      gazeX+=(gx-gazeX)*0.14; gazeY+=(gy-gazeY)*0.14;
+      eyeHov+=((eyeOver?1:0)-eyeHov)*0.18;
+      var squint=1-0.45*eyeHov;   // the eye half closes when you are about to tune out
       [eyeRays,eyeLid,eyeIris].forEach(function(sp){ sp.position.copy(tvWorld); });
       eyeRays.scale.set(es,es,1);
       if(introOp>0 && t-lastRaysDraw>1/30){ drawRays(t); lastRaysDraw=t; }
-      eyeLid.scale.set(es*eyeWide, es*eyeWide*lidOpen, 1);
+      eyeLid.scale.set(es*eyeWide, es*eyeWide*lidOpen*squint, 1);
       var irisS=es*(1-0.08*anyHot);
-      eyeIris.scale.set(irisS, irisS*lidOpen, 1);
-      eyeIris.position.x+=smx*es*0.11; eyeIris.position.y-=smy*es*0.05;
+      eyeIris.scale.set(irisS, irisS*lidOpen*squint, 1);
+      eyeIris.position.x+=gazeX*es*0.16; eyeIris.position.y-=gazeY*es*0.06;
       eyeIris.material.rotation=-t*0.25;
       var eo=introOp*(0.85+0.15*Math.sin(t*2.3));
       eyeRays.material.opacity=eo*0.75; eyeLid.material.opacity=eo; eyeIris.material.opacity=eo*(lidOpen>0.3?1:lidOpen/0.3);
@@ -857,12 +1030,13 @@ IN</span>
       // Hover target: pointer pick, else keyboard focus
       if(activated&&!flying){
         scene.updateMatrixWorld();
-        var ph=pointerIn?pickWord(pointerX,pointerY):-1;
+        // No picking until the words have landed, so nothing flashes as they fly past the pointer
+        var ph=(pointerIn&&actT>0.9)?pickWord(pointerX,pointerY):-1;
+        eyeOver=ph<0&&pointerIn&&actT>0.9&&overEye(pointerX,pointerY);
         if(ph<0&&focusIdx>=0) ph=focusIdx;
-        if(ph!==hoverIdx){
-          hoverIdx=ph;
-          document.body.style.cursor=ph>=0?'pointer':'';
-        }
+        if(ph!==hoverIdx){ hoverIdx=ph; setOsd(ph); }
+        var wantCur=(ph>=0||eyeOver)?'pointer':'';
+        if(wantCur!==curCur){ curCur=wantCur; document.body.style.cursor=wantCur; }
       }
 
       var sizeMul=layoutMul;
@@ -873,7 +1047,7 @@ IN</span>
         var hot=h>0.35;
         // Each word shoots out of the TV along its own ray, one after another
         var eW=emerge(0.25+0.1*wi,0.8);
-        var vis=activated?clamp01(eW*2.2)*(flying&&flying.wi!==wi?Math.max(0,1-flying.e*1.6):1):0;
+        var vis=live?fadeK*clamp01(eW*2.2)*(flying&&flying.wi!==wi?Math.max(0,1-flying.e*1.6):1):0;
 
         // Front cap position with parallax drift (deeper nodes drift less)
         w.front.set(w.base.x+smx*0.35, w.base.y-smy*0.22+Math.sin(t*0.6+w.phase)*0.05, w.base.z);
@@ -884,8 +1058,22 @@ IN</span>
         // Projection ray from TV glass to the front cap; hover pushes the cap forward
         _seg.subVectors(w.front,tvWorld); var len=_seg.length(); _segN.copy(_seg).normalize();
         w.cap.copy(w.front).addScaledVector(_segN,0.6*h);
+        // Keep the cap inside the window at the live camera angle and hover size
+        var capK=sizeMul*(1+0.08*h)*(0.12+0.88*eW), capHalf=w.textW*capK*0.5;
+        var cs=w2s(w.cap.x,w.cap.y,w.cap.z), ce=w2s(w.cap.x+capHalf,w.cap.y,w.cap.z);
+        var halfPx=Math.abs(ce.x-cs.x), vw=window.innerWidth, em=Math.max(10,vw*0.016), sh=0;
+        if(cs.x+halfPx>vw-em) sh=(vw-em)-(cs.x+halfPx); else if(cs.x-halfPx<em) sh=em-(cs.x-halfPx);
+        if(sh!==0&&halfPx>1){ w.cap.x+=sh*capHalf/halfPx; cs.x+=sh; }
+        // Pointer proximity: the beam warms up and stretches before the hover lands
+        var nt=0;
+        if(activated&&!flying&&ptrOn){
+          var ndx=pointerX-cs.x, ndy=pointerY-cs.y, nd=Math.sqrt(ndx*ndx+ndy*ndy);
+          nt=clamp01(1-(nd-halfPx*0.8)/(0.3*Math.min(vw,window.innerHeight)));
+        }
+        w.near+=(nt-w.near)*0.1;
+        var warm=Math.max(h,w.near*0.45);
         // Accordion: idle strata bunch up behind the cap, hover fans them out down the ray
-        var expo=lerp(0.5,1.1,h);
+        var expo=lerp(0.5,1.1,warm);
         var pulse=elemPulse(CHARS.length+wi,t);
         for(var s=0;s<SLICES;s++){
           var m=w.slices[s];
@@ -906,14 +1094,24 @@ IN</span>
           } else {
             _cold.copy(_deep).lerp(_near,u);
             if(h>0.01) _cold.lerp(_hotDeep.clone().lerp(_hotNear,u*u),h*0.85);
-            m.material.color.copy(_cold).multiplyScalar(1+0.5*h);
+            m.material.color.copy(_cold).multiplyScalar(1+0.5*warm);
             var nearCap=clamp01((u-0.7)/0.3); nearCap=nearCap*nearCap*(3-2*nearCap);
-            m.material.opacity=vis*Math.min(1,(0.07+0.4*Math.pow(u,1.5))*(0.8+0.2*pulse)*(1+1.4*h*(1-u*u)))*(1-0.92*h*nearCap);
+            m.material.opacity=vis*Math.min(1,(0.07+0.4*Math.pow(u,1.5))*(0.8+0.2*pulse)*(1+1.4*warm*(1-u*u)))*(1-0.92*h*nearCap);
           }
         }
+        // Teaser line: on hover or focus, always on (dim) for touch screens. It sits on the
+        // side away from the TV (above the upper pair, below the lower pair) to stay off the beam.
+        var up=w.item.upper, tp=w2s(w.cap.x,w.cap.y+(up?0.6:-0.62)*capK,w.cap.z);
+        var to=vis*(touchUI?0.62+0.38*h:h)*clamp01((eW-0.8)/0.2);
+        w.tease.style.opacity=to.toFixed(3);
+        if(to>0.01){
+          w.tease.style.maxWidth=Math.max(150,2*halfPx).toFixed(0)+'px';
+          w.tease.style.transform='translate('+tp.x.toFixed(1)+'px,'+tp.y.toFixed(1)+'px) translate(-50%,'+(up?'-100%':'0')+')';
+        }
+        if(hot!==w.teaseHot){ w.teaseHot=hot; w.tease.classList.toggle('hot',hot); }
       });
 
-      if(activated) drawBeams(introOp,t); else bctx.clearRect(0,0,bc.width,bc.height);
+      if(live) drawBeams(introOp*fadeK,t); else bctx.clearRect(0,0,bc.width,bc.height);
       renderer.render(scene,camera);
     }
     animate();
