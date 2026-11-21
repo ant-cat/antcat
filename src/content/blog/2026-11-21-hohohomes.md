@@ -63,6 +63,11 @@ The season is short, which is kind of the point. What I'd like to get to before 
 
 HoHoHomes keeps changing through the season. Every release gets a note here, newest first.
 
+### v1.2 · November 21, 2026 · A fresh map every season
+
+- **Removing houses.** I can now take a house off the map straight from its card, for the ones that were dropped by mistake or went dark for good.
+- **A new map every January 15.** The map starts empty each season, and last season's houses are kept as a saved archive instead of lingering into next year.
+
 ### v1.1 · November 21, 2026 · Lights that twinkle
 
 - **One tap, really.** "I see lights here" drops and saves the pin right away and snaps it onto the nearest house. Undo and Adjust Location sit right below it, big enough to hit from a passenger seat.
