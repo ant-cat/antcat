@@ -70,6 +70,7 @@ HoHoHomes keeps changing through the season. Every release gets a note here, new
 - **Lit Tonight.** Every house shows when it was last confirmed. Houses nobody has vouched for in 72 hours dim until someone taps Lit Tonight ✨.
 - **Fairy lights.** Houses are now warm-white and colored lights that twinkle out of step, so a street looks like a string of lights. New pins switch on with a golden glow, a little buzz and an optional chime.
 - **Hot Zones.** Zoomed out, houses gather into glowing halos named for the neighborhood. Tap one to fly in.
+- **Saves that stick.** Tapping things quickly could fail with "Busy right now, try again." Every save is now its own numbered version, so two people tapping at once can't trip over each other.
 - **Snow and glass.** A little snow falls in the header card, and everything floating over the map got a frosted-glass look. The bottom buttons no longer cover the map credits.
 
 ### v1.0 · November 21, 2026 · First lights
