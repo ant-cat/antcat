@@ -63,6 +63,12 @@ The season is short, which is kind of the point. What I'd like to get to before 
 
 HoHoHomes keeps changing through the season. Every release gets a note here, newest first.
 
+### v1.4 · November 21, 2026 · Worth the drive
+
+- **Call out the epic ones.** Every house now has a 🤩 Worth the Drive button. Three votes and it becomes a Showstopper: a bigger light with a slow golden starburst, a badge on its card, and a count on its neighborhood, like San Marco • 12 houses • 2 🤩.
+- **Showstoppers only.** Tap 🤩 in the header to see just the Showstoppers when you're planning a drive.
+- **No grades.** Votes only ever add. Every other house keeps its twinkle, and the old one-to-three star ratings are gone, because a modest strand of lights on a porch deserves a spot on the map too.
+
 ### v1.3 · November 21, 2026 · Starts where you are
 
 - **Opens on your neighborhood.** The map now starts on your part of Jacksonville instead of the whole city. If you've let it use your location before, it opens right on your street; otherwise it uses a rough guess from your connection, with no prompt and nothing saved. From out of town, you still land on Jacksonville.
