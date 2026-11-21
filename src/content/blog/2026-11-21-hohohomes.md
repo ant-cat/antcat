@@ -63,6 +63,10 @@ The season is short, which is kind of the point. What I'd like to get to before 
 
 HoHoHomes keeps changing through the season. Every release gets a note here, newest first.
 
+### v1.3 · November 21, 2026 · Starts where you are
+
+- **Opens on your neighborhood.** The map now starts on your part of Jacksonville instead of the whole city. If you've let it use your location before, it opens right on your street; otherwise it uses a rough guess from your connection, with no prompt and nothing saved. From out of town, you still land on Jacksonville.
+
 ### v1.2 · November 21, 2026 · A fresh map every season
 
 - **Removing houses.** I can now take a house off the map straight from its card, for the ones that were dropped by mistake or went dark for good.
