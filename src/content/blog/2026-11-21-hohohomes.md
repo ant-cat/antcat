@@ -13,7 +13,7 @@ So I built a map.
 
 ## What it does
 
-HoHoHomes is a crowd-sourced map of Christmas lights around Jacksonville. Zoomed out, houses gather into glowing neighborhood "Hot Zones" like *San Marco • 14 houses*. Tap one and the map flies in until every house is its own little twinkling light.
+HoHoHomes is a crowd-sourced map of Christmas lights across the US. It started in Jacksonville and now covers the whole country. Zoomed out, each city glows with its count. Closer in, houses gather into glowing neighborhood "Hot Zones" like *San Marco • 14 houses*. Tap one and the map flies in until every house is its own little twinkling light.
 
 Adding a house is one tap. Hit **🎄 I see lights here** and the pin drops right where you are, snapped onto the nearest house. Undo it, nudge it, or tag the vibe with one more tap: 🎶 Music Sync, 🎈 Inflatable Jungle, ✨ Clark Griswold, 🕯️ Classic & Cozy.
 
@@ -62,6 +62,13 @@ The season is short, which is kind of the point. What I'd like to get to before 
 ## Release notes
 
 HoHoHomes keeps changing through the season. Every release gets a note here, newest first.
+
+### v2.0 · November 21, 2026 · Lights across the USA
+
+- **The whole country.** HoHoHomes isn't just Jacksonville anymore. Drop a pin anywhere in the US: the lower 48, Alaska, Hawaii and Puerto Rico.
+- **A national map.** Zoomed all the way out, every city with lights glows with its count, like Jacksonville • 16 houses • 1 🤩. Tap one to fly in.
+- **Starts where you are.** The map opens on your city, or on the whole country if it can't tell where you are. Address search works anywhere in the US.
+- **Built to grow.** Houses are now stored city by city, so a busy night in one town never slows down another, and your phone only loads the area you're looking at.
 
 ### v1.4 · November 21, 2026 · Worth the drive
 
