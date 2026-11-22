@@ -63,6 +63,12 @@ The season is short, which is kind of the point. What I'd like to get to before 
 
 HoHoHomes keeps changing through the season. Every release gets a note here, newest first.
 
+### v2.1 · November 22, 2026 · Made for texting
+
+- **Links that look like Christmas.** Text a HoHoHomes link and it now shows a picture card of twinkling lights instead of a plain gray bubble, with a little lights icon to match.
+- **A Share button.** It sits next to the address box, so nobody has to type the address (I learned that one the hard way: hohohome.app without the S isn't ours).
+- **Share a neighborhood, not a house.** Zoomed in, Share sends the area you're looking at, rounded to about a kilometer, never a single home. The preview only gives totals, like 14 houses lit near San Marco, and skips the count entirely when only a house or two are nearby.
+
 ### v2.0 · November 21, 2026 · Lights across the USA
 
 - **The whole country.** HoHoHomes isn't just Jacksonville anymore. Drop a pin anywhere in the US: the lower 48, Alaska, Hawaii and Puerto Rico.
