@@ -53,13 +53,14 @@ const experiments = [
   {
     id: 'EXP-004',
     title: 'ShowGo',
-    status: 'building',
+    status: 'live',
     color: 'coral',
     date: 'Oct 2026',
     description: 'A radio station built from every band on every bill near you. Pick a place, a radius and a date range, and hear 30 seconds of each act, openers included, so you know what a band sounds like before you buy the ticket.',
     learning: 'The listing data is the product. Two ticketing sites can describe the same night at the same room in ways that do not match, and openers (the whole point) are missing from most listings.',
     tags: ['next.js 14', 'typescript', 'postgresql', 'prisma', 'ticketmaster', 'seatgeek', 'vercel'],
     demoUrl: 'https://showgo.fm',
+    demoLabel: 'Live',
     writeupUrl: '/writing/2026-10-11-show-go',
   },
   {
@@ -72,9 +73,13 @@ const experiments = [
     learning: 'Design for the passenger. Saving first and offering Undo beats asking anyone to confirm, and a lights map is only as good as tonight, so freshness mattered more than the house count.',
     tags: ['next.js 16', 'maplibre', 'openstreetmap', 'vercel blob', 'vercel'],
     demoUrl: 'https://hohohomes.app',
+    demoLabel: 'Live',
     writeupUrl: '/writing/2026-11-21-hohohomes',
   },
 ];
+
+// Newest first: sort by EXP number, highest at the top, so new cards land on top automatically.
+const sortedExperiments = [...experiments].sort((a, b) => b.id.localeCompare(a.id, undefined, { numeric: true }));
 
 const accentMap: Record<string, string> = {
   coral: '#E76F51',
@@ -90,7 +95,7 @@ const accentMap: Record<string, string> = {
   </div>
 
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
-    {experiments.map(exp => (
+    {sortedExperiments.map(exp => (
       <div style={`background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:24px;display:flex;flex-direction:column;position:relative;overflow:hidden;border-top:3px solid ${accentMap[exp.color] || 'var(--border)'}`}>
         <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px;gap:10px">
           <div>
