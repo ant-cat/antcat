@@ -5,11 +5,18 @@ categories: ["Experiments", "Building"]
 tags: ["next.js", "maplibre", "openstreetmap", "vercel-blob", "vercel", "ai"]
 ---
 
-Jacksonville goes all in on Christmas lights. The hard part has never been the lights. It's finding them.
+It's been crazy rainy here in Jacksonville. For days, it's been pouring. When Friday night rolled around, we were giddily ready to order Chinese and start watching Christmas movies. With over an hour to wait for delivery, I put real pants back on and headed to go pick it up.
 
-The good streets get passed around by word of mouth, a Facebook post, a neighbor who swears the house on the corner does a whole show synced to music. Then you drive over and it's dark, or it was last year's house, or you can't remember which street it was.
+In my six block drive, I noticed neighbors already had their houses ready for Christmas. Twinkly lights, blow ups, trees...it was all there for a few spots. It got me excited to take our 5yr old on the annual light hunt. Then it hit me, I wished there was  a PokemonGo / Waze for Christmas lights to help other people find them.
 
-So I built a map.
+In the parking lot of the Chan's Chinese, I started to build.
+
+## Goals
+* Least amount of friction to keep it fun
+* No accounts
+* No app to download
+* All cheer is respected no matter how big or small, which means all houses should be eligible to be displayed. Going all out gets extra snaps for extra effort.
+* Try to avoid moderation and hurtful actions from the crowd (fingers crossed)
 
 ## What it does
 
@@ -38,9 +45,9 @@ Claude and I built it together. The first version went up just after midnight. T
 
 The person using this is in a moving car at night, or walking with a kid on their shoulders. The first version asked them to tap the button, then tap the map, then fill in a little form. That's three things too many. Now it saves first and asks questions later: drop the pin, offer Undo. Undo is kinder than a confirm button.
 
-**A lights map is only as good as tonight.**
+**Density over epicness**
 
-A map full of houses from last week is a map that lies to you. The count of houses mattered less than knowing which ones are actually on. One tap to say "still lit" and a slow fade for the ones nobody has vouched for turned out to be the feature, not a nice-to-have.
+This is about me more than the product. I learned that I believe that density of holidays houses matters more than one giant epic display. Claude helped me to push this a bit further and account for houses that may go dark. It suggested that the count of houses mattered less than knowing which ones are actually on. One tap to say “still lit” and a slow fade for the ones nobody has vouched for turned out to be the feature, not a nice-to-have.
 
 **People think in neighborhoods, not dots.**
 
@@ -130,3 +137,88 @@ HoHoHomes keeps changing through the season. Every release gets a note here, new
 - A map of Christmas lights around Jacksonville. A heat map of glowing streets zoomed out, a dot for each house zoomed in.
 - Add a house with one tap, by tapping the map or by address. Optional 1 to 3 star "how wow" rating and a short note.
 - Live at hohohomes.app.
+
+
+
+
+
+
+
+
+# Markdown syntax guide
+
+## Headers
+
+# This is a Heading h1
+## This is a Heading h2
+###### This is a Heading h6
+
+## Emphasis
+
+*This text will be italic*  
+_This will also be italic_
+
+**This text will be bold**  
+__This will also be bold__
+
+_You **can** combine them_
+
+## Lists
+
+### Unordered
+
+* Item 1
+* Item 2
+* Item 2a
+* Item 2b
+    * Item 3a
+    * Item 3b
+
+### Ordered
+
+1. Item 1
+2. Item 2
+3. Item 3
+    1. Item 3a
+    2. Item 3b
+
+## Images
+
+![This is an alt text.](/image/Markdown-mark.svg "This is a sample image.")
+
+## Links
+
+You may be using [Markdown Live Preview](https://markdownlivepreview.com/).
+
+## Blockquotes
+
+> Markdown is a lightweight markup language with plain-text-formatting syntax, created in 2004 by John Gruber with Aaron Swartz.
+>
+>> Markdown is often used to format readme files, for writing messages in online discussion forums, and to create rich text using a plain text editor.
+
+## Tables
+
+| Left columns  | Right columns |
+| ------------- |:-------------:|
+| left foo      | right foo     |
+| left bar      | right bar     |
+| left baz      | right baz     |
+
+## Blocks of code
+
+```
+let message = 'Hello world';
+alert(message);
+```
+
+## Mermaid diagrams
+```mermaid
+graph TD
+  A[Start] --> B{Decision}
+  B -->|Yes| C[Finish]
+  B -->|No| D[Alternate]
+```
+
+## Inline code
+
+This web site is using `markedjs/marked`.
