@@ -1,4 +1,5 @@
 ---
+import GoogleTagManager from '../components/GoogleTagManager.astro';
 // ant.cat: hero v11. Raw photo first, "Tune in" activates the holo-UI.
 // v11: CRT emitter cone, desert wireframe dunes, 20-layer word extrusions that
 // retrace into the TV screen, hover physics, burst into the TV on click.
@@ -31,6 +32,7 @@ const teasers = {
 <!doctype html>
 <html lang="en">
 <head>
+  <GoogleTagManager part="head" />
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>ant.cat</title>
@@ -215,6 +217,7 @@ const teasers = {
   </style>
 </head>
 <body>
+  <GoogleTagManager part="body" />
   <picture id="raw-photo-wrap" style="display:contents">
     <source srcset="/images/hero.webp" type="image/webp" />
     <img id="raw-photo" src="/images/hero.png" alt="" fetchpriority="high" />

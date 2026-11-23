@@ -1,4 +1,5 @@
 ---
+import GoogleTagManager from '../components/GoogleTagManager.astro';
 interface Props {
   title: string;
   description?: string;
@@ -16,6 +17,7 @@ const navLinks = [
 <!doctype html>
 <html lang="en">
 <head>
+  <GoogleTagManager part="head" />
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content={description} />
@@ -26,6 +28,7 @@ const navLinks = [
   <link rel="icon" type="image/png" href="/favicon.png" />
 </head>
 <body>
+  <GoogleTagManager part="body" />
   <div id="reading-progress"></div>
   <header class="site-header">
     <a href="/" class="site-brand">ant.cat</a>
