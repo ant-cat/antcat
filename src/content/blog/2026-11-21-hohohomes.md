@@ -63,6 +63,30 @@ The season is short, which is kind of the point. What I'd like to get to before 
 
 HoHoHomes keeps changing through the season. Every release gets a note here, newest first.
 
+### v2.4 · November 22, 2026 · Public light shows
+
+- **Gold stars for the big shows.** When you add lights, you can now say whether it's a home or a public display, like a farm, park, church or business, and give it a name. Displays show up as gold stars with their names, and the new ⭐ button shows only them. City pages list them too.
+- **It takes two to name a display.** A display's name stays hidden until someone else confirms it by tapping "I see this display too", so nobody can put a name on a neighbor's house. Homes never get a name.
+- **Dates and hours.** Display cards can show the season and the hours, like Nov 27 to Jan 3, 6 to 10 PM. Before opening night a display's star looks pale and its card says when it starts, and after its last night it says it's done for the season.
+- **Jacksonville's shows are already on the map.** ZOOLights at the Jacksonville Zoo, Glowing Gardens, Deck the Chairs, Nights of Lights, Blackhawk Bluff Lights and Wizlights are there with their dates.
+
+### v2.3 · November 22, 2026 · Let's go Christmas light hunting
+
+- **Opens on the whole country.** The map now starts zoomed out so you can see every glowing Hot Zone, with a hint to pinch in or tap 📍 Lights near me. It only asks where you are when you tap that. Shared links still open right on their area.
+- **A new tagline.** Link previews and the text that goes with Share now lead with "Let's go Christmas light hunting!"
+- **City pages and How it works.** Each of 61 US cities has its own page with this season's totals and a link straight into the map, and a new How it works page answers the usual questions. Both are a tap away under the Santa hat, and they help search engines and AI assistants find and recommend HoHoHomes.
+- **A lit house icon.** The browser tab and home-screen icon is now a little cream house with red, green, gold and blue bulbs along the roof. In Firefox the bulbs twinkle right in the tab.
+- **Twinkling welcome lights.** The string of lights on the welcome card now twinkles bulb by bulb, and still glows softly for people who turn on Reduce Motion.
+
+### v2.2 · November 22, 2026 · A warmer welcome
+
+- **A welcome card.** Your first visit opens a short card that says what HoHoHomes is, with three quick steps and one button: Show me the lights.
+- **Add it to your home screen.** On an iPhone the welcome card shows how, and on Android there's an Add to Home Screen button. From there HoHoHomes opens full screen with its own icon, like an app.
+- **Scout badges.** Tap 🏅 for eight badges to earn, from 🕯️ First Light for your first house to 🎁 Twelve Nights of Lights for going out spotting on twelve different nights. Progress stays on your phone, with no sign-up, and starts fresh each season.
+- **Everything in one dock.** The top is now one slim bar with the name, the house count and a few small buttons. Everything for adding a house sits in one dock at the bottom, under a string of fairy lights, so the map gets the whole middle of the screen.
+- **A jingle bell.** The sound button is a little gold bell that rings when sound is on and dims when it's muted.
+- **A Santa hat.** Tap the small Santa hat to see who made HoHoHomes and the map credits.
+
 ### v2.1 · November 22, 2026 · Made for texting
 
 - **Links that look like Christmas.** Text a HoHoHomes link and it now shows a picture card of twinkling lights instead of a plain gray bubble, with a little lights icon to match.
